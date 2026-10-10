@@ -1,0 +1,412 @@
+"""Portable plugin manager. No third-party runtime dependencies."""
+from __future__ import annotations
+import csv
+from functools import wraps
+from datetime import datetime
+import hashlib
+import io
+import json
+import os
+from pathlib import Path, PurePosixPath
+import re
+import shutil
+import subprocess
+import tempfile
+from urllib.parse import urljoin, urlparse
+from urllib.error import HTTPError
+from urllib.request import Request, urlopen
+import uuid
+import zipfile
+
+SOURCE_REPOSITORY = 'https://github.com/Yck0701/XHNodeChinese'
+REPOSITORY = 'https://github.com/Yck0701/XHNodeChinese-new'
+DEFAULT_FEED = REPOSITORY + '/releases/latest/download/manifest.json'
+VERSION = '1.0.1'
+PROTECTED = ('Plugins/XHNodeChinese/Dictionaries/User.csv', 'Saved/XHNodeChinese/LongText.csv')
+ENGINE_FILES = tuple('Binaries/Win64/UnrealEditor-' + m + '.dll' for m in
+    ('Core','CoreUObject','Slate','SlateCore','ApplicationCore','InputCore','Engine','GraphEditor')) + tuple(
+    'Plugins/FX/Niagara/Binaries/Win64/UnrealEditor-' + m + '.dll' for m in
+    ('NiagaraEditor','NiagaraEditorWidgets','Niagara','NiagaraCore'))
+MAX_DOWNLOAD = 256 * 1024 * 1024
+MAX_EXPANDED = 512 * 1024 * 1024
+
+
+def digest(path):
+    h = hashlib.sha256()
+    with Path(path).open('rb') as f:
+        for block in iter(lambda: f.read(1024 * 1024), b''): h.update(block)
+    return h.hexdigest()
+
+
+def atomic(path, data):
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temp = path.with_name(path.name + '.' + uuid.uuid4().hex + '.tmp')
+    try:
+        with temp.open('xb') as f:
+            f.write(data); f.flush(); os.fsync(f.fileno())
+        os.replace(temp, path)
+    finally:
+        temp.unlink(missing_ok=True)
+
+
+def write_json(path, value):
+    atomic(path, json.dumps(value, ensure_ascii=False, indent=2).encode('utf-8'))
+
+
+def json_read(path):
+    return json.loads(Path(path).read_text(encoding='utf-8-sig'))
+
+
+def engine_path(path):
+    p = Path(path).expanduser().resolve()
+    if (p/'Engine/Build/Build.version').is_file(): p = p/'Engine'
+    if not (p/'Build/Build.version').is_file(): raise ValueError('请选择含 Engine/Build/Build.version 的引擎目录。')
+    return p
+
+
+def engine_info(path, log=lambda _: None):
+    p = engine_path(path); v = json_read(p/'Build/Build.version')
+    fingerprints = {}
+    for name in ENGINE_FILES:
+        file = p/name
+        if not file.is_file(): raise ValueError('引擎不完整，缺少：' + name)
+        log('校验引擎：' + file.name)
+        fingerprints[name] = digest(file)
+    return {'version': '.'.join(str(v[k]) for k in ('MajorVersion','MinorVersion','PatchVersion')),
+            'changelist': v.get('Changelist',0), 'sha256': fingerprints}
+
+
+def project_path(path):
+    p = Path(path).expanduser().resolve()
+    if p.suffix.lower() == '.uproject' and p.is_file(): return p.parent
+    if p.is_dir() and any(p.glob('*.uproject')): return p
+    raise ValueError('请选择工程的 .uproject 文件或其所在文件夹。')
+
+
+def ensure_closed():
+    if os.name != 'nt': return
+    output = subprocess.run(['tasklist.exe','/FI','IMAGENAME eq UnrealEditor.exe','/FO','CSV','/NH'],
+                            capture_output=True, check=True, creationflags=subprocess.CREATE_NO_WINDOW).stdout
+    if b'UnrealEditor.exe' in output:
+        raise RuntimeError('请先保存并关闭 UE 编辑器，再安装、替换或恢复文件。备份操作无需关闭。')
+
+
+def feed_location(value):
+    value = str(value).strip()
+    if re.fullmatch(r'https://github\.com/[^/]+/[^/]+/?', value):
+        return value.rstrip('/') + '/releases/latest/download/manifest.json'
+    return value
+
+
+def download(location, destination, expected=None, limit=MAX_DOWNLOAD):
+    destination=Path(destination); location=str(location)
+    temp=destination.with_name(destination.name+'.download-'+uuid.uuid4().hex)
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    try:
+        if location.startswith(('http://','https://')):
+            if urlparse(location).scheme != 'https': raise ValueError('在线更新地址必须使用 HTTPS。')
+            stream=urlopen(Request(location, headers={'User-Agent':'XHPluginManager/'+VERSION}), timeout=45)
+            if urlparse(stream.geturl()).scheme != 'https':
+                stream.close(); raise ValueError('拒绝不安全的下载重定向。')
+        else: stream=Path(location).open('rb')
+        total=0; h=hashlib.sha256()
+        with stream, temp.open('xb') as out:
+            while True:
+                chunk=stream.read(1024*1024)
+                if not chunk: break
+                total+=len(chunk)
+                if total>limit: raise ValueError('下载超过允许大小。')
+                out.write(chunk); h.update(chunk)
+        if expected and h.hexdigest()!=expected: raise ValueError('下载校验失败，文件未安装，请重新下载。')
+        os.replace(temp,destination)
+    finally: temp.unlink(missing_ok=True)
+    return destination
+
+
+def load_feed(location, cache):
+    location=feed_location(location)
+    try: file=download(location,Path(cache)/'manifest.json',limit=2*1024*1024)
+    except HTTPError as exc:
+        if exc.code==404: raise ValueError('尚未找到发布清单 manifest.json。请先使用随包离线版本，或由发布者上传 GitHub Release。') from exc
+        raise
+    feed=json_read(file)
+    if feed.get('schema')!=1 or not isinstance(feed.get('plugins'),list): raise ValueError('更新清单格式不支持。')
+    for item in feed['plugins']+[feed.get('shared',{})]+([feed['source']] if feed.get('source') else []):
+        if not re.fullmatch('[0-9a-f]{64}',item.get('sha256','')): raise ValueError('更新清单缺少有效的 SHA-256。')
+        if not item.get('url'): raise ValueError('更新清单缺少下载地址。')
+        if str(location).startswith('https://'):
+            item['_location']=urljoin(location,item['url'])
+            if not item['_location'].startswith('https://'): raise ValueError('清单包含非 HTTPS 地址。')
+        else:
+            if urlparse(item['url']).scheme: raise ValueError('离线清单只能引用同目录文件。')
+            rel=safe_relative(item['url'])
+            base=Path(location).resolve().parent
+            candidate=(base/rel).resolve()
+            if not candidate.is_relative_to(base): raise ValueError('离线包路径越界。')
+            item['_location']=str(candidate)
+    return feed
+
+
+def fetch(item, cache):
+    return download(item['_location'],Path(cache)/(item['sha256']+'.zip'),item['sha256'])
+
+
+def matching(feed, info):
+    return [p for p in feed['plugins'] if p.get('verified') is True and p.get('engine',{}).get('sha256')==info['sha256'] and
+            p.get('engine',{}).get('version')==info['version']]
+
+
+def safe_relative(name):
+    if '\\' in name or ':' in name: raise ValueError('压缩包路径非法：'+name)
+    path=PurePosixPath(name)
+    if path.is_absolute() or not path.parts or '..' in path.parts: raise ValueError('压缩包路径越界：'+name)
+    if any(part.rstrip(' .')!=part or part.upper().split('.')[0] in
+           {'CON','PRN','AUX','NUL',*(f'COM{i}' for i in range(10)),*(f'LPT{i}' for i in range(10))} for part in path.parts):
+        raise ValueError('压缩包包含非法 Windows 文件名。')
+    return path
+
+
+def zip_members(z):
+    result={}; total=0; names=set()
+    for info in z.infolist():
+        p=safe_relative(info.filename)
+        key=str(p).casefold()
+        if key in names: raise ValueError('压缩包有重复文件。')
+        names.add(key)
+        if (info.external_attr>>16)&0o170000==0o120000: raise ValueError('不允许压缩包符号链接。')
+        total+=info.file_size
+        if total>MAX_EXPANDED or len(names)>12000: raise ValueError('压缩包展开后过大。')
+        if not info.is_dir(): result[str(p)]=info
+    return result
+
+
+def unpack_plugin(archive, dest):
+    dest=Path(dest)
+    with zipfile.ZipFile(archive) as z:
+        members=zip_members(z)
+        if 'XHNodeChinese/XHNodeChinese.uplugin' not in members: raise ValueError('不是有效的星河插件包。')
+        for name,info in members.items():
+            p=PurePosixPath(name)
+            if p.parts[0]!='XHNodeChinese': raise ValueError('插件包包含无关目录。')
+            if any(part in ('Saved','Intermediate','__pycache__','.git') for part in p.parts):
+                raise ValueError('插件包包含构建缓存或私人数据。')
+            target=dest.joinpath(*p.parts[1:]); target.parent.mkdir(parents=True,exist_ok=True)
+            with z.open(info) as source,target.open('xb') as output: shutil.copyfileobj(source,output)
+    return dest
+
+
+def no_links(root):
+    root=Path(root)
+    for p in [root,*root.parents]:
+        if p.is_symlink() or (hasattr(p,'is_junction') and p.is_junction()): raise ValueError('目标路径不能是符号链接或目录联接。')
+    if root.is_dir():
+        for p in root.rglob('*'):
+            if p.is_symlink() or (hasattr(p,'is_junction') and p.is_junction()): raise ValueError('插件目录中存在链接，无法安全替换。')
+
+
+def exclusive_update(fn):
+    @wraps(fn)
+    def run(project,*args,**kwargs):
+        project=project_path(project)
+        lock=project/'Saved/XHNodeChinese/UpdaterBackups/operation.lock'
+        no_links(lock); lock.parent.mkdir(parents=True,exist_ok=True)
+        with lock.open('a+b') as handle:
+            handle.seek(0,2)
+            if handle.tell()==0:handle.write(b'0');handle.flush()
+            handle.seek(0)
+            if os.name=='nt':
+                import msvcrt
+                try:msvcrt.locking(handle.fileno(),msvcrt.LK_NBLCK,1)
+                except OSError as exc:raise RuntimeError('另一个更新器正在处理此工程，请稍后重试。') from exc
+            try:return fn(project,*args,**kwargs)
+            finally:
+                if os.name=='nt':
+                    handle.seek(0);msvcrt.locking(handle.fileno(),msvcrt.LK_UNLCK,1)
+    return run
+
+
+def backup(project):
+    project=project_path(project)
+    dest=project/'Saved/XHNodeChinese/UpdaterBackups'/('dictionary-'+datetime.now().strftime('%Y%m%d-%H%M%S')+'-'+uuid.uuid4().hex[:6]+'.zip')
+    no_links(dest.parent)
+    dest.parent.mkdir(parents=True,exist_ok=True)
+    temporary=dest.with_suffix('.tmp'); state={}
+    try:
+        with zipfile.ZipFile(temporary,'w',zipfile.ZIP_DEFLATED) as z:
+            for name in PROTECTED:
+                p=project/name; no_links(p)
+                data=p.read_bytes() if p.exists() else None
+                state[name]=None if data is None else hashlib.sha256(data).hexdigest()
+                if data is not None: z.writestr(name,data)
+            z.writestr('backup.json',json.dumps({'schema':1,'files':state},ensure_ascii=False))
+        os.replace(temporary,dest)
+    finally: temporary.unlink(missing_ok=True)
+    return dest
+
+
+def csv_validate(data):
+    text=data.decode('utf-8-sig')
+    rows=list(csv.reader(io.StringIO(text),strict=True))
+    rows=[r for r in rows if r and not (len(r)==1 and r[0].startswith('#'))]
+    if not rows or rows[0] not in (['Key','Value'],['Source','Translation','Namespace','Key','Category']):
+        raise ValueError('共享词典表头无效。')
+    width=len(rows[0]); seen=set()
+    for r in rows[1:]:
+        if len(r)!=width or not r[0].strip() or not r[1].strip() or '\x00' in ''.join(r): raise ValueError('共享词典存在空译文或错误行。')
+        key=(r[0],*r[2:])
+        if key in seen: raise ValueError('共享词典存在重复条目。')
+        seen.add(key)
+    return len(rows)-1
+
+
+def shared_contents(archive):
+    with zipfile.ZipFile(archive) as z:
+        members=zip_members(z)
+        if not {'User.csv','LongText.csv'}<=members.keys(): raise ValueError('共享包缺少词典或长文本。')
+        if not set(members)<= {'User.csv','LongText.csv','curation-report.json','README.md'}: raise ValueError('共享包包含未知文件。')
+        result={PROTECTED[0]:z.read('User.csv'),PROTECTED[1]:z.read('LongText.csv')}
+        for data in result.values(): csv_validate(data)
+        return result
+
+
+@exclusive_update
+def replace_files(project, contents):
+    project=project_path(project); ensure_closed()
+    if set(contents)!=set(PROTECTED): raise ValueError('不允许替换未知路径。')
+    for name in PROTECTED: no_links(project/name)
+    previous={name:(project/name).read_bytes() if (project/name).exists() else None for name in PROTECTED}
+    saved=backup(project)
+    try:
+        for name,data in contents.items():
+            if data is None: (project/name).unlink(missing_ok=True)
+            else: atomic(project/name,data)
+    except Exception:
+        for name,data in previous.items():
+            if data is None: (project/name).unlink(missing_ok=True)
+            else: atomic(project/name,data)
+        raise
+    return saved
+
+
+def replace_shared(project, archive):
+    return replace_files(project,shared_contents(archive))
+
+
+def restore(project, archive):
+    with zipfile.ZipFile(archive) as z:
+        members=zip_members(z)
+        meta=json.loads(z.read('backup.json'))
+        if meta.get('schema')!=1 or set(meta.get('files',{}))!=set(PROTECTED): raise ValueError('不是有效的词典备份。')
+        if set(members)-set(PROTECTED)-{'backup.json'}: raise ValueError('备份中含未知文件。')
+        contents={}
+        for name,h in meta['files'].items():
+            data=None if h is None else z.read(name)
+            if data is not None and hashlib.sha256(data).hexdigest()!=h: raise ValueError('备份校验失败。')
+            contents[name]=data
+    return replace_files(project,contents)
+
+
+def verify_bridge(plugin, info):
+    p=Path(plugin)/'Binaries/Win64'; m=json_read(p/'bridge-manifest.json')
+    if m.get('engine_sha256')!=info['sha256']: raise ValueError('包内引擎指纹不匹配，拒绝安装。')
+    name=m.get('bridge_file','')
+    if not re.fullmatch(r'XHSlateBridge[0-9]*\.dll',name): raise ValueError('动态组件名称无效。')
+    if digest(p/name)!=m.get('bridge_sha256'): raise ValueError('包内动态组件校验失败。')
+
+
+@exclusive_update
+def install(project, archive, info):
+    project=project_path(project); ensure_closed()
+    target=project/'Plugins/XHNodeChinese'; no_links(target)
+    target.parent.mkdir(exist_ok=True)
+    saved=backup(project)
+    with tempfile.TemporaryDirectory(prefix='.xh-install-',dir=target.parent) as temp:
+        stage=unpack_plugin(archive,Path(temp)/'new')
+        verify_bridge(stage,info)
+        # Plugin update never replaces the user's dictionary implicitly.
+        personal=target/'Dictionaries/User.csv'
+        if personal.is_file(): atomic(stage/'Dictionaries/User.csv',personal.read_bytes())
+        old=Path(temp)/'old'
+        if target.exists():
+            archive_dir=saved.parent/('plugin-'+saved.stem)
+            shutil.copytree(target,archive_dir,ignore=shutil.ignore_patterns('__pycache__','Intermediate'))
+            os.replace(target,old)
+        try: os.replace(stage,target)
+        except Exception:
+            if old.exists(): os.replace(old,target)
+            raise
+    return saved
+
+
+def zip_plugin(plugin, dest):
+    plugin=Path(plugin); dest=Path(dest); dest.parent.mkdir(parents=True,exist_ok=True)
+    tmp=dest.with_suffix('.zip.tmp')
+    m=json_read(plugin/'Binaries/Win64/bridge-manifest.json')
+    with zipfile.ZipFile(tmp,'w',zipfile.ZIP_DEFLATED) as z:
+        for p in sorted(plugin.rglob('*')):
+            rel=p.relative_to(plugin)
+            if not p.is_file() or any(s in ('Saved','Intermediate','__pycache__','.git') for s in rel.parts): continue
+            if p.name.startswith('XHSlateBridge') and p.suffix=='.dll' and p.name!=m['bridge_file']: continue
+            if str(rel.as_posix())=='Dictionaries/User.csv': continue
+            z.write(p,'XHNodeChinese/'+rel.as_posix())
+        z.writestr('XHNodeChinese/Dictionaries/User.csv','Key,Value\n')
+    os.replace(tmp,dest)
+    return dest
+
+
+def target_documentation(plugin,info):
+    plugin=Path(plugin)
+    target='UE '+info['version']+' / CL '+str(info.get('changelist',0))
+    p=plugin/'README.md'
+    if p.is_file():
+        lines=p.read_text(encoding='utf-8').splitlines()
+        lines=[('**引擎版本：**本包为 **'+target+'** 编译，必须匹配同一引擎构建。请通过配套管理器校验；不能仅按版本号强行安装。')
+               if line.startswith('**引擎版本：**') else line for line in lines]
+        atomic(p,('\n'.join(lines)+'\n').encode('utf-8'))
+    p=plugin/'ADVANCED.md'
+    if p.is_file():
+        text=p.read_text(encoding='utf-8').replace('本包的动态显示组件针对当前定制 **UE 5.8.3** 构建。','本包的动态显示组件针对 **'+target+'** 构建。')
+        atomic(p,text.encode('utf-8'))
+    write_json(plugin/'BUILD_INFO.json',{'engine':info,'note':'Compatibility is gated by engine DLL fingerprints.'})
+
+
+def run_logged(args, cwd, log):
+    flags=subprocess.CREATE_NO_WINDOW if os.name=='nt' else 0
+    env=os.environ.copy(); env['PYTHONIOENCODING']='utf-8'; env['PYTHONUTF8']='1'
+    with subprocess.Popen([str(a) for a in args],cwd=cwd,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,
+                          encoding='utf-8',errors='replace',env=env,creationflags=flags) as process:
+        for line in process.stdout: log(line.rstrip())
+        if process.wait(): raise RuntimeError('构建命令失败，请查看上方日志。')
+
+
+def compile_package(source, engine, sdk, vcvars, python, output, log=print, compiler_version='14.50'):
+    engine=engine_path(engine); sdk=engine_path(sdk); output=Path(output).resolve()
+    for p in (engine,sdk,Path(vcvars),output,Path(python)):
+        if re.search(r'[\r\n"%&|<>!^]',str(p)): raise ValueError('编译路径不能包含引号或命令行特殊字符。')
+    if not Path(vcvars).is_file(): raise ValueError('请选择 Visual Studio 的 vcvars64.bat。')
+    if not Path(python).is_file(): raise ValueError('编译需要 Python 3.9 或更新版本，请选择 python.exe。')
+    if not re.fullmatch(r'\d+\.\d+',compiler_version): raise ValueError('MSVC 版本应类似 14.50。')
+    if not (sdk/'Build/BatchFiles/RunUAT.bat').is_file(): raise ValueError('SDK 缺少 RunUAT.bat。')
+    info=engine_info(engine,log); output.mkdir(parents=True,exist_ok=True)
+    # Unique workspace keeps source distribution and installed plugin untouched.
+    build=output/('build-'+datetime.now().strftime('%Y%m%d-%H%M%S')+'-'+uuid.uuid4().hex[:6])
+    stage=unpack_plugin(source,build/'XHNodeChinese')
+    if not (stage/'Tools/build_bridge.py').is_file() or not (stage/'Source/SlateBridge/Bridge.cpp').is_file():
+        raise ValueError('请选择维护者提供的源码包；公开安装包不包含编译源码。')
+    for file in (stage/'Binaries/Win64').glob('*'): file.unlink()
+    log('开始构建动态组件；其他 UE 版本可能需要适配 C++ 源码。')
+    run_logged([python,stage/'Tools/build_bridge.py','--engine',engine,'--sdk',sdk,'--vcvars',vcvars,
+                '--compiler-version',compiler_version],stage,log)
+    verify_bridge(stage,info)
+    log('为目标引擎重新生成语言资源。')
+    run_logged([python,stage/'Tools/build.py','--engine',engine],stage,log)
+    target_documentation(stage,info)
+    fingerprint=hashlib.sha256(json.dumps(info['sha256'],sort_keys=True).encode()).hexdigest()[:12]
+    dest=output/('XHNodeChinese-0.2.8-UE'+info['version']+'-'+fingerprint+'-UNVERIFIED.zip')
+    zip_plugin(stage,dest)
+    report={'schema':1,'engine':info,'package':dest.name,'sha256':digest(dest),
+            'verified':False,'note':'编译成功不代表兼容，必须在该目标引擎的独立工程验证后才能发布。'}
+    write_json(dest.with_suffix('.json'),report)
+    log('编译完成：'+str(dest)); log(report['note'])
+    return dest

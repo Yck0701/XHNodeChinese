@@ -1,0 +1,1039 @@
+Source,Translation,Namespace,Key,Category
+Access Context,访问上下文,,,Niagara
+Address Mode,寻址模式,,,Niagara
+Aggregate Status,汇总状态,,,Niagara
+Aliased Parameter,参数别名,,,Niagara
+Allow Mega Lights,允许 MegaLights,,,Niagara
+Allowed Parent Emitters,允许的父发射器,,,Niagara
+Alternate Display Name,备用显示名称,,,Niagara
+Applied,已应用,,,Niagara
+Applied Fix Description,已应用修复说明,,,Niagara
+Apply Diffuse Scale,应用漫反射缩放,,,Niagara
+Apply Fade,应用淡出,,,Niagara
+Apply Falloff Exponent,应用衰减指数,,,Niagara
+Apply Orientation,应用朝向,,,Niagara
+Apply Owner Scale To Attributes,将所属对象缩放应用到属性,,,Niagara
+Apply Radius,应用半径,,,Niagara
+Apply Result,应用结果,,,Niagara
+Apply Size,应用尺寸,,,Niagara
+Apply Specular Scale,应用高光缩放,,,Niagara
+Apply Volumetric Scattering,应用体积散射,,,Niagara
+Array Data,数组数据,,,Niagara
+Attachment Settings,附加设置,,,Niagara
+Auto Link to Spawning NDC,自动关联生成用数据通道,,,Niagara
+Base Niagara System,基础 Niagara 系统,,,Niagara
+Bias Noise Field,偏移噪声场,,,Niagara
+Bias Noise Field Enabled,启用噪声场偏移,,,Niagara
+Can Run Async,可异步运行,,,Niagara
+Can be Dismissed,可忽略,,,Niagara
+Cell Size,单元尺寸,,,Niagara
+Center Coordinate Space,中心坐标空间,,,Niagara
+Circle End Radius,圆形终止半径,,,Niagara
+Circle Radius,圆形半径,,,Niagara
+Circle Rotation Rate,圆形旋转速率,,,Niagara
+Collection Binding,集合绑定,,,Niagara
+Color Binding,颜色绑定,,,Niagara
+Compile Events,编译事件,,,Niagara
+Compiled Data,已编译数据,,,Niagara
+Component to Capture,待捕获组件,,,Niagara
+Cone Direction,锥体方向,,,Niagara
+Cone Rotation Type,锥体旋转类型,,,Niagara
+Cone Velocity Scale,锥体速度缩放,,,Niagara
+Coordinate Space,坐标空间,,,Niagara
+Count Only,仅计数,,,Niagara
+Create Filtered Table,创建筛选表,,,Niagara
+Custom Access Context,自定义访问上下文,,,Niagara
+Custom Sorting Binding,自定义排序绑定,,,Niagara
+Cutout Ignore Sub UV,裁剪时忽略子 UV,,,Niagara
+Cylinder Surface Expansion,圆柱表面扩展,,,Niagara
+Cylinder Surface Only,仅圆柱表面,,,Niagara
+Cylinder Surface Only Include End Caps,圆柱表面包含端盖,,,Niagara
+Cylinder Surface Thickness,圆柱表面厚度,,,Niagara
+Data Channel,数据通道,,,Niagara
+Data Interface,数据接口,,,Niagara
+Data Interface Class,数据接口类,,,Niagara
+Debug Draw Enabled,启用调试绘制,,,Niagara
+Debug Source,调试源,,,Niagara
+Decal Attributes,贴花属性,,,Niagara
+Default Collection,默认集合,,,Niagara
+Default Material Inst,默认材质实例,,,Niagara
+Default System to Spawn,默认生成系统,,,Niagara
+Default Template,默认模板,,,Niagara
+Diffuse Scale,漫反射缩放,,,Niagara
+Display Parameter,显示参数,,,Niagara
+Dynamic Input Asset,动态输入资产,,,Niagara
+Dynamic Input Reference,动态输入引用,,,Niagara
+Dynamic Material Parameter Binding,动态材质参数绑定,,,Niagara
+Emitter,发射器,,,Niagara
+Emitter Data,发射器数据,,,Niagara
+Emitter Name,发射器名称,,,Niagara
+Emitter Ref,发射器引用,,,Niagara
+Emitter Spawn Script,发射器生成脚本,,,Niagara
+Emitter Template,发射器模板,,,Niagara
+Emitter Update Script,发射器更新脚本,,,Niagara
+Emitter to Remove,待移除发射器,,,Niagara
+Emitters,发射器,,,Niagara
+Enable Collision,启用碰撞,,,Niagara
+Enable Material Overrides,启用材质覆盖,,,Niagara
+Particle Spawn,粒子生成,,,Niagara
+Particle Update,粒子更新,,,Niagara
+Emitter Spawn,发射器生成,,,Niagara
+Emitter Update,发射器更新,,,Niagara
+System Spawn,系统生成,,,Niagara
+System Update,系统更新,,,Niagara
+Initialize Particle,初始化粒子,,,Niagara
+Spawn Rate,生成速率,,,Niagara
+Spawn Burst Instantaneous,瞬时爆发生成,,,Niagara
+Solve Forces and Velocity,求解力与速度,,,Niagara
+Add Velocity,添加速度,,,Niagara
+Gravity Force,重力,,,Niagara
+Curl Noise Force,旋度噪声力,,,Niagara
+Drag,阻力,,,Niagara
+Scale Color,缩放颜色,,,Niagara
+Scale Sprite Size,缩放精灵尺寸,,,Niagara
+Sprite Renderer,精灵渲染器,,,Niagara
+Mesh Renderer,网格渲染器,,,Niagara
+Ribbon Renderer,条带渲染器,,,Niagara
+Light Renderer,灯光渲染器,,,Niagara
+Simulation Stage,模拟阶段,,,Niagara
+Simulation Stages,模拟阶段,,,Niagara
+Local Space,局部空间,,,Niagara
+World Space,世界空间,,,Niagara
+Execution State,执行状态,,,Niagara
+GPU Compute Sim,GPU 计算模拟,,,Niagara
+CPU Sim,CPU 模拟,,,Niagara
+Fixed Bounds,固定边界,,,Niagara
+Warmup Time,预热时间,,,Niagara
+User Parameters,用户参数,,,Niagara
+Scratch Pad,暂存区,,,Niagara
+Scratch Pad Scripts,暂存区脚本,,,Niagara
+Renderer Bindings,渲染器绑定,,,Niagara
+Position,位置,,,
+Velocity,速度,,,
+Acceleration,加速度,,,
+Lifetime,生命周期,,,
+Spawn Count,生成数量,,,Niagara
+Random Seed,随机种子,,,
+Active Override Material,当前覆盖材质,,,Material
+Actor Face Material Overrides,Actor 面材质覆盖,,,Material
+Actor Material,Actor 材质,,,Material
+Additional Material Slot Names,额外材质槽名称,,,Material
+Affect Material Curves,影响材质曲线,,,Material
+Allow Local Light Shadow,允许局部灯光阴影,,,Material
+Amplitude,振幅,,,Material
+Anisotropy,各向异性,,,Material
+Apply as Overrides,应用为覆盖,,,Material
+Attribute Index,属性索引,,,Material
+Attribute Value,属性值,,,Material
+Available Blends,可用混合,,,Material
+Available Layers,可用图层,,,Material
+Back Color,背面颜色,,,Material
+Back Material,背面材质,,,Material
+BackFace,背面,,,Material
+Bake Materials,烘焙材质,,,Material
+Baked Materials,已烘焙材质,,,Material
+Baking Settings,烘焙设置,,,Material
+Base Color,基础颜色,,,Material
+BaseColor,基础颜色,,,Material
+Base Material,基础材质,,,Material
+Base Materials,基础材质,,,Material
+Bevel Color,倒角颜色,,,Material
+Bevel Material,倒角材质,,,Material
+Blend Mode,混合模式,,,Material
+Blend Input Relevance,混合输入相关性,,,Material
+Body Material,主体材质,,,Material
+Break Float{0},拆分 Float{0},,,Material
+Cached Default Material,缓存的默认材质,,,Material
+Cached Material Assets,缓存的材质资产,,,Material
+Channel Index,通道索引,,,Material
+Channel Name,通道名称,,,Material
+Channel Texture Input,通道纹理输入,,,Material
+Clamp Texture UV,限制纹理 UV,,,Material
+Component Mask Values,分量遮罩值,,,Material
+Const Amplitude,常量振幅,,,Material
+Emissive Color,自发光颜色,,,Material
+Metallic,金属度,,,Material
+Specular,高光,,,Material
+Roughness,粗糙度,,,Material
+Opacity,不透明度,,,Material
+Opacity Mask,不透明度遮罩,,,Material
+Normal,法线,,,Material
+World Position Offset,世界位置偏移,,,Material
+Ambient Occlusion,环境光遮蔽,,,Material
+Refraction,折射,,,Material
+Subsurface Color,次表面颜色,,,Material
+Shading Model,着色模型,,,Material
+Texture Sample,纹理采样,,,Material
+Texture Object,纹理对象,,,Material
+Texture Coordinate,纹理坐标,,,Material
+Texture Sample Parameter 2D,二维纹理采样参数,,,Material
+Scalar Parameter,标量参数,,,Material
+Vector Parameter,向量参数,,,Material
+Static Switch Parameter,静态开关参数,,,Material
+Static Component Mask Parameter,静态分量遮罩参数,,,Material
+Material Attributes,材质属性,,,Material
+Make Material Attributes,构造材质属性,,,Material
+Break Material Attributes,拆分材质属性,,,Material
+Blend Material Attributes,混合材质属性,,,Material
+Material Function,材质函数,,,Material
+Material Instance,材质实例,,,Material
+Material Parameter Collection,材质参数集合,,,Material
+Pixel Depth,像素深度,,,Material
+Scene Depth,场景深度,,,Material
+Depth Fade,深度淡化,,,Material
+Camera Position,相机位置,,,Material
+World Position,世界位置,,,Material
+Vertex Color,顶点颜色,,,Material
+Vertex Normal WS,顶点世界空间法线,,,Material
+Pixel Normal WS,像素世界空间法线,,,Material
+Fresnel,菲涅耳,,,Material
+Panner,平移器,,,Material
+Rotator,旋转器,,,Material
+Time,时间,,,
+Sine,正弦,,,
+Cosine,余弦,,,
+Add,相加,,,
+Subtract,相减,,,
+Multiply,相乘,,,
+Divide,相除,,,
+Power,幂,,,
+Clamp,限制范围,,,
+Saturate,限制至 0–1,,,
+Linear Interpolate,线性插值,,,
+Lerp,线性插值,,,
+Normalize,归一化,,,
+Dot Product,点积,,,
+Cross Product,叉积,,,
+Distance,距离,,,
+Length,长度,,,
+Absolute,绝对值,,,
+Floor,向下取整,,,
+Ceil,向上取整,,,
+Round,四舍五入,,,
+Fractional,小数部分,,,
+One Minus,一减输入值,,,Material
+Append Vector,拼接向量,,,Material
+Component Mask,分量遮罩,,,Material
+Custom,自定义,,,
+Custom Expression,自定义表达式,,,Material
+AI MoveTo,AI 移动到,,,Blueprint
+Ability System Component,技能系统组件,,,Blueprint
+Allow Multiple Instances,允许多个实例,,,Blueprint
+Anim Blueprint to Use,使用的动画蓝图,,,Blueprint
+Anim Notify Event,动画通知事件,,,Blueprint
+Animation List,动画列表,,,Blueprint
+Animation Sequence Base,动画序列基类,,,Blueprint
+Arguments,参数,,,Blueprint
+Asset to Regenerate,待重新生成的资产,,,Blueprint
+Asset to Update,待更新的资产,,,Blueprint
+Attach Bone Name,附加骨骼名称,,,Blueprint
+Blend Factor,混合因子,,,Blueprint
+Blend Time,混合时间,,,Blueprint
+Blueprint Asset Name,蓝图资产名称,,,Blueprint
+Blueprint Class,蓝图类,,,Blueprint
+Blueprint Function Info,蓝图函数信息,,,Blueprint
+Blueprint Graph Editor,蓝图图表编辑器,,,Blueprint
+Blueprint Graph Pin,蓝图图表引脚,,,Blueprint
+Blueprint Mode,蓝图模式,,,Blueprint
+Blueprint Variables,蓝图变量,,,Blueprint
+Blueprint to Modify,待修改的蓝图,,,Blueprint
+Call in Editor,在编辑器中调用,,,Blueprint
+Cached Pins,缓存引脚,,,Blueprint
+Category Path,分类路径,,,Blueprint
+Class Path,类路径,,,Blueprint
+Branch,分支,,,Blueprint
+Sequence,序列,,,Blueprint
+For Loop,For 循环,,,Blueprint
+For Loop with Break,可中断的 For 循环,,,Blueprint
+For Each Loop,遍历数组,,,Blueprint
+For Each Loop with Break,可中断的数组遍历,,,Blueprint
+While Loop,While 循环,,,Blueprint
+Do Once,仅执行一次,,,Blueprint
+Do N,执行 N 次,,,Blueprint
+Flip Flop,交替执行,,,Blueprint
+Gate,门控,,,Blueprint
+MultiGate,多路门控,,,Blueprint
+Delay,延迟,,,Blueprint
+Retriggerable Delay,可重新触发的延迟,,,Blueprint
+Print String,打印字符串,,,Blueprint
+Print Text,打印文本,,,Blueprint
+Is Valid,是否有效,,,Blueprint
+Select,选择,,,Blueprint
+Switch on Int,按整数切换,,,Blueprint
+Switch on String,按字符串切换,,,Blueprint
+Switch on Name,按名称切换,,,Blueprint
+Switch on Enum,按枚举切换,,,Blueprint
+Event BeginPlay,开始运行事件,,,Blueprint
+Event Tick,逐帧事件,,,Blueprint
+Custom Event,自定义事件,,,Blueprint
+Construction Script,构造脚本,,,Blueprint
+Event Graph,事件图表,,,Blueprint
+Function,函数,,,Blueprint
+Macro,宏,,,Blueprint
+Variable,变量,,,Blueprint
+Local Variable,局部变量,,,Blueprint
+Input,输入,,,
+Output,输出,,,
+Inputs,输入,,,
+Outputs,输出,,,
+Return Value,返回值,,,Blueprint
+Completed,已完成,,,Blueprint
+Loop Body,循环体,,,Blueprint
+Array Element,数组元素,,,Blueprint
+Array Index,数组索引,,,Blueprint
+First Index,起始索引,,,Blueprint
+Last Index,结束索引,,,Blueprint
+Condition,条件,,,Blueprint
+True,真,,,Blueprint
+False,假,,,Blueprint
+Promote to Variable,提升为变量,,,Blueprint
+Collapse Nodes,折叠节点,,,Blueprint
+Expand Node,展开节点,,,Blueprint
+Find References,查找引用,,,Blueprint
+Find in Blueprints,在蓝图中查找,,,Blueprint
+Compile,编译,,,Blueprint
+Refresh All Nodes,刷新所有节点,,,Blueprint
+Add Reroute Node,添加重路由节点,,,Blueprint
+Reroute Node,重路由节点,,,Blueprint
+Break Struct,拆分结构体,,,Blueprint
+Make Struct,构造结构体,,,Blueprint
+Split Struct Pin,拆分结构体引脚,,,Blueprint
+Recombine Struct Pin,合并结构体引脚,,,Blueprint
+Spawn Actor from Class,按类生成 Actor,,,Blueprint
+Get Actor Location,获取 Actor 位置,,,Blueprint
+Set Actor Location,设置 Actor 位置,,,Blueprint
+Get Actor Rotation,获取 Actor 旋转,,,Blueprint
+Set Actor Rotation,设置 Actor 旋转,,,Blueprint
+Get World Delta Seconds,获取世界帧间隔秒数,,,Blueprint
+Set Timer by Event,按事件设置定时器,,,Blueprint
+Clear and Invalidate Timer by Handle,按句柄清除并使定时器失效,,,Blueprint
+Map Range Clamped,范围映射并限制,,,
+Map Range Unclamped,范围映射但不限制,,,
+Remap Value,重映射数值,,,
+Random Float in Range,范围内随机浮点数,,,
+Random Integer in Range,范围内随机整数,,,
+Random Unit Vector,随机单位向量,,,
+Get,获取,,,Blueprint
+Set,设置,,,Blueprint
+Actor,Actor 对象,,,
+Actors,Actor 对象,,,
+Asset,资产,,,
+Asset Name,资产名称,,,
+Asset Path,资产路径,,,
+Assets,资产,,,
+Category,分类,,,
+Channel,通道,,,
+Class,类,,,
+Color,颜色,,,
+Component,组件,,,
+Components,组件,,,
+Count,数量,,,
+Data Table,数据表,,,
+Default Value,默认值,,,
+Deprecated,已弃用,,,
+Description,说明,,,
+Display Name,显示名称,,,
+Enabled,启用,,,
+Name,名称,,,
+Size,尺寸,,,
+Scale,缩放,,,
+Value,数值,,,
+Emitter State,发射器状态,,,Niagara
+Shape Location,形状位置,,,Niagara
+Particle State,粒子状态,,,Niagara
+Vortex Force,涡旋力,,,Niagara
+Scale Velocity,缩放速度,,,Niagara
+Point Attraction Force,点吸引力,,,Niagara
+Spawns a burst of particles instantaneously.,瞬间生成一批粒子。,,,Niagara
+Point Attributes,点属性,,,Niagara
+Lifetime Mode,生命周期模式,,,Niagara
+Direct Set,直接设置,,,Niagara
+Random Range Float,随机浮点范围,,,Niagara
+Minimum,最小值,,,Niagara
+Maximum,最大值,,,Niagara
+Color Mode,颜色模式,,,Niagara
+Unset,未设置,,,Niagara
+Position Mode,位置模式,,,Niagara
+Simulation Position,模拟位置,,,Niagara
+Mass Mode,质量模式,,,Niagara
+Sprite Attributes,精灵属性,,,Niagara
+Sprite Size Mode,精灵尺寸模式,,,Niagara
+Uniform,均匀,,,Niagara
+Uniform Sprite Size,统一精灵尺寸,,,Niagara
+Sprite Rotation Mode,精灵旋转模式,,,Niagara
+Spawn Per Unit,按单位距离生成,,,Niagara
+System State,系统状态,,,Niagara
+Render,渲染,,,Niagara
+Renderers,渲染器,,,Niagara
+Scale Mesh Size,缩放网格尺寸,,,Niagara
+Mesh Attributes,网格属性,,,Niagara
+Ribbon Attributes,条带属性,,,Niagara
+Add Acceleration,添加加速度,,,Niagara
+Acceleration Force,加速力,,,Niagara
+Linear Drag,线性阻力,,,Niagara
+Rotational Drag,旋转阻力,,,Niagara
+Limit Velocity,限制速度,,,Niagara
+Cone Velocity,锥体速度,,,Niagara
+Sphere Location,球体位置,,,Niagara
+Cylinder Location,圆柱位置,,,Niagara
+Box Location,盒体位置,,,Niagara
+Torus Location,圆环位置,,,Niagara
+Grid Location,网格位置,,,Niagara
+Static Mesh Location,静态网格位置,,,Niagara
+Skeletal Mesh Location,骨骼网格位置,,,Niagara
+Sample Texture,采样纹理,,,Niagara
+Collision,碰撞,,,Niagara
+Kill Particles,销毁粒子,,,Niagara
+Update Age,更新年龄,,,Niagara
+Loop Behavior,循环行为,,,Niagara
+Loop Duration,循环时长,,,Niagara
+Loop Delay,循环延迟,,,Niagara
+Loop Count,循环次数,,,Niagara
+Inactive Response,停用响应,,,Niagara
+Life Cycle Mode,生命周期控制模式,,,Niagara
+Self,自身,,,Niagara
+Once,一次,,,Niagara
+Infinite,无限,,,Niagara
+Multiple,多次,,,Niagara
+Burst Count,爆发数量,,,Niagara
+Spawn Time,生成时间,,,Niagara
+Spawn Probability,生成概率,,,Niagara
+Spawn Group,生成组,,,Niagara
+Seed,种子,,,Niagara
+Determinism,确定性,,,Niagara
+Simulation Space,模拟空间,,,Niagara
+Velocity Mode,速度模式,,,Niagara
+Velocity Strength,速度强度,,,Niagara
+Force,力,,,Niagara
+Force Strength,力的强度,,,Niagara
+Attraction Strength,吸引强度,,,Niagara
+Attraction Radius,吸引半径,,,Niagara
+Attraction Position,吸引位置,,,Niagara
+Vortex Axis,涡旋轴,,,Niagara
+Vortex Origin,涡旋中心,,,Niagara
+Vortex Strength,涡旋强度,,,Niagara
+Noise Strength,噪声强度,,,Niagara
+Noise Frequency,噪声频率,,,Niagara
+Noise Quality,噪声质量,,,Niagara
+Noise Position,噪声位置,,,Niagara
+Noise Speed,噪声速度,,,Niagara
+Scale Factor,缩放系数,,,Niagara
+Scale by Mass,按质量缩放,,,Niagara
+Sprite Rotation,精灵旋转,,,Niagara
+Sprite Size,精灵尺寸,,,Niagara
+Sprite Facing,精灵朝向,,,Niagara
+Sprite Alignment,精灵对齐,,,Niagara
+Sprite Facing Mode,精灵朝向模式,,,Niagara
+Sprite Alignment Mode,精灵对齐模式,,,Niagara
+Mesh Scale,网格缩放,,,Niagara
+Mesh Orientation,网格朝向,,,Niagara
+Mesh Rotation,网格旋转,,,Niagara
+Mass,质量,,,Niagara
+Random Range Vector,随机向量范围,,,Niagara
+Random Range Int,随机整数范围,,,Niagara
+Float from Curve,从曲线获取浮点数,,,Niagara
+Vector from Curve,从曲线获取向量,,,Niagara
+Color from Curve,从曲线获取颜色,,,Niagara
+Multiply Float,浮点数相乘,,,Niagara
+Multiply Vector,向量相乘,,,Niagara
+Add Float,浮点数相加,,,Niagara
+Add Vector,向量相加,,,Niagara
+Make Vector,构造向量,,,Niagara
+Break Vector,拆分向量,,,Niagara
+Module Inputs,模块输入,,,Niagara
+Advanced,高级,,,Niagara
+Disabled,已禁用,,,Niagara
+Non-Uniform,非均匀,,,Niagara
+Random,随机,,,Niagara
+Range,范围,,,Niagara
+Min,最小值,,,Niagara
+Max,最大值,,,Niagara
+Default,默认,,,Niagara
+Apply Initial Forces,应用初始力,,,Niagara
+Apply Force to Velocity,将力应用于速度,,,Niagara
+Apply Rotational Force to Rotational Velocity,将旋转力应用于角速度,,,Niagara
+Apply Force to Position,将力应用于位置,,,Niagara
+Positional Force Warmup Time,位置力预热时间,,,Niagara
+Scale Sprite Size Mode,精灵尺寸缩放模式,,,Niagara
+Uniform Curve Sprite Scale,均匀曲线精灵缩放,,,Niagara
+Uniform Curve Index,均匀曲线索引,,,Niagara
+Uniform Curve Scale,均匀曲线缩放,,,Niagara
+Non-Uniform Curve Sprite Scale,非均匀曲线精灵缩放,,,Niagara
+Non-Uniform Curve Index,非均匀曲线索引,,,Niagara
+Non-Uniform Curve Scale,非均匀曲线缩放,,,Niagara
+NormalizedAge,归一化年龄,,,Niagara
+Normalized Age,归一化年龄,,,Niagara
+Particles.NormalizedAge,粒子.归一化年龄,,,Niagara
+Scale Mode,缩放模式,,,Niagara
+RGBA Linear Color Curve,RGBA 线性颜色曲线,,,Niagara
+Kill Particles When Lifetime Has Elapsed,生命周期结束时销毁粒子,,,Niagara
+Enable Particle Lifetime Looping,启用粒子生命周期循环,,,Niagara
+Write to Intrinsic Properties,写入内置属性,,,Niagara
+"This module converts rotational and linear forces From force modules such as Curl Noise Force (Transient.PhysicsForce, and Transient.PhysicsRotationalForce, respectively)  into rotational and linear velocity. 
+
+Optionally, Converts the Transient.PhysicsForce value generated by Force modules and applies it to initial particle positions. Can be thought of as a ""warmup"" of forces affecting the initial state of particle positions from time < 0.
+
+If the forces have been converted to Velocity/Orientation (Write to Intrinsic Properties is checked in the advanced tab which means the force was applied to velocity), then zero out Transient.PhysicsForce and Transient.PhysicsRotationalForce","此模块将旋度噪声力等力模块产生的旋转力和线性力，分别转换为角速度和线速度。
+
+还可以将力模块产生的线性力应用于粒子的初始位置，相当于预先计算时间小于 0 时力对粒子位置的影响，即对初始位置进行“预热”。
+
+如果已将这些力转换为速度或朝向（在“高级”选项中勾选“写入内置属性”），则会将累计的瞬态物理力和瞬态旋转力清零。",,,Niagara
+"The version of this script was recently upgraded; here is a list of changes:
+1.2: FirstFrame should now be more stable and don't produce double FirstFrames
+","此脚本最近已升级，变更如下：
+1.2：首帧处理更加稳定，不再重复触发首帧。
+",,,Niagara
+Dynamic Material Parameter,动态材质参数,,,Niagara
+Array,数组,,,Niagara
+Audio,音频,,,Niagara
+Bounds,边界,,,Niagara
+Decal,贴花,,,Niagara
+Grid2D,二维网格,,,Niagara
+Landscape,地形,,,Niagara
+Light,灯光,,,Niagara
+Location,位置,,,Niagara
+MAXScripts,MAX 脚本,,,Niagara
+Math,数学,,,Niagara
+Skeletal Mesh,骨骼网格体,,,Niagara
+Spawning,生成,,,Niagara
+Sprite,精灵,,,Niagara
+SubUV,子 UV,,,Niagara
+Game,项目,,,Niagara
+NiagaraFluids,Niagara 流体,,,Niagara
+View Mask,视图遮罩,,,Niagara
+Waveform,波形,,,Niagara
+Spawn Particles in Grid,在网格中生成粒子,,,Niagara
+Split Matrix Into Rows,将矩阵拆分为行,,,Niagara
+Spawn MS Vertex Animation Tools Morph Target Particles,生成 MS 顶点动画工具变形目标粒子,,,Niagara
+Add Force,添加力,,,Niagara
+Linear Force,线性力,,,Niagara
+Cone Location,圆锥体位置,,,Niagara
+Dynamic Material Parameters,动态材质参数,,,Niagara
+SubUV Animation,子 UV 动画,,,Niagara
+Update Mesh Orientation,更新网格体朝向,,,Niagara
+Initial Mesh Orientation,初始网格体朝向,,,Niagara
+Sprite Rotation Rate,精灵旋转速率,,,Niagara
+Rotation,旋转,,,Niagara
+Add Particle to Neighbor Query,将粒子添加到邻居查询,,,Niagara
+Add Rotational Velocity,添加旋转速度,,,Niagara
+Advance Groom State,推进毛发状态,,,Niagara
+Advect Groom State,平流输送毛发状态,,,Niagara
+Align Sprite to Mesh Orientation,将精灵对齐到网格体朝向,,,Niagara
+Align Velocity to Random Axis,将速度对齐到随机轴,,,Niagara
+Apply Chaos Data,应用 Chaos 数据,,,Niagara
+Apply Vector Field,应用向量场,,,Niagara
+Async GPUTrace,异步 GPU 追踪,,,Niagara
+Attach Groom Roots,附着毛发根部,,,Niagara
+Attribute Reader,属性读取器,,,Niagara
+Avoid Cone,避开圆锥体,,,Niagara
+Avoid Distance Field Surfaces GPU,避开距离场表面（GPU）,,,Niagara
+Beam,光束,,,Niagara
+Beam Width,光束宽度,,,Niagara
+Build Grid Velocity,构建网格速度,,,Niagara
+Calculate Line Plane Int,计算直线与平面的交点,,,Niagara
+Calculate Mass and Rotational Inertia by Volume,根据体积计算质量与转动惯量,,,Niagara
+Calculate Size and Rotational Inertia by Mass,根据质量计算尺寸与转动惯量,,,Niagara
+Camera Particle Depth,相机空间粒子深度,,,Niagara
+Cascade Conversion Initial Mesh Rotation,Cascade 转换：初始网格体旋转,,,Niagara
+Check Distance Field Behind,检查后方距离场,,,Niagara
+Compute Grid Weights,计算网格权重,,,Niagara
+Compute Neighbor Grid to SDFParameters,计算邻居网格到 SDF 的参数,,,Niagara
+Cone Mask,圆锥体遮罩,,,Niagara
+Cone Sphere Intersection,圆锥体与球体相交,,,Niagara
+Constrain Position to Plane,将位置约束到平面,,,Niagara
+Constrain Vector to Cone,将向量约束到圆锥体,,,Niagara
+Constrain to Plane,约束到平面,,,Niagara
+Constraints,约束,,,Niagara
+Construct Bounding Box for Vector Field,为向量场构建包围盒,,,Niagara
+Debug Grid Material Params,调试网格材质参数,,,Niagara
+Default Module,默认模块,,,Niagara
+Determine Specific Velocity,确定指定速度,,,Niagara
+Distance Fields,距离场,,,Niagara
+Distribute Arrows for Vector Field,为向量场分布箭头,,,Niagara
+Do Once,仅执行一次,,,Niagara
+Dont Go Below Floor,禁止低于地面,,,Niagara
+Dual Rest Capture Position,双重静止位置捕获,,,Niagara
+Dust Card Appearance,尘埃面片外观,,,Niagara
+Dust Spot Appearance,尘埃斑点外观,,,Niagara
+Export Particle Data to Blueprint,将粒子数据导出到蓝图,,,Niagara
+FXM Should Fire Crowd Event,FXM 是否触发人群事件,,,Niagara
+Fade Over Time,随时间淡出,,,Niagara
+Fill Bool Array,填充布尔数组,,,Niagara
+Fill Color Array,填充颜色数组,,,Niagara
+Fill Crowd Grid,填充人群网格,,,Niagara
+Fill Float Array,填充浮点数组,,,Niagara
+Fill Int Array,填充整数数组,,,Niagara
+Fill Position Array,填充位置数组,,,Niagara
+Fill Quaternion Array,填充四元数数组,,,Niagara
+Fill Vector 2DArray,填充二维向量数组,,,Niagara
+Fill Vector 4Array,填充四维向量数组,,,Niagara
+Fill Vector Array,填充向量数组,,,Niagara
+Find Closest Point on Line Segment,查找线段上的最近点,,,Niagara
+Find Closest Point on Triangle,查找三角形上的最近点,,,Niagara
+Find Kinetic and Potential Energy,计算动能与势能,,,Niagara
+Find Screen Space Bounding Box,查找屏幕空间包围盒,,,Niagara
+Flip,翻转,,,Niagara
+Fluids Gas Source,流体气体源,,,Niagara
+Follow Spline,沿样条线移动,,,Niagara
+Generate Grid Ribbon IDs,生成网格条带 ID,,,Niagara
+Generate Location Event,生成位置事件,,,Niagara
+Generate Particle Position,生成粒子位置,,,Niagara
+Get Cached Particle Path,获取缓存的粒子路径,,,Niagara
+Get Vector Field Properties,获取向量场属性,,,Niagara
+Get Water Level,获取水位,,,Niagara
+Grid 2D,二维网格,,,Niagara
+Groom,毛发,,,Niagara
+Increment Over Time,随时间递增,,,Niagara
+Increment Step Index,递增步进索引,,,Niagara
+Inherit Velocity,继承速度,,,Niagara
+Initial Decal Orientation,初始贴花朝向,,,Niagara
+Initialization,初始化,,,Niagara
+Initialize Crowd Grid,初始化人群网格,,,Niagara
+Initialize Crowd Member,初始化人群成员,,,Niagara
+Initialize Mesh Reproduction Sprite,初始化网格体复现精灵,,,Niagara
+Initialize Random Crowd Member,初始化随机人群成员,,,Niagara
+Initialize Traverse Skeletal Mesh,初始化骨骼网格体遍历,,,Niagara
+Interpolate Groom Roots,插值毛发根部,,,Niagara
+Is Falling,是否正在下落,,,Niagara
+Jitter Position,抖动位置,,,Niagara
+Kill,销毁,,,Niagara
+Kill Particles Below Water Level,销毁水位以下的粒子,,,Niagara
+Kill Particles Inside Distance Fields,销毁距离场内部的粒子,,,Niagara
+Kill Particles in Volume,销毁体积内的粒子,,,Niagara
+Lerp Particle Attributes,线性插值粒子属性,,,Niagara
+Light Attributes,灯光属性,,,Niagara
+Limit Force,限制力,,,Niagara
+Line Attraction Force,线吸引力,,,Niagara
+Maintain in Camera Particle Scale,保持粒子在相机中的缩放比例,,,Niagara
+Mask Particle with Mesh Color,使用网格体颜色遮罩粒子,,,Niagara
+Match Velocity Via Force,通过施力匹配速度,,,Niagara
+Math / Blend,数学 / 混合,,,Niagara
+Mesh Rotation Force,网格体旋转力,,,Niagara
+Move to Nearest Distance Field Surface GPU,移动到最近的距离场表面（GPU）,,,Niagara
+Move with Velocity Buffer,随速度缓冲区移动,,,Niagara
+NDCCollision Sphere Wiggle,NDC 碰撞球体摆动,,,Niagara
+NMS 1D Shore Simulation,NMS 一维岸线模拟,,,Niagara
+NMS Blur Grid,NMS 模糊网格,,,Niagara
+NMS Sample Waterbody Spline RT,NMS 采样水体样条线渲染目标,,,Niagara
+NMS Shore Particles To Grid,NMS 岸线粒子转网格,,,Niagara
+Neighbor Grid,邻居网格,,,Niagara
+Neighbor Grid 3D Visualize,可视化三维邻居网格,,,Niagara
+Neighbor Query Visualize,可视化邻居查询,,,Niagara
+Offset Position,偏移位置,,,Niagara
+Orient Mesh to Camera,将网格体朝向相机,,,Niagara
+Overcrowd,人群模拟,,,Niagara
+PBD,基于位置的动力学,,,Niagara
+PBD Emit Box,PBD 盒体发射,,,Niagara
+PBD Integrate,PBD 积分,,,Niagara
+PBD Plane Collision Constraint,PBD 平面碰撞约束,,,Niagara
+PBD Solve Collision Constraints,PBD 解算碰撞约束,,,Niagara
+Particle Color Params,粒子颜色参数,,,Niagara
+Partition Particles,划分粒子,,,Niagara
+Physics,物理,,,Niagara
+Pin To Depth,固定到深度,,,Niagara
+Place Particles on Depth Buffer GPU,将粒子放置到深度缓冲区表面（GPU）,,,Niagara
+Play Audio,播放音频,,,Niagara
+Play Persistent Audio,播放持续音频,,,Niagara
+Point Force,点作用力,,,Niagara
+Populate Neighbor Grid,填充邻居网格,,,Niagara
+Project Grid Velociy,投影网格速度,,,Niagara
+Project Groom State,投影毛发状态,,,Niagara
+Project Rod Constraints,投影杆约束,,,Niagara
+Project Spring Constraints,投影弹簧约束,,,Niagara
+Query Crowd Grid,查询人群网格,,,Niagara
+Query Crowd Grid Avoidance,查询人群网格避让,,,Niagara
+Rain Sprite Appearance,雨滴精灵外观,,,Niagara
+Rasterization Grid 3D Initialize,初始化三维光栅化网格,,,Niagara
+Rasterization Grid 3D SDFTo RT,三维光栅化网格：SDF 转渲染目标,,,Niagara
+Rasterization Grid Particle Source,光栅化网格粒子源,,,Niagara
+Ray Trace Distance Field GPU,距离场射线追踪（GPU）,,,Niagara
+Ray Trace,射线追踪,,,Niagara
+Read Distance Field GPU,读取距离场（GPU）,,,Niagara
+Read Geometry Collection,读取几何体集合,,,Niagara
+Recreate Camera Projection,重建相机投影,,,Niagara
+Region Mask,区域遮罩,,,Niagara
+Report Groom Position,报告毛发位置,,,Niagara
+Reset Groom Points,重置毛发点,,,Niagara
+Rewind Groom State,回退毛发状态,,,Niagara
+Rewind Stable State,回退稳定状态,,,Niagara
+Runtime Virtual Texture,运行时虚拟纹理,,,Niagara
+Sample Bezier Spline,采样贝塞尔样条线,,,Niagara
+Sample Curl Noise Field,采样旋度噪声场,,,Niagara
+Sample DLWE State,采样 DLWE 状态,,,Niagara
+Sample GBuffer,采样 GBuffer,,,Niagara
+Sample Landscape,采样地形,,,Niagara
+Sample Particles from Other Emitter,从其他发射器采样粒子,,,Niagara
+Sample Particles from Sim Cache,从模拟缓存采样粒子,,,Niagara
+Sample Pseudo Volume Texture,采样伪体积纹理,,,Niagara
+Sample Runtime Virtual Texture,采样运行时虚拟纹理,,,Niagara
+Sample Skeletal Mesh,采样骨骼网格体,,,Niagara
+Sample Vector Field,采样向量场,,,Niagara
+Scale Attributes by Camera Distance,根据相机距离缩放属性,,,Niagara
+Secondary,次级,,,Niagara
+Set Alternate Renderer Bindings,设置替代渲染器绑定,,,Niagara
+Set Animation Index,设置动画索引,,,Niagara
+Set Fluid Source Attributes,设置流体源属性,,,Niagara
+Set Geometry Collection Transform,设置几何体集合变换,,,Niagara
+Set Grid Boundary,设置网格边界,,,Niagara
+Set Groom Location,设置毛发位置,,,Niagara
+Set Initial Audio Parameter,设置初始音频参数,,,Niagara
+Set Weather Bounds,设置天气边界,,,Niagara
+Set Weather Sprite Velocity,设置天气精灵速度,,,Niagara
+ShallowWater,浅水,,,Niagara
+Shapes,形状,,,Niagara
+Slerp Vector,球面插值向量,,,Niagara
+Smear Sprite by Speed,根据速率拖曳精灵,,,Niagara
+Smoothly Rotate Vector Around Axis,绕轴平滑旋转向量,,,Niagara
+Snap to Wave Surface,吸附到波面,,,Niagara
+Snow Sprite Appearance,雪花精灵外观,,,Niagara
+Snow Twirl,雪花旋转,,,Niagara
+Socket Location,插槽位置,,,Niagara
+Solve Float Spring Constraint,解算浮点弹簧约束,,,Niagara
+Solve Groom State,解算毛发状态,,,Niagara
+Solve Rod Constraints,解算杆约束,,,Niagara
+Solve Spring Constraints,解算弹簧约束,,,Niagara
+Spawn Beam,生成光束,,,Niagara
+Sphere Plane Intersection,球体与平面相交,,,Niagara
+Splines,样条线,,,Niagara
+Sprite Based Line,基于精灵的线条,,,Niagara
+Store Groom State,存储毛发状态,,,Niagara
+Sub UV Texture Sample,采样子 UV 纹理,,,Niagara
+Sub UVAnimation,子 UV 动画,,,Niagara
+System Location,系统位置,,,Niagara
+Transfer Grid Velocity,传递网格速度,,,Niagara
+Transfer Groom Velocity,传递毛发速度,,,Niagara
+Traverse Skeletal Mesh,遍历骨骼网格体,,,Niagara
+UDW Wind Force,UDW 风力,,,Niagara
+Update Grid Velocity,更新网格速度,,,Niagara
+Update Groom Velocity,更新毛发速度,,,Niagara
+Update MS Vertex Animation Tools Morph Targets,更新 MS 顶点动画工具变形目标,,,Niagara
+Update Mesh Reproduction Sprite,更新网格体复现精灵,,,Niagara
+Update Persistent Audio,更新持续音频,,,Niagara
+Vector Noise Force,向量噪声力,,,Niagara
+Vector Noise Value,向量噪声值,,,Niagara
+Volume Cache Get Vector 4,体积缓存：获取四维向量,,,Niagara
+Volume Cache Read File,体积缓存：读取文件,,,Niagara
+Wakling Velocity,行走速度,,,Niagara
+Water Body Collider,水体碰撞体,,,Niagara
+Water Body Data,水体数据,,,Niagara
+Weather Particle Kill Sphere,天气粒子销毁球体,,,Niagara
+Wedge Location,楔形位置,,,Niagara
+World Aligned Texture Sample,采样世界对齐纹理,,,Niagara
+Write NDC SW Collision Particles,写入 NDC 浅水碰撞粒子,,,Niagara
+Add Particle to Neighbor Query*,将粒子添加到邻居查询*,,,Niagara
+Align Velocity to Random Axis*,将速度对齐到随机轴*,,,Niagara
+Avoid Cone*,避开圆锥体*,,,Niagara
+Calculate Line Plane Int*,计算直线与平面的交点*,,,Niagara
+Camera Particle Depth*,相机空间粒子深度*,,,Niagara
+Cascade Conversion Initial Mesh Rotation*,Cascade 转换：初始网格体旋转*,,,Niagara
+Check Distance Field Behind*,检查后方距离场*,,,Niagara
+Compute Neighbor Grid to SDFParameters*,计算邻居网格到 SDF 的参数*,,,Niagara
+Cone Sphere Intersection*,圆锥体与球体相交*,,,Niagara
+Constrain Position to Plane*,将位置约束到平面*,,,Niagara
+Constrain to Plane*,约束到平面*,,,Niagara
+Construct Bounding Box for Vector Field*,为向量场构建包围盒*,,,Niagara
+Debug Grid Material Params*,调试网格材质参数*,,,Niagara
+Default Module*,默认模块*,,,Niagara
+Determine Specific Velocity*,确定指定速度*,,,Niagara
+Distribute Arrows for Vector Field*,为向量场分布箭头*,,,Niagara
+Dual Rest Capture Position*,双重静止位置捕获*,,,Niagara
+Dust Card Appearance*,尘埃面片外观*,,,Niagara
+Dust Spot Appearance*,尘埃斑点外观*,,,Niagara
+Generate Grid Ribbon IDs*,生成网格条带 ID*,,,Niagara
+Generate Particle Position*,生成粒子位置*,,,Niagara
+Get Cached Particle Path*,获取缓存的粒子路径*,,,Niagara
+Get Vector Field Properties*,获取向量场属性*,,,Niagara
+Get Water Level*,获取水位*,,,Niagara
+Grid 2D Blur,二维网格：模糊,,,Niagara
+Grid 2D Blur Vector 2D,二维网格：模糊二维向量,,,Niagara
+Grid 2D Blur Vector 3,二维网格：模糊三维向量,,,Niagara
+Grid 2D Compute Blended UV,二维网格：计算混合 UV,,,Niagara
+Grid 2D Compute Blended UV*,二维网格：计算混合 UV*,,,Niagara
+Grid 2D Compute FFT,二维网格：计算快速傅里叶变换,,,Niagara
+Grid 2D Compute FFT*,二维网格：计算快速傅里叶变换*,,,Niagara
+Grid 2D Extrapolate Velocity,二维网格：外推速度,,,Niagara
+Grid 2D Extrapolate Velocity*,二维网格：外推速度*,,,Niagara
+Grid 2D FLIP CONTROLS,二维网格：FLIP 控制,,,Niagara
+Grid 2D FLIP CONTROLS*,二维网格：FLIP 控制*,,,Niagara
+Grid 2D FLIP Spawn Cone Splash,二维网格：FLIP 生成锥形飞溅,,,Niagara
+Grid 2D Fill Neighbor Grid,二维网格：填充邻居网格,,,Niagara
+Grid 2D Fill Neighbor Grid*,二维网格：填充邻居网格*,,,Niagara
+Grid 2D Foam Advect,二维网格：平流输送泡沫,,,Niagara
+Grid 2D Foam Advect*,二维网格：平流输送泡沫*,,,Niagara
+Grid 2D Foam Update,二维网格：更新泡沫,,,Niagara
+Grid 2D Foam Update*,二维网格：更新泡沫*,,,Niagara
+Grid 2D Gas 3DBuoyancy,二维网格：气体三维浮力,,,Niagara
+Grid 2D Gas 3DBuoyancy*,二维网格：气体三维浮力*,,,Niagara
+Grid 2D Gas Buoyancy,二维网格：气体浮力,,,Niagara
+Grid 2D Gas Buoyancy*,二维网格：气体浮力*,,,Niagara
+Grid 2D Gas Gbuffer Source,二维网格：气体 GBuffer 源,,,Niagara
+Grid 2D Gas Gbuffer Source*,二维网格：气体 GBuffer 源*,,,Niagara
+Grid 2D Gas Init,二维网格：初始化气体,,,Niagara
+Grid 2D Gas Init*,二维网格：初始化气体*,,,Niagara
+Grid 2D Gas Particle Scatter Source Color,二维网格：气体粒子散射源颜色,,,Niagara
+Grid 2D Gas Particle Scatter Source Color*,二维网格：气体粒子散射源颜色*,,,Niagara
+Grid 2D Gas Particle Scatter Source,二维网格：气体粒子散射源,,,Niagara
+Grid 2D Gas Particle Scatter Source*,二维网格：气体粒子散射源*,,,Niagara
+Grid 2D Gas Particle Source Color,二维网格：气体粒子源颜色,,,Niagara
+Grid 2D Gas Particle Source Color*,二维网格：气体粒子源颜色*,,,Niagara
+Grid 2D Gas Particle Source,二维网格：气体粒子源,,,Niagara
+Grid 2D Gas Particle Source*,二维网格：气体粒子源*,,,Niagara
+Grid 2D Gas Set RTValues,二维网格：设置气体渲染目标值,,,Niagara
+Grid 2D Gas Set RTValues*,二维网格：设置气体渲染目标值*,,,Niagara
+Grid 2D Gas Set Resolution,二维网格：设置气体分辨率,,,Niagara
+Grid 2D Gas Set Resolution*,二维网格：设置气体分辨率*,,,Niagara
+Grid 2D Generate Distance Field,二维网格：生成距离场,,,Niagara
+Grid 2D Init Blended UV,二维网格：初始化混合 UV,,,Niagara
+Grid 2D Init Blended UV*,二维网格：初始化混合 UV*,,,Niagara
+Grid 2D Integrate Forces,二维网格：对力积分,,,Niagara
+Grid 2D Integrate Forces*,二维网格：对力积分*,,,Niagara
+Grid 2D Output Screen Space Surface,二维网格：输出屏幕空间表面,,,Niagara
+Grid 2D Output Screen Space Surface*,二维网格：输出屏幕空间表面*,,,Niagara
+Grid 2D Owner Motion Force,二维网格：所有者运动力,,,Niagara
+Grid 2D Owner Motion Force*,二维网格：所有者运动力*,,,Niagara
+Grid 2D Profile Buffer Compute,二维网格：计算剖面缓冲区,,,Niagara
+Grid 2D Profile Buffer Compute*,二维网格：计算剖面缓冲区*,,,Niagara
+Grid 2D Profile Buffer Normals,二维网格：剖面缓冲区法线,,,Niagara
+Grid 2D Profile Buffer Normals*,二维网格：剖面缓冲区法线*,,,Niagara
+Grid 2D Profile Buffer Surface Height,二维网格：剖面缓冲区表面高度,,,Niagara
+Grid 2D Profile Buffer Surface Height*,二维网格：剖面缓冲区表面高度*,,,Niagara
+Grid 2D Rasterize Particles Screen Space,二维网格：在屏幕空间光栅化粒子,,,Niagara
+Grid 2D Rasterize Particles Screen Space*,二维网格：在屏幕空间光栅化粒子*,,,Niagara
+Grid 2D Resample Float,二维网格：重采样浮点值,,,Niagara
+Grid 2D Resample Float*,二维网格：重采样浮点值*,,,Niagara
+Grid 2D Resample Vector 2D,二维网格：重采样二维向量,,,Niagara
+Grid 2D Resample Vector 2D*,二维网格：重采样二维向量*,,,Niagara
+Grid 2D Resample from Owner Motion,二维网格：根据所有者运动重采样,,,Niagara
+Grid 2D Resample from Owner Motion*,二维网格：根据所有者运动重采样*,,,Niagara
+Grid 2D SW Advect,二维网格：浅水平流输送,,,Niagara
+Grid 2D SW Advect*,二维网格：浅水平流输送*,,,Niagara
+Grid 2D SW Array Collisions,二维网格：浅水数组碰撞,,,Niagara
+Grid 2D SW Array Collisions*,二维网格：浅水数组碰撞*,,,Niagara
+Grid 2D SW Collision Force,二维网格：浅水碰撞力,,,Niagara
+Grid 2D SW Collision Force*,二维网格：浅水碰撞力*,,,Niagara
+Grid 2D SW Compute Bottom Contour,二维网格：计算浅水底部轮廓,,,Niagara
+Grid 2D SW Compute Bottom Contour*,二维网格：计算浅水底部轮廓*,,,Niagara
+Grid 2D SW Compute Normals,二维网格：计算浅水法线,,,Niagara
+Grid 2D SW Compute Normals*,二维网格：计算浅水法线*,,,Niagara
+Grid 2D SW Debug Visualization,二维网格：浅水调试可视化,,,Niagara
+Grid 2D SW Debug Visualization*,二维网格：浅水调试可视化*,,,Niagara
+Grid 2D SW Distribute Overlap Volume,二维网格：分配浅水重叠体积,,,Niagara
+Grid 2D SW Distribute Overlap Volume*,二维网格：分配浅水重叠体积*,,,Niagara
+Grid 2D SW Extrapolate Height,二维网格：外推浅水高度,,,Niagara
+Grid 2D SW Extrapolate Height*,二维网格：外推浅水高度*,,,Niagara
+Grid 2D SW Extrapolate Render Height,二维网格：外推浅水渲染高度,,,Niagara
+Grid 2D SW Extrapolate Render Height*,二维网格：外推浅水渲染高度*,,,Niagara
+Grid 2D SW Extrapolate Velocities,二维网格：外推浅水速度,,,Niagara
+Grid 2D SW Extrapolate Velocities*,二维网格：外推浅水速度*,,,Niagara
+Grid 2D SW Filter Overshoot,二维网格：过滤浅水过冲,,,Niagara
+Grid 2D SW Filter Overshoot*,二维网格：过滤浅水过冲*,,,Niagara
+Grid 2D SW Flow Velocity Force,二维网格：浅水流速作用力,,,Niagara
+Grid 2D SW Flow Velocity Force*,二维网格：浅水流速作用力*,,,Niagara
+Grid 2D SW Foam Spread,二维网格：浅水泡沫扩散,,,Niagara
+Grid 2D SW Foam Spread*,二维网格：浅水泡沫扩散*,,,Niagara
+Grid 2D SW Init,二维网格：初始化浅水,,,Niagara
+Grid 2D SW Init*,二维网格：初始化浅水*,,,Niagara
+Grid 2D SW Moving Window Shift Grids,二维网格：浅水移动窗口网格偏移,,,Niagara
+Grid 2D SW Moving Window Shift Grids*,二维网格：浅水移动窗口网格偏移*,,,Niagara
+Grid 2D SW NDCParticle Collisions,二维网格：浅水 NDC 粒子碰撞,,,Niagara
+Grid 2D SW NDCParticle Collisions*,二维网格：浅水 NDC 粒子碰撞*,,,Niagara
+Grid 2D SW Smooth Boundary Cells,二维网格：平滑浅水边界单元,,,Niagara
+Grid 2D SW Smooth Boundary Cells*,二维网格：平滑浅水边界单元*,,,Niagara
+Grid 2D SW Source,二维网格：浅水源,,,Niagara
+Grid 2D SW Source*,二维网格：浅水源*,,,Niagara
+Grid 2D SW Update Collisions,二维网格：更新浅水碰撞,,,Niagara
+Grid 2D SW Update Collisions*,二维网格：更新浅水碰撞*,,,Niagara
+Grid 2D SW Update Depth Grid,二维网格：更新浅水深度网格,,,Niagara
+Grid 2D SW Update Depth Grid*,二维网格：更新浅水深度网格*,,,Niagara
+Grid 2D SW Update Velocity,二维网格：更新浅水速度,,,Niagara
+Grid 2D SW Update Velocity*,二维网格：更新浅水速度*,,,Niagara
+Grid 2D Secondary Emission Points,二维网格：次级发射点,,,Niagara
+Grid 2D Secondary Emission Points*,二维网格：次级发射点*,,,Niagara
+Grid 2D Secondary Spawn Particle,二维网格：生成次级粒子,,,Niagara
+Grid 2D Secondary Spawn Particle*,二维网格：生成次级粒子*,,,Niagara
+Grid 2D Secondary Update Particles,二维网格：更新次级粒子,,,Niagara
+Grid 2D Secondary Update Particles*,二维网格：更新次级粒子*,,,Niagara
+Grid 2D Set Bounds,二维网格：设置边界,,,Niagara
+Grid 2D Set Bounds*,二维网格：设置边界*,,,Niagara
+Grid 2D Smooth Screen Space Surface,二维网格：平滑屏幕空间表面,,,Niagara
+Grid 2D Smooth Screen Space Surface*,二维网格：平滑屏幕空间表面*,,,Niagara
+Grid 2D Vorticity Confinement Force,二维网格：涡量约束力,,,Niagara
+Grid 2D Vorticity Confinement Force*,二维网格：涡量约束力*,,,Niagara
+Grid 3D Add SDFTo Boundary,三维网格：将 SDF 添加到边界,,,Niagara
+Grid 3D Add SDFTo Boundary*,三维网格：将 SDF 添加到边界*,,,Niagara
+Grid 3D Advect Fluid Attribute,三维网格：平流输送流体属性,,,Niagara
+Grid 3D Advect Fluid Attribute*,三维网格：平流输送流体属性*,,,Niagara
+Grid 3D Advect Particle,三维网格：平流输送粒子,,,Niagara
+Grid 3D Advect Particle*,三维网格：平流输送粒子*,,,Niagara
+Grid 3D Bake Ambient Occlusion and Normals,三维网格：烘焙环境光遮蔽与法线,,,Niagara
+Grid 3D Bake Ambient Occlusion and Normals*,三维网格：烘焙环境光遮蔽与法线*,,,Niagara
+Grid 3D Bake Ambient Occlusion,三维网格：烘焙环境光遮蔽,,,Niagara
+Grid 3D Bake Ambient Occlusion*,三维网格：烘焙环境光遮蔽*,,,Niagara
+Grid 3D Bake Directional Light,三维网格：烘焙方向光,,,Niagara
+Grid 3D Bake Directional Light*,三维网格：烘焙方向光*,,,Niagara
+Grid 3D Bake Point Light,三维网格：烘焙点光源,,,Niagara
+Grid 3D Bake Point Light*,三维网格：烘焙点光源*,,,Niagara
+Grid 3D Blur,三维网格：模糊,,,Niagara
+Grid 3D Blur*,三维网格：模糊*,,,Niagara
+Grid 3D Chaos Buoyancy Force,三维网格：Chaos 浮力,,,Niagara
+Grid 3D Chaos Buoyancy Force*,三维网格：Chaos 浮力*,,,Niagara
+Grid 3D Compute Curl at Position,三维网格：计算指定位置的旋度,,,Niagara
+Grid 3D Compute Curl at Position*,三维网格：计算指定位置的旋度*,,,Niagara
+Grid 3D Convolve Axis,三维网格：沿轴卷积,,,Niagara
+Grid 3D Convolve Axis*,三维网格：沿轴卷积*,,,Niagara
+Grid 3D Create Convolution Kernel,三维网格：创建卷积核,,,Niagara
+Grid 3D Create Convolution Kernel*,三维网格：创建卷积核*,,,Niagara
+Grid 3D External Object Buoyancy Force,三维网格：外部物体浮力,,,Niagara
+Grid 3D External Object Buoyancy Force*,三维网格：外部物体浮力*,,,Niagara
+Grid 3D Extrapolate Velocity,三维网格：外推速度,,,Niagara
+Grid 3D Extrapolate Velocity*,三维网格：外推速度*,,,Niagara
+Grid 3D FLIP FLUID CONTROLS,三维网格：FLIP 流体控制,,,Niagara
+Grid 3D FLIP FLUID CONTROLS*,三维网格：FLIP 流体控制*,,,Niagara
+Grid 3D FLIP Grid Particles,三维网格：FLIP 网格粒子,,,Niagara
+Grid 3D FLIP Grid Particles*,三维网格：FLIP 网格粒子*,,,Niagara
+Grid 3D FLIP Integrate Particle Velocity,三维网格：FLIP 对粒子速度积分,,,Niagara
+Grid 3D FLIP Integrate Particle Velocity*,三维网格：FLIP 对粒子速度积分*,,,Niagara
+Grid 3D Fill Neighbor Grid,三维网格：填充邻居网格,,,Niagara
+Grid 3D Fill Neighbor Grid*,三维网格：填充邻居网格*,,,Niagara
+Grid 3D Gas Buoyancy,三维网格：气体浮力,,,Niagara
+Grid 3D Gas Buoyancy*,三维网格：气体浮力*,,,Niagara
+Grid 3D Gas Fill Volume Texture Grid,三维网格：填充气体体积纹理网格,,,Niagara
+Grid 3D Gas Fill Volume Texture Grid*,三维网格：填充气体体积纹理网格*,,,Niagara
+Grid 3D Gas Gather Particle Source,三维网格：汇集气体粒子源,,,Niagara
+Grid 3D Gas Gather Particle Source*,三维网格：汇集气体粒子源*,,,Niagara
+Grid 3D Gas Init,三维网格：初始化气体,,,Niagara
+Grid 3D Gas Init*,三维网格：初始化气体*,,,Niagara
+Grid 3D Gas Particle Source,三维网格：气体粒子源,,,Niagara
+Grid 3D Gas Particle Source*,三维网格：气体粒子源*,,,Niagara
+Grid 3D Gas Resample Volume Texture,三维网格：重采样气体体积纹理,,,Niagara
+Grid 3D Gas Resample Volume Texture*,三维网格：重采样气体体积纹理*,,,Niagara
+Grid 3D Gas Sphere Source,三维网格：气体球形源,,,Niagara
+Grid 3D Gas Sphere Source*,三维网格：气体球形源*,,,Niagara
+Grid 3D Generate Mesh from Distance Field,三维网格：根据距离场生成网格体,,,Niagara
+Grid 3D Generate Mesh from Distance Field*,三维网格：根据距离场生成网格体*,,,Niagara
+Grid 3D Geometry Collection Boundary,三维网格：几何体集合边界,,,Niagara
+Grid 3D Geometry Collection Boundary*,三维网格：几何体集合边界*,,,Niagara
+Grid 3D Get Float at Position,三维网格：获取指定位置的浮点值,,,Niagara
+Grid 3D Get Float,三维网格：获取浮点值,,,Niagara
+Grid 3D Get Float*,三维网格：获取浮点值*,,,Niagara
+Grid 3D Get Fluid Attribute at Position,三维网格：获取指定位置的流体属性,,,Niagara
+Grid 3D Get Fluid Attribute,三维网格：获取流体属性,,,Niagara
+Grid 3D Get Fluid Attribute*,三维网格：获取流体属性*,,,Niagara
+Grid 3D Get Vector 4,三维网格：获取四维向量,,,Niagara
+Grid 3D Get Vector 4*,三维网格：获取四维向量*,,,Niagara
+Grid 3D Get Vector 4At Position,三维网格：获取指定位置的四维向量,,,Niagara
+Grid 3D Get Vector at Position,三维网格：获取指定位置的向量,,,Niagara
+Grid 3D Get Vector,三维网格：获取向量,,,Niagara
+Grid 3D Get Vector*,三维网格：获取向量*,,,Niagara
+Grid 3D Grid Value Mask,三维网格：网格值遮罩,,,Niagara
+Grid 3D Grid Value Mask*,三维网格：网格值遮罩*,,,Niagara
+Grid 3D Implicit Source,三维网格：隐式源,,,Niagara
+Grid 3D Implicit Source*,三维网格：隐式源*,,,Niagara
+Grid 3D Initialize Convolution Kernel,三维网格：初始化卷积核,,,Niagara
+Grid 3D Initialize Convolution Kernel*,三维网格：初始化卷积核*,,,Niagara
+Grid 3D Initialize Mesh from Distance Field,三维网格：根据距离场初始化网格体,,,Niagara
+Grid 3D Initialize Mesh from Distance Field*,三维网格：根据距离场初始化网格体*,,,Niagara
+Grid 3D Integrate Forces,三维网格：对力积分,,,Niagara
+Grid 3D Integrate Forces*,三维网格：对力积分*,,,Niagara
+Grid 3D Landscape Boundary,三维网格：地形边界,,,Niagara
+Grid 3D Landscape Boundary*,三维网格：地形边界*,,,Niagara
+Grid 3D Modify Grid Scale,三维网格：修改网格缩放,,,Niagara
+Grid 3D Modify Grid Scale*,三维网格：修改网格缩放*,,,Niagara
+Grid 3D Neighbor Query to SDF,三维网格：邻居查询转 SDF,,,Niagara
+Grid 3D Neighbor Query to SDF*,三维网格：邻居查询转 SDF*,,,Niagara
+Grid 3D Owner Motion Force,三维网格：所有者运动力,,,Niagara
+Grid 3D Owner Motion Force*,三维网格：所有者运动力*,,,Niagara
+Grid 3D Particle Boundary,三维网格：粒子边界,,,Niagara
+Grid 3D Particle Boundary*,三维网格：粒子边界*,,,Niagara
+Grid 3D Physics Asset Boundary,三维网格：物理资产边界,,,Niagara
+Grid 3D Physics Asset Boundary*,三维网格：物理资产边界*,,,Niagara
+Grid 3D Raymarch SDF,三维网格：对 SDF 进行射线步进,,,Niagara
+Grid 3D Raymarch SDF*,三维网格：对 SDF 进行射线步进*,,,Niagara
+Grid 3D Resample Float,三维网格：重采样浮点值,,,Niagara
+Grid 3D Resample Float*,三维网格：重采样浮点值*,,,Niagara
+Grid 3D Resample Named Float,三维网格：重采样指定名称的浮点值,,,Niagara
+Grid 3D Resample Named Float*,三维网格：重采样指定名称的浮点值*,,,Niagara
+Grid 3D Resample Rasterization Float,三维网格：重采样光栅化浮点值,,,Niagara
+Grid 3D Resample Rasterization Float*,三维网格：重采样光栅化浮点值*,,,Niagara
+Grid 3D Resample Rasterization Vector,三维网格：重采样光栅化向量,,,Niagara
+Grid 3D Resample Rasterization Vector*,三维网格：重采样光栅化向量*,,,Niagara
+Grid 3D Resample Vector 4,三维网格：重采样四维向量,,,Niagara
+Grid 3D Resample Vector 4*,三维网格：重采样四维向量*,,,Niagara
+Grid 3D Resample Vector,三维网格：重采样向量,,,Niagara
+Grid 3D Resample Vector*,三维网格：重采样向量*,,,Niagara
+Grid 3D Rigid Mesh Boundary,三维网格：刚性网格体边界,,,Niagara
+Grid 3D Rigid Mesh Boundary*,三维网格：刚性网格体边界*,,,Niagara
+Grid 3D Rigid Mesh Find Colliders,三维网格：查找刚性网格体碰撞体,,,Niagara
+Grid 3D Rigid Mesh Find Colliders*,三维网格：查找刚性网格体碰撞体*,,,Niagara
+Grid 3D Secondary Emission Points,三维网格：次级发射点,,,Niagara
+Grid 3D Secondary Emission Points*,三维网格：次级发射点*,,,Niagara
+Grid 3D Secondary Spawn Particles,三维网格：生成次级粒子,,,Niagara
+Grid 3D Secondary Spawn Particles*,三维网格：生成次级粒子*,,,Niagara
+Grid 3D Secondary Update Particles,三维网格：更新次级粒子,,,Niagara
+Grid 3D Secondary Update Particles*,三维网格：更新次级粒子*,,,Niagara
+Grid 3D Set Bounds,三维网格：设置边界,,,Niagara
+Grid 3D Set Bounds*,三维网格：设置边界*,,,Niagara
+Grid 3D Set Float Value,三维网格：设置浮点值,,,Niagara
+Grid 3D Set Float Value*,三维网格：设置浮点值*,,,Niagara
+Grid 3D Set Fluid Attribute,三维网格：设置流体属性,,,Niagara
+Grid 3D Set Fluid Attribute*,三维网格：设置流体属性*,,,Niagara
+Grid 3D Set Generic Grid Values,三维网格：设置通用网格值,,,Niagara
+Grid 3D Set Generic Grid Values*,三维网格：设置通用网格值*,,,Niagara
+Grid 3D Set RTValues,三维网格：设置渲染目标值,,,Niagara
+Grid 3D Set RTValues*,三维网格：设置渲染目标值*,,,Niagara
+Grid 3D Set Vector 4Value,三维网格：设置四维向量值,,,Niagara
+Grid 3D Set Vector 4Value*,三维网格：设置四维向量值*,,,Niagara
+Grid 3D Set Vector Value,三维网格：设置向量值,,,Niagara
+Grid 3D Set Vector Value*,三维网格：设置向量值*,,,Niagara
+Grid 3D Visualize Vector Field,三维网格：可视化向量场,,,Niagara
+Grid 3D Visualize Vector Field*,三维网格：可视化向量场*,,,Niagara
+Grid 3D Vorticity Confinement Force,三维网格：涡量约束力,,,Niagara
+Grid 3D Vorticity Confinement Force*,三维网格：涡量约束力*,,,Niagara
+Initialize Crowd Member*,初始化人群成员*,,,Niagara
+Kill Particles Below Water Level*,销毁水位以下的粒子*,,,Niagara
+Kill Particles Inside Distance Fields*,销毁距离场内部的粒子*,,,Niagara
+Mask Particle with Mesh Color*,使用网格体颜色遮罩粒子*,,,Niagara
+Match Velocity Via Force*,通过施力匹配速度*,,,Niagara
+Move with Velocity Buffer*,随速度缓冲区移动*,,,Niagara
+NDCCollision Sphere Wiggle*,NDC 碰撞球体摆动*,,,Niagara
+NMS 1D Shore Simulation*,NMS 一维岸线模拟*,,,Niagara
+NMS Blur Grid*,NMS 模糊网格*,,,Niagara
+NMS Sample Waterbody Spline RT*,NMS 采样水体样条线渲染目标*,,,Niagara
+NMS Shore Particles To Grid*,NMS 岸线粒子转网格*,,,Niagara
+Neighbor Grid 3D Visualize*,可视化三维邻居网格*,,,Niagara
+Neighbor Query Visualize*,可视化邻居查询*,,,Niagara
+Orient Mesh to Camera*,将网格体朝向相机*,,,Niagara
+Particle Color Params*,粒子颜色参数*,,,Niagara
+Pin To Depth*,固定到深度*,,,Niagara
+Rain Sprite Appearance*,雨滴精灵外观*,,,Niagara
+Rasterization Grid 3D Initialize*,初始化三维光栅化网格*,,,Niagara
+Rasterization Grid 3D SDFTo RT*,三维光栅化网格：SDF 转渲染目标*,,,Niagara
+Rasterization Grid Particle Source*,光栅化网格粒子源*,,,Niagara
+Ray Trace Distance Field GPU*,距离场射线追踪（GPU）*,,,Niagara
+Ray Trace*,射线追踪*,,,Niagara
+Read Distance Field GPU*,读取距离场（GPU）*,,,Niagara
+Sample Bezier Spline*,采样贝塞尔样条线*,,,Niagara
+Sample Curl Noise Field*,采样旋度噪声场*,,,Niagara
+Sample DLWE State*,采样 DLWE 状态*,,,Niagara
+Scale Attributes by Camera Distance*,根据相机距离缩放属性*,,,Niagara
+Set Alternate Renderer Bindings*,设置替代渲染器绑定*,,,Niagara
+Set Weather Bounds*,设置天气边界*,,,Niagara
+Set Weather Sprite Velocity*,设置天气精灵速度*,,,Niagara
+Slerp Vector*,球面插值向量*,,,Niagara
+Smear Sprite by Speed*,根据速率拖曳精灵*,,,Niagara
+Smoothly Rotate Vector Around Axis*,绕轴平滑旋转向量*,,,Niagara
+Snap to Wave Surface*,吸附到波面*,,,Niagara
+Snow Sprite Appearance*,雪花精灵外观*,,,Niagara
+Snow Twirl*,雪花旋转*,,,Niagara
+Sphere Plane Intersection*,球体与平面相交*,,,Niagara
+Volume Cache Get Vector 4*,体积缓存：获取四维向量*,,,Niagara
+Volume Cache Read File*,体积缓存：读取文件*,,,Niagara
+Wakling Velocity*,行走速度*,,,Niagara
+Water Body Collider*,水体碰撞体*,,,Niagara
+Water Body Data*,水体数据*,,,Niagara
+Weather Particle Kill Sphere*,天气粒子销毁球体*,,,Niagara
+Wedge Location*,楔形位置*,,,Niagara
+Write NDC SW Collision Particles*,写入 NDC 浅水碰撞粒子*,,,Niagara
+Source Particles,源粒子,,,Niagara
+Niagara,Niagara,,,Niagara
+Chaos,Chaos,,,Niagara

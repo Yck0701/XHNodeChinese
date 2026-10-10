@@ -1,0 +1,880 @@
+﻿Key,Value
+"Accumulates a pull towards AttractorPosition into Transient.PhysicsForce
+路径：/Niagara/Modules/Update/Forces/V2/PointAttractionForce.PointAttractionForce","将指向 AttractorPosition 的吸引力累加到 Transient.PhysicsForce。
+路径：/Niagara/Modules/Update/Forces/V2/PointAttractionForce.PointAttractionForce"
+"Accumulates a pull towards towards the closest position on a line segment, and adds it to the Transient.PhysicsForce.
+路径：/Niagara/Modules/Update/Forces/LineAttractionForce.LineAttractionForce","计算指向线段上最近位置的吸引力，并将其累加到 Transient.PhysicsForce。
+路径：/Niagara/Modules/Update/Forces/LineAttractionForce.LineAttractionForce"
+"Add inherit velocity from another source, defaults to the position of the particle system which owns the emitter.
+路径：/Niagara/Modules/Update/Velocity/InheritVelocity.InheritVelocity","叠加从其他来源继承的速度，默认根据所属粒子系统的位置变化计算。
+路径：/Niagara/Modules/Update/Velocity/InheritVelocity.InheritVelocity"
+"Add toTransient.PhysicsForce using a curl noise field. Samples a medium resolution baked tiling curl noise field by default, can optionally sample a simplex derived curl function directly at increased cost.
+路径：/Niagara/Modules/Update/Forces/V2/CurlNoiseForce.CurlNoiseForce","使用卷曲噪声场向 Transient.PhysicsForce 累加力。默认采样已烘焙、可平铺的中等分辨率卷曲噪声场；也可直接采样由单纯形噪声推导的卷曲函数，但计算开销更高。
+路径：/Niagara/Modules/Update/Forces/V2/CurlNoiseForce.CurlNoiseForce"
+"Add's force from an arbitrary point in space with optional falloff. Uses the vector  between the velocity origin and the Particles.Position to determine the force vector. If positions have been unitialized (that is, the particle position and the velocity origin are on top of each other or very nearly so), the module will inject random velocity. For the most accurate results, it's best to place this module after your location modules so the particle positions have already been initialized.
+路径：/Niagara/Modules/Spawn/Velocity/PointForce.PointForce","从空间中的任意点施加力，并可选择添加衰减。使用速度原点与 Particles.Position 之间的向量来确定力的方向。如果位置尚未初始化，即粒子位置与速度原点重合或非常接近，模块会注入随机速度。为获得最准确的结果，最好将此模块放在位置模块之后，确保粒子位置已完成初始化。
+路径：/Niagara/Modules/Spawn/Velocity/PointForce.PointForce"
+"Adds a rotational force as described by the newtons applied on the yaw, pitch and roll axes, and accumulates that value to Transient.PhysicsRotationalForce.
+
+NOTE: This is a physically based rotation force which takes mass/drag/inertia into account. This requires an additional Rotational Solver (Solve Rotational Forces and Velocity) and is significantly more expensive than the direct set Orientation model (Initial Mesh Orientation and Update Mesh Orientation). It allows for particles of differing mass to respond differently to rotational forces.
+路径：/Niagara/Modules/Update/Orientation/V2/MeshRotationForce.MeshRotationForce","根据施加在偏航、俯仰和翻滚轴上的力（单位：牛顿）添加旋转力，并将其累加到 Transient.PhysicsRotationalForce。
+
+注意：这是基于物理的旋转力，会考虑质量、阻力和惯量。它需要额外的旋转求解器“求解旋转力与速度”，计算开销显著高于直接设置朝向的方式（“初始网格体朝向”和“更新网格体朝向”）。它可以让质量不同的粒子对旋转力产生不同的响应。
+路径：/Niagara/Modules/Update/Orientation/V2/MeshRotationForce.MeshRotationForce"
+"Adds force to a particle to align it's velocity with a target velocity.
+路径：/Niagara/Modules/Math/MatchVelocity_ViaForce.MatchVelocity_ViaForce
+* 脚本未公开给库。","向粒子施加力，使其速度与目标速度一致。
+路径：/Niagara/Modules/Math/MatchVelocity_ViaForce.MatchVelocity_ViaForce
+* 脚本未公开给库。"
+"Adds to the Rotational Velocity variable. Input vectors arrive in a user defined space which are then converted to simulation space.
+路径：/Niagara/Modules/Collision/AddRotationalVelocity.AddRotationalVelocity","向旋转速度变量叠加速度。输入向量位于用户指定的坐标空间中，随后会转换到模拟空间。
+路径：/Niagara/Modules/Collision/AddRotationalVelocity.AddRotationalVelocity"
+"Adds to Transient.PhysicsForce which will translate into acceleration within the solver.
+路径：/Niagara/Modules/Update/Forces/AccelerationForce.AccelerationForce","向 Transient.PhysicsForce 累加力，求解器会将其转换为加速度。
+路径：/Niagara/Modules/Update/Forces/AccelerationForce.AccelerationForce"
+"Advance the groom state in time with N substeps applying forces, materials and constraints. 
+路径：/HairStrands/Emitters/AdvanceGroomState.AdvanceGroomState","使用 N 个子步随时间推进毛发模拟状态，并在各子步中应用力、材质和约束。
+路径：/HairStrands/Emitters/AdvanceGroomState.AdvanceGroomState"
+"Applies a gravitational force (in cm/s) to Transient.PhysicsForce
+路径：/Niagara/Modules/Update/Forces/GravityForce.GravityForce","向 Transient.PhysicsForce 施加重力（单位：cm/s）。
+路径：/Niagara/Modules/Update/Forces/GravityForce.GravityForce"
+"Applies a non-physical aerodynamic drag that can be useful for thin objects like paper or leaves where the Particle.MeshOrientation affects the drag, lift-direction and rotation of the particle.
+
+Accumulates into AdvectionVelocity, PhysicsDrag and Transient.PhysicsRotationalDrag which are applied in Solve Forces and Velocity and Solve Rotational Forces And Velocity, respectively.
+
+This mode enables Rotational Solver inside the Solve Forces and Velocity module.
+路径：/Niagara/Modules/Update/Forces/AerodynamicDrag.AerodynamicDrag","施加一种不严格遵循物理规律的空气动力阻力，适用于纸张、树叶等薄片物体。在这类物体中，Particle.MeshOrientation 会影响粒子的阻力、升力方向和旋转。
+
+相关作用累加到 AdvectionVelocity、PhysicsDrag 和 Transient.PhysicsRotationalDrag，并分别由“求解力与速度”和“求解旋转力与速度”模块应用。
+
+此模式会启用“求解力与速度”模块内部的旋转求解器。
+路径：/Niagara/Modules/Update/Forces/AerodynamicDrag.AerodynamicDrag"
+"Applies a spring-like force on a particle given certain parameters. Accumulates to Transient.PhysicsForce.
+路径：/Niagara/Modules/Update/Forces/SpringForce.SpringForce","根据指定参数向粒子施加类似弹簧的力，并将其累加到 Transient.PhysicsForce。
+路径：/Niagara/Modules/Update/Forces/SpringForce.SpringForce"
+"Applies a wind speed to particles
+
+Drag determines the speed at which a particle matches the wind speed.
+路径：/Niagara/Modules/Update/Forces/WindForce.WindForce","向粒子施加风速。
+
+阻力决定粒子速度趋近风速的快慢。
+路径：/Niagara/Modules/Update/Forces/WindForce.WindForce"
+"Applies Drag directly to particle velocity and/or rotational velocity, irrespective of Mass.
+
+Accumulates into Transient.PhysicsDrag and Transient.PhysicsRotationalDrag which are applied in Solve Forces and Velocity and Solve Rotational Forces And Velocity, respectively.
+路径：/Niagara/Modules/Update/Forces/Drag.Drag","直接向粒子的速度和／或旋转速度施加阻力，不受质量影响。
+
+阻力分别累加到 Transient.PhysicsDrag 和 Transient.PhysicsRotationalDrag，并分别由“求解力与速度”和“求解旋转力与速度”模块应用。
+路径：/Niagara/Modules/Update/Forces/Drag.Drag"
+"Assign a 0-1 mask/region value to particles based on their distance to the edge of the active viewport.
+In addition, tag particles with a bool signifying if they are inside or outside the view.
+路径：/Niagara/Modules/Update/Camera/ViewMask.ViewMask","根据粒子到活动视口边缘的距离，为粒子设置 0–1 范围的遮罩或区域值。
+
+此外，还会用布尔值标记粒子位于视野内还是视野外。
+路径：/Niagara/Modules/Update/Camera/ViewMask.ViewMask"
+"audio sound cue metasound parameters float int bool
+路径：/Niagara/Modules/Audio/SetInitialAudioParameter.SetInitialAudioParameter","音频、声音提示、MetaSound、参数、浮点数、整数、布尔值。
+路径：/Niagara/Modules/Audio/SetInitialAudioParameter.SetInitialAudioParameter"
+"Build the grid solid distance and velocity field
+路径：/HairStrands/Emitters/SetGridBoundary.SetGridBoundary","构建网格中的实体距离场和速度场。
+路径：/HairStrands/Emitters/SetGridBoundary.SetGridBoundary"
+"Build the input velocvity field that will be used during the pressure solve
+路径：/HairStrands/Emitters/BuildGridVelocity.BuildGridVelocity","构建供压力求解使用的输入速度场。
+路径：/HairStrands/Emitters/BuildGridVelocity.BuildGridVelocity"
+"By Default, accepts the initial color as determined in the particle spawn script (Cached off as Particles.Initial.Color), and scales the RGB and Alpha components separately.
+路径：/Niagara/Modules/Update/Color/ScaleColor.ScaleColor","默认使用粒子生成脚本确定的初始颜色（缓存为 Particles.Initial.Color），并分别缩放 RGB 和 Alpha 分量。
+路径：/Niagara/Modules/Update/Color/ScaleColor.ScaleColor"
+"Cache both sim and renderable cell sizes for use later in the simulation.
+路径：/NiagaraFluids/Modules/Grid3D/Grid3D_ModifyGridScale.Grid3D_ModifyGridScale
+* 脚本未公开给库。","缓存模拟单元尺寸和渲染单元尺寸，以供模拟后续阶段使用。
+路径：/NiagaraFluids/Modules/Grid3D/Grid3D_ModifyGridScale.Grid3D_ModifyGridScale
+* 脚本未公开给库。"
+"Calculate a 0-1 region mask based on values within a scalar grid. This mask can be used to limit an influence based on a density or temperature band for example.
+路径：/NiagaraFluids/Modules/Grid3D/Grid3D_GridValueMask.Grid3D_GridValueMask
+* 脚本未公开给库。","根据标量网格中的值计算 0–1 范围的区域遮罩。例如，可用此遮罩将影响限制在特定密度区间或温度区间内。
+路径：/NiagaraFluids/Modules/Grid3D/Grid3D_GridValueMask.Grid3D_GridValueMask
+* 脚本未公开给库。"
+"Calculate an accurate velocity from a previous and current position. Useful if a constraint was applied which altered the expected position of a particle outside the framework of the solver.
+路径：/Niagara/Modules/PostSolvers/CalculateAccurateVelocity.CalculateAccurateVelocity","根据上一位置与当前位置计算精确速度。当约束在求解器之外改变了粒子的预期位置时，此模块尤其有用。
+路径：/Niagara/Modules/PostSolvers/CalculateAccurateVelocity.CalculateAccurateVelocity"
+"Calculates the mass and rotational inertia based off of the particle's bounds and a density value. The density is measured in kilograms per cubic meters.
+
+When used in particle update one should also use ""UpdateVelocityOnMassChange.""
+路径：/Niagara/Modules/Update/Mass/CalculateMassAndRotationalInertiaByVolume.CalculateMassAndRotationalInertiaByVolume","根据粒子边界和密度值计算质量与旋转惯量。密度单位为千克／立方米。
+
+在粒子更新阶段使用时，还应同时使用 UpdateVelocityOnMassChange。
+路径：/Niagara/Modules/Update/Mass/CalculateMassAndRotationalInertiaByVolume.CalculateMassAndRotationalInertiaByVolume"
+"Calculates the output of a spring constraint over time for a float. The StackContext.Module.Current Value variable should be intiialized in an earlier stage. 
+路径：/Niagara/Modules/Math/SolveFloatSpringConstraint.SolveFloatSpringConstraint","随时间计算浮点数弹簧约束的输出。应在更早的阶段初始化 StackContext.Module.Current Value 变量。
+路径：/Niagara/Modules/Math/SolveFloatSpringConstraint.SolveFloatSpringConstraint"
+"Calculates the particle's Sprite Size and rotational inertia based off of user driven mass and density values. The density is measured in kilograms per cubic meters.
+
+When used in particle update one should also use ""UpdateVelocityOnMassChange.""
+路径：/Niagara/Modules/Update/Mass/CalculateSizeAndRotationalInertiaByMass.CalculateSizeAndRotationalInertiaByMass","根据用户指定的质量和密度计算粒子的精灵尺寸与旋转惯量。密度单位为千克／立方米。
+
+在粒子更新阶段使用时，还应同时使用 UpdateVelocityOnMassChange。
+路径：/Niagara/Modules/Update/Mass/CalculateSizeAndRotationalInertiaByMass.CalculateSizeAndRotationalInertiaByMass"
+"Can be used to make particles veer away from spotlights or other cones. The included constraints help one to avoid penetration of nearby surfaces.
+路径：/Niagara/Modules/Math/AvoidCone.AvoidCone
+* 脚本未公开给库。","可使粒子避开聚光灯照射区域或其他锥形区域。内置约束有助于避免穿入附近表面。
+路径：/Niagara/Modules/Math/AvoidCone.AvoidCone
+* 脚本未公开给库。"
+"Compute the air drag force and gravity and advect the velocities
+路径：/HairStrands/Emitters/AdvectGroomState.AdvectGroomState","计算空气阻力和重力，并对速度进行平流输运。
+路径：/HairStrands/Emitters/AdvectGroomState.AdvectGroomState"
+"Constrains a vector to a direction within a cone. The vector will be rotated toward the nearest valid vector within the cone if the input vector rests outside of it. Note that this module only writes to an output vector.
+路径：/Niagara/Modules/Math/ConstrainVectorToCone.ConstrainVectorToCone","将向量方向约束在锥体内。如果输入向量位于锥体外，会将其旋转到锥体内最近的有效方向。注意：此模块只写入输出向量。
+路径：/Niagara/Modules/Math/ConstrainVectorToCone.ConstrainVectorToCone"
+"Create and set default attributes used within fluid sourcing modules.
+路径：/NiagaraFluids/Modules/Particles/SetFluidSourceAttributes.SetFluidSourceAttributes","创建并设置流体源模块中使用的默认属性。
+路径：/NiagaraFluids/Modules/Particles/SetFluidSourceAttributes.SetFluidSourceAttributes"
+"Creates a float timeline which can be used to drive other things in the stack. Works at all levels (System/Emitter/Particle) and outputs both a raw time (Between Timeline Beginning and Timeline End) and a normalized 0-1 time which can be used to drive curves or interpolations. Also outputs booleans for whether the timeline is playing or rewinding.
+
+Optionally rewinds automatically when Play is unchecked, or has a manual rewind behavior if desired.
+
+路径：/Niagara/Modules/Update/Utility/Timeline.Timeline","创建一个浮点时间轴，用于驱动堆栈中的其他行为。适用于系统、发射器和粒子各个层级，同时输出原始时间（介于时间轴起点与终点之间）以及归一化到 0–1 的时间，可用于驱动曲线或插值。还会输出表示时间轴是否正在播放或倒放的布尔值。
+
+可选择在取消勾选“播放”时自动倒放，也可按需采用手动倒放。
+路径：/Niagara/Modules/Update/Utility/Timeline.Timeline"
+"Directly sets Particles.Color, with scale factors for the Float3 Color and Scalar Alpha components.
+路径：/Niagara/Modules/Update/Color/Color.Color","直接设置 Particles.Color，并分别为 Float3 颜色分量和标量 Alpha 分量提供缩放系数。
+路径：/Niagara/Modules/Update/Color/Color.Color"
+"Distribute particles through a 3D wedge shape.
+路径：/Niagara/Modules/Math/WedgeLocation.WedgeLocation
+* 脚本未公开给库。","将粒子分布在三维楔形区域内。
+路径：/Niagara/Modules/Math/WedgeLocation.WedgeLocation
+* 脚本未公开给库。"
+"Distributes points in a grid based on a vector field. 
+
+Optionally applies a local translate, rotate and scale transformation.
+
+Note: Writes directly to Particles.Position and Particles.Scale
+路径：/Niagara/VectorFields/DistributeArrowsForVectorField.DistributeArrowsForVectorField
+* 脚本未公开给库。","根据向量场在网格中分布点。
+
+可选择应用局部平移、旋转和缩放变换。
+
+注意：直接写入 Particles.Position 和 Particles.Scale。
+路径：/Niagara/VectorFields/DistributeArrowsForVectorField.DistributeArrowsForVectorField
+* 脚本未公开给库。"
+"Draw lines, boxes or spheres on particles for debugging purposes.
+路径：/Niagara/Modules/Update/Utility/DebugDraw.DebugDraw","在粒子上绘制线条、方盒或球体，用于调试。
+路径：/Niagara/Modules/Update/Utility/DebugDraw.DebugDraw"
+"Extracts relevant properties from a vector field object and calculates some additional useful properties
+路径：/Niagara/VectorFields/GetVectorFieldProperties.GetVectorFieldProperties
+* 脚本未公开给库。","从向量场对象中提取相关属性，并计算一些额外的实用属性。
+路径：/Niagara/VectorFields/GetVectorFieldProperties.GetVectorFieldProperties
+* 脚本未公开给库。"
+"Find a random position in the intersection between a cone and a sphere.
+路径：/Niagara/Modules/Math/ConeSphereIntersection.ConeSphereIntersection
+* 脚本未公开给库。","在圆锥与球体的相交区域内查找一个随机位置。
+路径：/Niagara/Modules/Math/ConeSphereIntersection.ConeSphereIntersection
+* 脚本未公开给库。"
+"Find any position in which a plane intersects a sphere. 
+
+Note: 
+
+""Output.Module.CircleCentertoPositionVector"" can be used to add an outward force to the particle on the intersection plane.
+
+Other useful data is also output from this node.
+路径：/Niagara/Modules/Math/SpherePlaneIntersection.SpherePlaneIntersection
+* 脚本未公开给库。","查找平面与球体相交处的任意位置。
+
+注意：
+可使用 Output.Module.CircleCentertoPositionVector，为相交平面上的粒子添加向外的力。
+
+此节点还会输出其他实用数据。
+路径：/Niagara/Modules/Math/SpherePlaneIntersection.SpherePlaneIntersection
+* 脚本未公开给库。"
+"Find the on screen bounding rectangle for an object both in clip and world space. 
+
+This can be used to optimize screen space effects that only need to be applied to a portion of the scene. 
+路径：/Niagara/Modules/Math/FindScreenSpaceBoundingBox.FindScreenSpaceBoundingBox","查找物体的屏幕包围矩形，并分别给出裁剪空间和世界空间中的结果。
+
+可用于优化只需应用于部分场景区域的屏幕空间效果。
+路径：/Niagara/Modules/Math/FindScreenSpaceBoundingBox.FindScreenSpaceBoundingBox"
+"Finds the closest point on a line segment along with other related data.  The calculated values are exported to output variables.
+路径：/Niagara/Modules/Math/FindClosestPointOnLineSegment.FindClosestPointOnLineSegment","查找线段上的最近点及其他相关数据，并将计算结果写入输出变量。
+路径：/Niagara/Modules/Math/FindClosestPointOnLineSegment.FindClosestPointOnLineSegment"
+"Finds the closest position between a triangle's surface and a point in space.
+路径：/Niagara/Modules/Math/FindClosestPointOnTriangle.FindClosestPointOnTriangle","查找三角形表面上距离空间中指定点最近的位置。
+路径：/Niagara/Modules/Math/FindClosestPointOnTriangle.FindClosestPointOnTriangle"
+"Finds the distance to a plane given a trace origin, vector and plane description. If the line and the plane are aligned the line intersection vector produces NANs. To avoid referencing this value reference the output bool called ""Line Intersects"" appropriately. 
+路径：/Niagara/Modules/Collision/CalculateLinePlaneInt.CalculateLinePlaneInt
+* 脚本未公开给库。","根据射线起点、方向向量和平面描述，计算到平面的距离。如果直线与平面平行，交点向量会产生 NaN。为避免使用无效值，请先正确检查名为“直线相交”的布尔输出。
+路径：/Niagara/Modules/Collision/CalculateLinePlaneInt.CalculateLinePlaneInt
+* 脚本未公开给库。"
+"Generate a force that pushes particles away from Distance Field Surfaces. This is useful for Boid-like simulations.
+路径：/Niagara/Modules/Math/AvoidDistanceFieldSurfaces_GPU.AvoidDistanceFieldSurfaces_GPU","生成将粒子推离距离场表面的力，适用于类似鸟群的模拟。
+路径：/Niagara/Modules/Math/AvoidDistanceFieldSurfaces_GPU.AvoidDistanceFieldSurfaces_GPU"
+"Generate an event upon the death of a particle which contains the position of the particle generating the event. The event payload also contain the particle velocity, a Particle ID which can be used to generate a Ribbon ID per particle, The age of the sending particle, as well as a random number which can be generically useful.
+
+This event Generator module is typically placed after the ""Solve Forces and Velocity"" module, in order for the event payload to contain the position and velocity of the particle at the very end of the frame. If placed before the solver, you are sending the event before the final positon and velocity of the particle are derived by the solver.
+路径：/Niagara/Modules/Events/GenerateDeathEvent.GenerateDeathEvent","在粒子死亡时生成事件，事件包含发出事件的粒子位置。事件载荷还包含粒子速度、可用于为每个粒子生成条带 ID 的粒子 ID、发送粒子的年龄，以及可作通用用途的随机数。
+
+通常应将此事件生成模块放在“求解力与速度”之后，以确保事件载荷包含粒子在本帧结束时的位置和速度。如果放在求解器之前，事件会在求解器计算出粒子的最终位置和速度之前发出。
+路径：/Niagara/Modules/Events/GenerateDeathEvent.GenerateDeathEvent"
+"Generate an event which contains the position of the particle generating the event. The event payload also contain the particle velocity and acceleration, a Particle ID which can be used to generate a Ribbon ID per particle, The Particle Color, The age of the sending particle, its total distance traveled, as well as a random number which can be generically useful.
+
+Any of this data can be overridden by expanding the advanced properties on the module and overriding the default data.
+
+This event Generator module is typically placed after the ""Solve Forces and Velocity"" module, in order for the event payload to contain the position and velocity of the particle at the very end of the frame. If placed before the solver, you are sending the event before the final positon and velocity of the particle are derived by the solver, and missing out on a frame accurate  accumulated distance traveled for that particle.
+路径：/Niagara/Modules/Events/GenerateLocationEvent.GenerateLocationEvent","生成一个包含发出事件的粒子位置的事件。事件载荷还包含粒子速度与加速度、可用于为每个粒子生成条带 ID 的粒子 ID、粒子颜色、发送粒子的年龄、累计移动距离，以及可作通用用途的随机数。
+
+展开模块的高级属性并覆盖默认数据，即可覆盖其中的任意数据。
+
+通常应将此事件生成模块放在“求解力与速度”之后，以确保事件载荷包含粒子在本帧结束时的位置和速度。如果放在求解器之前，事件会在求解器计算出最终位置和速度之前发出，并且无法获得截至当前帧的准确累计移动距离。
+路径：/Niagara/Modules/Events/GenerateLocationEvent.GenerateLocationEvent"
+"In-camera particle size can be retained by taking into account the camera's fov, the particle's camera relative depth and the render target's size.
+路径：/Niagara/Modules/Update/Camera/MaintainInCameraParticleScale.MaintainInCameraParticleScale","综合考虑摄像机视场角、粒子相对于摄像机的深度以及渲染目标尺寸，以保持粒子在摄像机画面中的尺寸。
+路径：/Niagara/Modules/Update/Camera/MaintainInCameraParticleScale.MaintainInCameraParticleScale"
+"Increase a value each frame.The counter variable increases by tick delta multiplied by a user specified rate.
+路径：/Niagara/Modules/Update/Utility/IncrementOverTime.IncrementOverTime","每帧增加一个值。计数变量的增量为帧间隔时间乘以用户指定的速率。
+路径：/Niagara/Modules/Update/Utility/IncrementOverTime.IncrementOverTime"
+"Increment the step index to know at which iteration we are during the map for. 
+路径：/HairStrands/Emitters/IncrementStepIndex.IncrementStepIndex","递增步索引，以确定映射循环当前所处的迭代次数。
+路径：/HairStrands/Emitters/IncrementStepIndex.IncrementStepIndex"
+"Increments a counter upward each frame when Increment Counter is true.
+
+The Counter is a Particle Attribute which defaults to 
+Particles.FrameCounter.Counter
+路径：/Niagara/Modules/Update/Utility/FrameCounter.FrameCounter","当“递增计数器”为真时，每帧递增一次计数器。
+
+计数器是一个粒子属性，默认使用：
+Particles.FrameCounter.Counter
+路径：/Niagara/Modules/Update/Utility/FrameCounter.FrameCounter"
+"Inject a velocity around a vortex axis (with an optional additional pull towards the vortex origin) into the Transient.PhysicsForce
+路径：/Niagara/Modules/Update/Forces/VortexForce.VortexForce","将绕涡旋轴旋转的速度注入 Transient.PhysicsForce，并可选择额外施加指向涡旋中心的吸引力。
+路径：/Niagara/Modules/Update/Forces/VortexForce.VortexForce"
+"Input a grid with a 1-bit black and white mask to generate a 2d distance field. The distance field will be outputted as an output variable.
+路径：/NiagaraFluids/Modules/Grid2D/Grid2D_GenerateDistanceField.Grid2D_GenerateDistanceField","输入包含 1 位黑白遮罩的网格，生成二维距离场。距离场会写入输出变量。
+路径：/NiagaraFluids/Modules/Grid2D/Grid2D_GenerateDistanceField.Grid2D_GenerateDistanceField"
+"Integrate forces into the supplied velocity grid.
+路径：/NiagaraFluids/Modules/Grid3D/Grid3D_IntegrateForces.Grid3D_IntegrateForces
+* 脚本未公开给库。","将力积分到指定的速度网格中。
+路径：/NiagaraFluids/Modules/Grid3D/Grid3D_IntegrateForces.Grid3D_IntegrateForces
+* 脚本未公开给库。"
+"Interpolate between the source and the target state for the attached roots during sub stepping. 
+路径：/HairStrands/Emitters/InterpolateGroomRoots.InterpolateGroomRoots","在子步计算期间，对已附着的毛发根部在源状态与目标状态之间进行插值。
+路径：/HairStrands/Emitters/InterpolateGroomRoots.InterpolateGroomRoots"
+"Introduce Random Noise into Transient.PhysicsForce
+路径：/Niagara/Modules/Update/Forces/VectorNoiseForce.VectorNoiseForce","向 Transient.PhysicsForce 中引入随机噪声。
+路径：/Niagara/Modules/Update/Forces/VectorNoiseForce.VectorNoiseForce"
+"Iteratively sample neighboring grid 2d cells to produce a blur. The output is written to an output variable. If used within a simulation stage that iterates over a grid, the output value can be written to a grid attribute by writting to a stack context variable. 
+路径：/NiagaraFluids/Modules/Grid2D/Grid2D_Blur.Grid2D_Blur","迭代采样相邻的二维网格单元，以产生模糊效果，并将结果写入输出变量。若在遍历网格的模拟阶段中使用，可通过写入堆栈上下文变量，将输出值写入网格属性。
+路径：/NiagaraFluids/Modules/Grid2D/Grid2D_Blur.Grid2D_Blur"
+"Iteratively sample neighboring grid 2d cells to produce a blur. The output is written to an output variable. If used within a simulation stage that iterates over a grid, the output value can be written to a grid attribute by writting to a stack context variable. 
+路径：/NiagaraFluids/Modules/Grid2D/Grid2D_Blur_Vector2D.Grid2D_Blur_Vector2D","迭代采样相邻的二维网格单元，以产生模糊效果，并将结果写入输出变量。若在遍历网格的模拟阶段中使用，可通过写入堆栈上下文变量，将输出值写入网格属性。
+路径：/NiagaraFluids/Modules/Grid2D/Grid2D_Blur_Vector2D.Grid2D_Blur_Vector2D"
+"Iteratively sample neighboring grid 2d cells to produce a blur. The output is written to an output variable. If used within a simulation stage that iterates over a grid, the output value can be written to a grid attribute by writting to a stack context variable. 
+路径：/NiagaraFluids/Modules/Grid2D/Grid2D_Blur_Vector3.Grid2D_Blur_Vector3","迭代采样相邻的二维网格单元，以产生模糊效果，并将结果写入输出变量。若在遍历网格的模拟阶段中使用，可通过写入堆栈上下文变量，将输出值写入网格属性。
+路径：/NiagaraFluids/Modules/Grid2D/Grid2D_Blur_Vector3.Grid2D_Blur_Vector3"
+"Iteratively sample the global distance field to find the first isosurface along a ray.
+路径：/Niagara/Modules/Math/RayTraceDistanceField_GPU.RayTraceDistanceField_GPU
+* 脚本未公开给库。","迭代采样全局距离场，查找沿射线方向遇到的第一个等值面。
+路径：/Niagara/Modules/Math/RayTraceDistanceField_GPU.RayTraceDistanceField_GPU
+* 脚本未公开给库。"
+"Jitters a particle in a random direction, on a delay timer.
+路径：/Niagara/Modules/Update/Position/JitterPosition.JitterPosition","根据延迟计时器，沿随机方向对粒子施加抖动。
+路径：/Niagara/Modules/Update/Position/JitterPosition.JitterPosition"
+"Kill Particles if the boolean input into the module is true. Allows for particles to be dynamically killed based on a boolean conditional at any point in the execution stack.
+
+Should be used with Interpolated Spawn turned on when used in an update script, otherwise any newly spawned particles will appear for one frame, then die.
+路径：/Niagara/Modules/Update/Lifetime/KillParticles.KillParticles","当模块的布尔输入为真时销毁粒子。可在执行堆栈中的任意位置，根据布尔条件动态销毁粒子。
+
+在更新脚本中使用时，应开启“插值生成”，否则新生成的粒子会先显示一帧，然后才被销毁。
+路径：/Niagara/Modules/Update/Lifetime/KillParticles.KillParticles"
+"Kill Particles if they are inside of a  series of analytical shapes. Can compare against a box, plane, slab (two planes facing inward), or sphere. The result can also be inverted. 
+
+Should be used with Interpolated Spawn turned on when used in an update script, otherwise any newly spawned particles will appear for one frame, then die.
+路径：/Niagara/Modules/Update/Lifetime/KillParticlesInVolume.KillParticlesInVolume","当粒子位于指定的解析形状内时将其销毁。可检测方盒、平面、夹层（两个朝内的平面）或球体，也可将检测结果反转。
+
+在更新脚本中使用时，应开启“插值生成”，否则新生成的粒子会先显示一帧，然后才被销毁。
+路径：/Niagara/Modules/Update/Lifetime/KillParticlesInVolume.KillParticlesInVolume"
+"Lerps to a target value over time using a user defined rate.
+路径：/Niagara/Modules/Update/Utility/InterpolateOverTime.InterpolateOverTime","随时间按用户指定的速率向目标值进行线性插值。
+路径：/Niagara/Modules/Update/Utility/InterpolateOverTime.InterpolateOverTime"
+"Manages Particle Age/Lifetime.
+
+Takes the current Particles.Age attribute and updates it by adding Engine.DeltaTime. 
+
+If ""Enable Particle Lifetime Looping"" is set and ""Kill Particles When Lifetime Has Elapsed"" is unset then Particles.Age will wrap around to 0 after exceeding Particles.Lifetime.  
+
+Else if ""Kill Particles When Lifetime Has Elapsed"" is disabled the particle lives indefinitely.
+
+Otherwise the particle is killed when Particles.Age exceeds Particles.Lifetime.
+
+A normalized version of Particles.Age is stored in Particles.NormalizedAge, where a value 0.0 is the birth of the particle and 1.0 is a full lifetime. This is convenient in animated ranges.
+路径：/Niagara/Modules/Update/Lifetime/ParticleState.ParticleState","管理粒子年龄／生命周期。
+
+在当前 Particles.Age 属性上加上 Engine.DeltaTime，以更新粒子年龄。
+
+如果已启用“启用粒子生命周期循环”，且未启用“生命周期结束时销毁粒子”，则 Particles.Age 超过 Particles.Lifetime 后会回到 0。
+
+否则，若未启用“生命周期结束时销毁粒子”，粒子将无限期存活。
+
+其余情况下，当 Particles.Age 超过 Particles.Lifetime 时，粒子将被销毁。
+
+Particles.Age 的归一化值存储在 Particles.NormalizedAge 中：0.0 表示粒子刚出生，1.0 表示完整生命周期结束。此值便于驱动动画范围。
+路径：/Niagara/Modules/Update/Lifetime/ParticleState.ParticleState"
+"Module for setting and getting the local bounds.
+路径：/Niagara/Modules/Emitter/EmitterBounds.EmitterBounds","用于设置和获取局部边界的模块。
+路径：/Niagara/Modules/Emitter/EmitterBounds.EmitterBounds"
+"Moves particles that are outside the camera view a position that is inside the camera view.
+路径：/Niagara/Modules/Update/Camera/ViewRecycler.ViewRecycler","将摄像机视野外的粒子移到视野内的位置。
+路径：/Niagara/Modules/Update/Camera/ViewRecycler.ViewRecycler"
+"Non-physically-correct pendulum constraint which interacts nicely with forces. Add Gravity/Acceleration force for gravity/wind, or drag force for viscous friction drag. 
+路径：/Niagara/Modules/Constraints/PendulumConstraint.PendulumConstraint","一种不严格遵循物理规律、但能与力良好配合的摆锤约束。可添加重力或加速力来模拟重力与风，也可添加阻力来模拟黏性摩擦阻力。
+路径：/Niagara/Modules/Constraints/PendulumConstraint.PendulumConstraint"
+"Non-physically-correct pendulum constraint which interacts nicely with forces. Add Gravity/Acceleration force for gravity/wind, or drag force for viscous friction drag. 
+路径：/Niagara/Modules/Constraints/PendulumSetup.PendulumSetup","一种不严格遵循物理规律、但能与力良好配合的摆锤约束。可添加重力或加速力来模拟重力与风，也可添加阻力来模拟黏性摩擦阻力。
+路径：/Niagara/Modules/Constraints/PendulumSetup.PendulumSetup"
+"Offset a position in its appropriate coordinate space. 
+路径：/Niagara/Modules/Update/Position/OffsetPosition.OffsetPosition","在相应的坐标空间内对位置施加偏移。
+路径：/Niagara/Modules/Update/Position/OffsetPosition.OffsetPosition"
+"Offset the particle along the vector between the particle and the camera.
+路径：/Niagara/Modules/Update/Camera/CameraOffset.CameraOffset","沿粒子与摄像机之间的向量偏移粒子。
+路径：/Niagara/Modules/Update/Camera/CameraOffset.CameraOffset"
+"Opt into setting any of a particle system's intrinsic particle values.
+路径：/Niagara/Modules/Update/Utility/LerpParticleAttributes.LerpParticleAttributes","可选择设置粒子系统中的任意内置粒子属性值。
+路径：/Niagara/Modules/Update/Utility/LerpParticleAttributes.LerpParticleAttributes"
+"Performs a spherical lerp operation from point A to B via ""Alpha"" and then scales the resulting vector.
+路径：/Niagara/Modules/Math/SlerpVector.SlerpVector
+* 脚本未公开给库。","根据 Alpha 从点 A 到点 B 进行球面线性插值，然后缩放得到的向量。
+路径：/Niagara/Modules/Math/SlerpVector.SlerpVector
+* 脚本未公开给库。"
+"Place a particle on a Bone/Socket/Triangle/Vertex of a skeletal Mesh. Also samples many attributes (As Outputs, or optionally written to Particle Attributes) of the underlying skeletal mesh depending on which sampling mode is used.
+
+Skeleton:
+SampledPosition
+SampledRotation
+SampledVelocity
+
+Triangles:
+SampledPosition
+SampledRotation
+SampledVelocity
+SampledNormal
+SampledUV
+SampledVertexColor
+
+Vertices:
+SampledPosition
+SampledRotation
+SampledVelocity
+SampledNormal
+SampledUV
+SampledVertexColor
+
+
+路径：/Niagara/Modules/Spawn/Location/V2/SkeletalMeshLocation.SkeletalMeshLocation","将粒子放置到骨骼网格体的骨骼、插槽、三角形或顶点上。根据所选采样模式，还会采样该骨骼网格体的多种属性，作为输出提供，也可选择写入粒子属性。
+
+骨架：
+SampledPosition
+SampledRotation
+SampledVelocity
+
+三角形：
+SampledPosition
+SampledRotation
+SampledVelocity
+SampledNormal
+SampledUV
+SampledVertexColor
+
+顶点：
+SampledPosition
+SampledRotation
+SampledVelocity
+SampledNormal
+SampledUV
+SampledVertexColor
+路径：/Niagara/Modules/Spawn/Location/V2/SkeletalMeshLocation.SkeletalMeshLocation"
+"Place particles on the nearest distance field surface. Please note that this module only works in GPU emitters in projects that have enabled the global distance field.
+路径：/Niagara/Modules/Math/MoveToNearestDistanceFieldSurface_GPU.MoveToNearestDistanceFieldSurface_GPU","将粒子放置到最近的距离场表面。注意：此模块仅适用于启用了全局距离场的项目中的 GPU 发射器。
+路径：/Niagara/Modules/Math/MoveToNearestDistanceFieldSurface_GPU.MoveToNearestDistanceFieldSurface_GPU"
+"Places particles along a bezier spline. Useful for sprite spacing along a beam style path, or to be used with the ribbon renderer for a classic style beam. Update beam recalculates the spline positions each frame, to allow for beams with dynamically changing start and endpoints.
+路径：/Niagara/Modules/Beams/UpdateBeam.UpdateBeam","沿贝塞尔样条放置粒子。可用于沿光束形状的路径排列精灵，也可配合条带渲染器制作传统光束。“更新光束”会在每帧重新计算样条位置，从而支持起点和终点动态变化的光束。
+路径：/Niagara/Modules/Beams/UpdateBeam.UpdateBeam"
+"Project the position to match the distance/angular/collision constraints
+路径：/HairStrands/Emitters/ProjectGroomState.ProjectGroomState","对位置进行投影修正，以满足距离、角度和碰撞约束。
+路径：/HairStrands/Emitters/ProjectGroomState.ProjectGroomState"
+"Project the velocity field to be divergence free.
+路径：/HairStrands/Emitters/ProjectGridVelociy.ProjectGridVelociy","对速度场进行投影，使其散度为零。
+路径：/HairStrands/Emitters/ProjectGridVelociy.ProjectGridVelociy"
+"Provides settings to Apply or Output Attributes in order to control the Decal Renderer.
+路径：/Niagara/Modules/Decal/Decal_Attributes.Decal_Attributes","提供用于应用或输出属性的设置，以控制贴花渲染器。
+路径：/Niagara/Modules/Decal/Decal_Attributes.Decal_Attributes"
+"Provides settings to Apply or Output Attributes in order to control the Light Renderer.
+路径：/Niagara/Modules/Light/Light_Attributes.Light_Attributes","提供用于应用或输出属性的设置，以控制灯光渲染器。
+路径：/Niagara/Modules/Light/Light_Attributes.Light_Attributes"
+"Reads geometry element data from a geometry collection
+路径：/ChaosNiagara/Modules/ReadGeometryCollection.ReadGeometryCollection","从几何体集合中读取几何元素数据。
+路径：/ChaosNiagara/Modules/ReadGeometryCollection.ReadGeometryCollection"
+"Recreates the camera relative world position of a scene capture 2D's pixel. The projector transform fields allow one to reposition and rotate the projected positions.
+路径：/Niagara/Modules/Update/Position/RecreateCameraProjection.RecreateCameraProjection","重建二维场景捕获像素相对于摄像机的世界位置。可通过投影器变换参数重新定位或旋转投影位置。
+路径：/Niagara/Modules/Update/Position/RecreateCameraProjection.RecreateCameraProjection"
+"Reduce a value over time if the target value is less than the current blended value. A lower end cap is placed on how low the lerped value can go.
+
+This is useful for EQ visualizers.
+路径：/Niagara/Modules/Math/FadeOverTime.FadeOverTime","当目标值小于当前混合值时，使该值随时间减小，并为插值结果设置下限。
+
+适用于均衡器可视化。
+路径：/Niagara/Modules/Math/FadeOverTime.FadeOverTime"
+"Report the node position onto the points and compute the bounding box 
+路径：/HairStrands/Emitters/ReportGroomPosition.ReportGroomPosition","将节点位置传递给各个点，并计算包围盒。
+路径：/HairStrands/Emitters/ReportGroomPosition.ReportGroomPosition"
+"Returns a particles kinetic energy based off of the particles velocity, it's potential energy which is a sum of the force modules that write to Physics.PotentialEnergy and a total which is the sum of those two values.
+路径：/Niagara/Modules/Update/Forces/FindKineticAndPotentialEnergy.FindKineticAndPotentialEnergy","根据粒子速度返回粒子的动能；将各个力模块写入 Physics.PotentialEnergy 的值相加，得到势能；同时返回动能与势能之和。
+路径：/Niagara/Modules/Update/Forces/FindKineticAndPotentialEnergy.FindKineticAndPotentialEnergy"
+"Rotate a sprite over time. Input is in Degrees, use the NormalizedAngleToDegrees dynamic input to remap the input range to 0-1 if desired.
+路径：/Niagara/Modules/Update/Orientation/SpriteRotationRate.SpriteRotationRate","随时间旋转精灵。输入单位为度；如需将 0–1 范围的值转换为角度，可使用 NormalizedAngleToDegrees 动态输入。
+路径：/Niagara/Modules/Update/Orientation/SpriteRotationRate.SpriteRotationRate"
+"Rotate the Mesh Orientation parameter over time.
+
+NOTE: The Orientation modules use a ""direct set"" orientation paradigm whereby the input values directly set the orientation of the mesh.
+ 
+This differs from the Rotational Force/Velocity modules which establish a more physically based approach to rotations which account for Mass/Rotational Inertia/Rotational Drag. The rotational force paradigm requires an additional solver which makes them much more costly, but more responsive to real world stimulus.
+路径：/Niagara/Modules/Update/Decal/UpdateDecalOrientation.UpdateDecalOrientation","随时间旋转网格朝向参数。
+
+注意：朝向模块采用“直接设置”的方式，由输入值直接设置网格体的朝向。
+
+这与旋转力／速度模块不同：后者采用更接近物理规律的旋转方式，会考虑质量、旋转惯量和旋转阻力。基于旋转力的方式需要额外的求解器，因此计算开销更高，但对现实物理作用的响应也更自然。
+路径：/Niagara/Modules/Update/Decal/UpdateDecalOrientation.UpdateDecalOrientation"
+"Rotate the Mesh Orientation parameter over time.
+
+NOTE: The Orientation modules use a ""direct set"" orientation paradigm whereby the input values directly set the orientation of the mesh.
+ 
+This differs from the Rotational Force/Velocity modules which establish a more physically based approach to rotations which account for Mass/Rotational Inertia/Rotational Drag. The rotational force paradigm requires an additional solver which makes them much more costly, but more responsive to real world stimulus.
+路径：/Niagara/Modules/Update/Orientation/V3/UpdateMeshOrientation.UpdateMeshOrientation","随时间旋转网格朝向参数。
+
+注意：朝向模块采用“直接设置”的方式，由输入值直接设置网格体的朝向。
+
+这与旋转力／速度模块不同：后者采用更接近物理规律的旋转方式，会考虑质量、旋转惯量和旋转阻力。基于旋转力的方式需要额外的求解器，因此计算开销更高，但对现实物理作用的响应也更自然。
+路径：/Niagara/Modules/Update/Orientation/V3/UpdateMeshOrientation.UpdateMeshOrientation"
+"Sample a grid value from a particle position.
+路径：/NiagaraFluids/Modules/Grid3D/Grid3D_GetFluidAttributeAtPosition.Grid3D_GetFluidAttributeAtPosition","根据粒子位置采样网格值。
+路径：/NiagaraFluids/Modules/Grid3D/Grid3D_GetFluidAttributeAtPosition.Grid3D_GetFluidAttributeAtPosition"
+"Sample a landscape for height, base color, normal and physics material index
+路径：/Niagara/Modules/Landscape/SampleLandscape.SampleLandscape","采样地形的高度、基础颜色、法线和物理材质索引。
+路径：/Niagara/Modules/Landscape/SampleLandscape.SampleLandscape"
+"Sample a pseudo volume texture's color based on UVW coordinates. 
+路径：/Niagara/Modules/Update/Textures/SamplePseudoVolumeTexture.SamplePseudoVolumeTexture","根据 UVW 坐标采样伪体积纹理的颜色。
+路径：/Niagara/Modules/Update/Textures/SamplePseudoVolumeTexture.SamplePseudoVolumeTexture"
+"Sample a skeletal mesh in any stack context, including system or emitter scripts.
+
+Skeleton:
+SampledPosition
+SampledRotation
+SampledVelocity
+
+Triangles:
+SampledPosition
+SampledRotation
+SampledVelocity
+SampledNormal
+SampledUV
+SampledVertexColor
+
+Vertices:
+SampledPosition
+SampledRotation
+SampledVelocity
+SampledNormal
+SampledUV
+SampledVertexColor
+
+
+路径：/Niagara/Modules/Update/MeshInterface/SampleSkeletalMesh.SampleSkeletalMesh","在任意堆栈上下文中采样骨骼网格体，包括系统脚本和发射器脚本。
+
+骨架：
+SampledPosition
+SampledRotation
+SampledVelocity
+
+三角形：
+SampledPosition
+SampledRotation
+SampledVelocity
+SampledNormal
+SampledUV
+SampledVertexColor
+
+顶点：
+SampledPosition
+SampledRotation
+SampledVelocity
+SampledNormal
+SampledUV
+SampledVertexColor
+路径：/Niagara/Modules/Update/MeshInterface/SampleSkeletalMesh.SampleSkeletalMesh"
+"Sample the attributes of particles in another emitter. 
+
+Cost increases linearly as additional attributes are sampled, regardless of whether they are applied or only written as outputs, so only sample the ones you need.
+
+NOTE: Unexpected results can occur if both emitters are not in the same coordinate space (local vs. world)
+
+This emitter should go after Solve Forces and Velocity if it's used to override position and velocity.
+路径：/Niagara/Modules/AttributeReader/UpdateParticlesFromOtherEmitter.UpdateParticlesFromOtherEmitter","采样另一个发射器中粒子的属性。
+
+每增加一个采样属性，开销都会线性增加，无论该属性是实际应用还是仅作为输出写出，因此请只采样所需的属性。
+
+注意：如果两个发射器不在相同的坐标空间中，例如一个使用局部空间、另一个使用世界空间，可能出现意外结果。
+
+若用于覆盖位置和速度，应将此模块放在“求解力与速度”之后。
+路径：/Niagara/Modules/AttributeReader/UpdateParticlesFromOtherEmitter.UpdateParticlesFromOtherEmitter"
+"Sample the GBuffer directly from Niagara.
+路径：/Niagara/Modules/Update/Utility/SampleGBuffer.SampleGBuffer","直接从 Niagara 中采样 GBuffer。
+路径：/Niagara/Modules/Update/Utility/SampleGBuffer.SampleGBuffer"
+"Samples a procedural curl noise field based on analytic Simplex noise.
+路径：/Niagara/Noise/SampleCurlNoiseField.SampleCurlNoiseField
+* 脚本未公开给库。","采样基于解析单纯形噪声的程序化卷曲噪声场。
+路径：/Niagara/Noise/SampleCurlNoiseField.SampleCurlNoiseField
+* 脚本未公开给库。"
+"Samples a texture at a specific uv location and returns the color. 
+
+Supports generating the sampling UV using an importance texture, and allows for rejection criteria which rejects samples if that criteria is met, such as ""Alpha is Zero"".
+
+Currently only supported on GPU simuations.
+路径：/Niagara/Modules/Update/Textures/SampleTexture.SampleTexture","在指定 UV 位置采样纹理并返回颜色。
+
+支持利用重要性纹理生成采样 UV，也可设置样本剔除条件，例如“Alpha 为零”；满足条件的样本会被丢弃。
+
+目前仅支持 GPU 模拟。
+路径：/Niagara/Modules/Update/Textures/SampleTexture.SampleTexture"
+"Samples a texture's color based on particle position much like world aligned texture does within the material editor. 
+路径：/Niagara/Modules/Update/Textures/WorldAlignedTextureSample.WorldAlignedTextureSample","根据粒子位置采样纹理颜色，方式类似于材质编辑器中的世界对齐纹理。
+路径：/Niagara/Modules/Update/Textures/WorldAlignedTextureSample.WorldAlignedTextureSample"
+"Samples a vector field, applying a (per-particle) intensity factor and an optional falloff factor that fades the influence of the vector field towards the edges of the bounding box.
+
+Optionally applies a local translate, rotate and scale transformation.
+
+Samples using a Clamp sampling mode if no tiling, and a Repeat sampling mode if tiling is used (per axis). 
+路径：/Niagara/VectorFields/SampleVectorField.SampleVectorField","采样向量场，并应用逐粒子的强度系数。还可选择使用衰减系数，使向量场的影响在接近包围盒边缘时逐渐减弱。
+
+可选择应用局部平移、旋转和缩放变换。
+
+各轴未启用平铺时使用钳制采样，启用平铺时使用重复采样。
+路径：/Niagara/VectorFields/SampleVectorField.SampleVectorField"
+"Samples the global distance field and outputs the gradient, the distance to nearest surface, and an is valid values to Output parameters.
+路径：/Niagara/Modules/Math/ReadDistanceField_GPU.ReadDistanceField_GPU
+* 脚本未公开给库。","采样全局距离场，并将梯度、到最近表面的距离以及有效性标志写入输出参数。
+路径：/Niagara/Modules/Math/ReadDistanceField_GPU.ReadDistanceField_GPU
+* 脚本未公开给库。"
+"Scale particle color by the magnitude of the velocity vector with min and max speed thresholds
+路径：/Niagara/Modules/Update/Color/ScaleColorBySpeed.ScaleColorBySpeed","根据速度向量的模长缩放粒子颜色，并使用最小和最大速度阈值。
+路径：/Niagara/Modules/Update/Color/ScaleColorBySpeed.ScaleColorBySpeed"
+"Scale the Initial velocity as set in the particle spawn script
+路径：/Niagara/Modules/Update/Velocity/ScaleVelocity.ScaleVelocity","缩放粒子生成脚本中设置的初始速度。
+路径：/Niagara/Modules/Update/Velocity/ScaleVelocity.ScaleVelocity"
+"Scales Mesh Scale by the magnitude of the velocity vector.
+路径：/Niagara/Modules/Update/Size/ScaleMeshSizeBySpeed.ScaleMeshSizeBySpeed","根据速度向量的模长缩放网格体尺寸。
+路径：/Niagara/Modules/Update/Size/ScaleMeshSizeBySpeed.ScaleMeshSizeBySpeed"
+"Scales Sprite Size by the magnitude of the velocity vector.
+路径：/Niagara/Modules/Update/Size/ScaleSpriteSizeBySpeed.ScaleSpriteSizeBySpeed","根据速度向量的模长缩放精灵尺寸。
+路径：/Niagara/Modules/Update/Size/ScaleSpriteSizeBySpeed.ScaleSpriteSizeBySpeed"
+"Scales the initial beam size by a scale factor
+路径：/Niagara/Modules/Beams/ScaleBeamWidth.ScaleBeamWidth","按缩放系数缩放光束的初始尺寸。
+路径：/Niagara/Modules/Beams/ScaleBeamWidth.ScaleBeamWidth"
+"Scales the initial Ribbon Width by a scale factor
+路径：/Niagara/Modules/Ribbons/ScaleRibbonWidth.ScaleRibbonWidth","按缩放系数缩放条带的初始宽度。
+路径：/Niagara/Modules/Ribbons/ScaleRibbonWidth.ScaleRibbonWidth"
+"Scales Transient.PhysicsForce down to the magnitude specified if it exceeds the ""Force Limit""
+路径：/Niagara/Modules/Update/Forces/LimitForce.LimitForce","当 Transient.PhysicsForce 的大小超过“力上限”时，将其缩小到指定大小。
+路径：/Niagara/Modules/Update/Forces/LimitForce.LimitForce"
+"Set individual particle color channels via bool parameters and scalar values.
+路径：/Niagara/Modules/Update/Material/ParticleColorParams.ParticleColorParams
+* 脚本未公开给库。","通过布尔参数和标量值设置粒子的各个颜色通道。
+路径：/Niagara/Modules/Update/Material/ParticleColorParams.ParticleColorParams
+* 脚本未公开给库。"
+"Set the emitter bounds procedurally based on the grid size.
+路径：/NiagaraFluids/Modules/Grid3D/Grid3D_SetBounds.Grid3D_SetBounds
+* 脚本未公开给库。","根据网格尺寸，以程序化方式设置发射器边界。
+路径：/NiagaraFluids/Modules/Grid3D/Grid3D_SetBounds.Grid3D_SetBounds
+* 脚本未公开给库。"
+"Set the target position and orientation and rest the simfor future interpolation
+路径：/HairStrands/Emitters/AttachGroomRoots.AttachGroomRoots","设置目标位置与朝向，并重置模拟，以供后续插值使用。
+路径：/HairStrands/Emitters/AttachGroomRoots.AttachGroomRoots"
+"Shoots a ray from the camera to the incoming particle position. The first opaque z depth buffer surface that's hit is returned. 
+
+Note: this module should only be used on transluecent GPU particles unless using the Partial Depth option.
+路径：/Niagara/Modules/Math/PlaceParticlesOnDepthBuffer_GPU.PlaceParticlesOnDepthBuffer_GPU","从摄像机向输入的粒子位置发射射线，返回命中的第一个不透明 Z 深度缓冲表面。
+
+注意：除非使用“部分深度”选项，否则此模块只能用于半透明 GPU 粒子。
+路径：/Niagara/Modules/Math/PlaceParticlesOnDepthBuffer_GPU.PlaceParticlesOnDepthBuffer_GPU"
+"Smoothly transitions from 1.0 if the sample position lies within a spherical cone to 0.0 if it falls outside of it. 
+路径：/Niagara/Modules/Masks/V2/ConeMask.ConeMask","采样位置位于球形锥体内时取值为 1.0，在锥体外时取值为 0.0，并在两者之间平滑过渡。
+路径：/Niagara/Modules/Masks/V2/ConeMask.ConeMask"
+"Spawn particles from the location of a socket.
+路径：/Niagara/Modules/Spawn/Location/SocketLocation.SocketLocation","从插槽位置生成粒子。
+路径：/Niagara/Modules/Spawn/Location/SocketLocation.SocketLocation"
+"Spawn particles from the surface of a static mesh.
+路径：/Niagara/Modules/Spawn/Location/StaticMeshLocation.StaticMeshLocation","从静态网格体表面生成粒子。
+路径：/Niagara/Modules/Spawn/Location/StaticMeshLocation.StaticMeshLocation"
+"Spawn particles from the system location.
+路径：/Niagara/Modules/Spawn/Location/SystemLocation.SystemLocation","从系统位置生成粒子。
+路径：/Niagara/Modules/Spawn/Location/SystemLocation.SystemLocation"
+"Spawn particles using number of different shape primitives
+路径：/Niagara/Modules/Spawn/Location/V2/ShapeLocation.ShapeLocation","使用多种基本形状生成粒子。
+路径：/Niagara/Modules/Spawn/Location/V2/ShapeLocation.ShapeLocation"
+"Spawns a burst of particles when a trigger bool is set to true.
+路径：/Niagara/Modules/Emitter/SpawnByTrigger.SpawnByTrigger","当触发布尔值设为 true 时，瞬间生成一批粒子。
+路径：/Niagara/Modules/Emitter/SpawnByTrigger.SpawnByTrigger"
+"Spawns an audio effect at a location and plays it over multiple frames. This module is intended to be used with looping audio assets, but it does NOT on its own make the played audio looping. The sounds stops when the ""Play Audio"" condition is false or when the emitter is reset.
+路径：/Niagara/Modules/Audio/PlayLoopingAudio.PlayLoopingAudio","在指定位置生成音频效果，并跨多帧持续播放。此模块用于配合循环音频资产，但它本身不会让音频循环播放。当“播放音频”条件为假或发射器被重置时，声音停止。
+路径：/Niagara/Modules/Audio/PlayLoopingAudio.PlayLoopingAudio"
+"Spawns an audio effect at a location and returns a handle to control the effect over multiple frames. The sounds stops when the ""Play Audio"" condition is false or when the emitter is reset.
+This module can only be used once per emitter, if two persistent sounds should be played at the same time, a custom scratch pad module must be used.
+路径：/Niagara/Modules/Audio/PlayPersistentAudio.PlayPersistentAudio","在指定位置生成音频效果，并返回用于跨多帧控制该效果的句柄。当“播放音频”条件为假或发射器被重置时，声音停止。
+
+每个发射器只能使用一次此模块。如果需要同时播放两个持续声音，必须使用自定义暂存区模块。
+路径：/Niagara/Modules/Audio/PlayPersistentAudio.PlayPersistentAudio"
+"Takes a velocity vector and maintains its magnitude, while picking a random axis to align it to, with an optional time interval between updates (in seconds)
+路径：/Niagara/Modules/Update/Velocity/AlignVelocityToRandomAxis.AlignVelocityToRandomAxis
+* 脚本未公开给库。","保持输入速度向量的模长不变，并将其对齐到随机选取的轴。可选择设置更新间隔，单位为秒。
+路径：/Niagara/Modules/Update/Velocity/AlignVelocityToRandomAxis.AlignVelocityToRandomAxis
+* 脚本未公开给库。"
+"Takes the initial mesh scale as set in the spawn script, and scales it by a scale factor.
+路径：/Niagara/Modules/Update/Size/ScaleMeshSize.ScaleMeshSize","获取生成脚本中设置的初始网格缩放，并按缩放系数进行缩放。
+路径：/Niagara/Modules/Update/Size/ScaleMeshSize.ScaleMeshSize"
+"Takes the initial particle scale as set in the spawn script, and scales it by a scale factor.
+路径：/Niagara/Modules/Update/Size/ScaleSpriteSize.ScaleSpriteSize","获取生成脚本中设置的初始粒子缩放，并按缩放系数进行缩放。
+路径：/Niagara/Modules/Update/Size/ScaleSpriteSize.ScaleSpriteSize"
+"Takes the values accumulated into Transient.PhysicsForce, multiplies by Engine.DeltaTime and adds to the current Velocity. Outputs the updated Particles.Velocity and Particles.Position.
+
+If the forces have been converted to Velocity (Write to Intrinsic Properties is checked in the advanced tab which means the force was applied to velocity), then zero out Transient.PhysicsForce and Transient.PhysicsDrag.
+路径：/Niagara/Modules/Solvers/SolveForcesAndVelocity.SolveForcesAndVelocity","获取累加到 Transient.PhysicsForce 中的值，将其乘以 Engine.DeltaTime 后加到当前速度上，并输出更新后的 Particles.Velocity 和 Particles.Position。
+
+如果力已转换为速度，即已勾选高级选项中的“写入内置属性”，表示力已应用到速度，则将 Transient.PhysicsForce 和 Transient.PhysicsDrag 清零。
+路径：/Niagara/Modules/Solvers/SolveForcesAndVelocity.SolveForcesAndVelocity"
+"Takes the vector sampled by a vector field sampler and applies it as a force or velocity.
+路径：/Niagara/VectorFields/ApplyVectorField.ApplyVectorField","获取向量场采样器采样得到的向量，并将其作为力或速度施加。
+路径：/Niagara/VectorFields/ApplyVectorField.ApplyVectorField"
+"The ""Prepare Traverse Skeletal Mesh"" module will calculate the travel/search vector prepare each particle for the mesh traversal process. It should be placed at the end of Particle Update. 
+路径：/Niagara/Modules/Mesh/PrepareTraverseSkeletalMesh.PrepareTraverseSkeletalMesh","“准备遍历骨骼网格体”模块计算移动或搜索向量，为每个粒子的网格体遍历过程做好准备。应将其放在粒子更新堆栈的末尾。
+路径：/Niagara/Modules/Mesh/PrepareTraverseSkeletalMesh.PrepareTraverseSkeletalMesh"
+"The module keeps track of wheither it's trigger condition has ever been true in previous frames. If not, the Execute attribute from this module returns true. If it has returned true in a previous frame it will return false.
+
+One can populate the Trigger Condition with any type of equation that can be evaluted as true or false. For instance, the user can return true if a value comparision finds ""X"" to be greater than ""Y.""
+路径：/Niagara/Modules/Update/Utility/DoOnce.DoOnce","此模块记录触发条件在之前的帧中是否曾经为真。如果从未为真，模块的 Execute 属性返回真；如果之前某一帧已经为真，则返回假。
+
+“触发条件”可以使用任何能够求值为真或假的表达式。例如，可在比较发现 X 大于 Y 时返回真。
+路径：/Niagara/Modules/Update/Utility/DoOnce.DoOnce"
+"The module will output a float (Particles.Module.OnOffPercentage) to indicate if the particle is in state 1(on) or 2(off).
+路径：/Niagara/Modules/Update/StateChange/TimeBasedStateMachine.TimeBasedStateMachine","此模块输出一个浮点数 Particles.Module.OnOffPercentage，用于表示粒子处于状态 1（开启）还是状态 2（关闭）。
+路径：/Niagara/Modules/Update/StateChange/TimeBasedStateMachine.TimeBasedStateMachine"
+"This experimental node aligns sprites to the surface of an analytical plane.
+路径：/Niagara/Functions/Math/ConstrainToPlane.ConstrainToPlane
+* 脚本未公开给库。","此实验性节点将精灵对齐到解析平面的表面。
+路径：/Niagara/Functions/Math/ConstrainToPlane.ConstrainToPlane
+* 脚本未公开给库。"
+"This is a utility module. It returns a noise vector as a module output for use further down the stack. 
+
+Samples a medium resolution baked tiling curl noise by default, can optionally sample a vector field asset or a simplex derived curl function directly at increased cost.
+路径：/Niagara/Modules/Update/Utility/VectorNoiseValue.VectorNoiseValue","这是一个实用工具模块，将噪声向量作为模块输出，供堆栈中后续模块使用。
+
+默认采样已烘焙、可平铺的中等分辨率卷曲噪声；也可采样向量场资产，或直接采样由单纯形噪声推导的卷曲函数，但计算开销更高。
+路径：/Niagara/Modules/Update/Utility/VectorNoiseValue.VectorNoiseValue"
+"This module aligns a sprite to a plane over time. By default, the plane is defined by the collision module's returned collision plane.
+
+Note: 
+""Alignment"" in sprite renderers has to be set to to ""Custom Alignment"", and ""Facing Mode"" has to be set to ""Custom Facing Vector""  for this feature to work properly.
+路径：/Niagara/Modules/Collision/AlignParticlesWithCollisionPlane.AlignParticlesWithCollisionPlane","此模块使精灵随时间逐渐对齐到一个平面。默认使用碰撞模块返回的碰撞平面。
+
+注意：
+必须将精灵渲染器的“对齐”设置为“自定义对齐”，并将“朝向模式”设置为“自定义朝向向量”，此功能才能正常工作。
+路径：/Niagara/Modules/Collision/AlignParticlesWithCollisionPlane.AlignParticlesWithCollisionPlane"
+"This module creates new particle position, size and alignment attributes that can be used to stretch a sprite from point A to B. 
+
+To use the output, create a new sprite renderer then assign this module's outputs to the renderer's particle size, alignment and position variables. Then set the alignment enum to custom alignment.
+路径：/Niagara/Modules/Debug/SpriteBasedLine.SpriteBasedLine","此模块生成新的粒子位置、尺寸和对齐属性，可用于将精灵从点 A 拉伸到点 B。
+
+使用时，先新建一个精灵渲染器，将此模块的输出分别绑定到渲染器的粒子尺寸、对齐和位置变量，再将对齐方式设置为“自定义对齐”。
+路径：/Niagara/Modules/Debug/SpriteBasedLine.SpriteBasedLine"
+"This module samples a single texture pixel in a sub uv fashion.
+路径：/Niagara/Modules/Update/Textures/SubUV_TextureSample.SubUV_TextureSample","此模块以子 UV 的方式采样单个纹理像素。
+路径：/Niagara/Modules/Update/Textures/SubUV_TextureSample.SubUV_TextureSample"
+"This module sets Particles.SpriteFacing and Particles.SpriteAlignment white automatically orients sprite particles if the renderer mode is set to either ""Automatic"" or ""Custom"". Newly created Sprite renderers default to ""Automatic"".
+
+It is not required to have a mesh renderer in order for these behaviors to function and Mesh Orientation and Rotation modules can be used to control these behaviors.
+路径：/Niagara/Modules/Update/Orientation/AlignSpriteToMeshOrientation.AlignSpriteToMeshOrientation","此模块设置 Particles.SpriteFacing 和 Particles.SpriteAlignment。当渲染器模式为“自动”或“自定义”时，这些属性会自动控制精灵粒子的朝向。新建精灵渲染器默认采用“自动”模式。
+
+这些行为无需网格体渲染器即可生效，可使用网格朝向与旋转模块对其进行控制。
+路径：/Niagara/Modules/Update/Orientation/AlignSpriteToMeshOrientation.AlignSpriteToMeshOrientation"
+"This module takes in two positions. One is the particles position and another is a target position. The module will project a point in space away from the initial position to a location on a vector between the two points at the set length described by the ""Ideal Distance"" input. For certain situations you may want to switch the target position and the particle position variables.
+路径：/Niagara/Modules/Constraints/MaintainA_SetDistanceBetweenPoints.MaintainA_SetDistanceBetweenPoints","此模块接收两个位置：粒子位置和目标位置。沿两点之间的向量，将空间中的一个点从初始位置投影到由“理想距离”输入指定的距离处。某些情况下可能需要交换目标位置变量与粒子位置变量。
+路径：/Niagara/Modules/Constraints/MaintainA_SetDistanceBetweenPoints.MaintainA_SetDistanceBetweenPoints"
+"This module will find a position on a forward vector aligned circle around a user defined center point. The radius and position along the circle can be modified over time. 
+路径：/Niagara/Modules/Spawn/Location/RotateAroundPoint.RotateAroundPoint","以用户指定的点为圆心，在与前向向量对齐的圆上查找位置。圆的半径和沿圆周的位置均可随时间改变。
+路径：/Niagara/Modules/Spawn/Location/RotateAroundPoint.RotateAroundPoint"
+"This module will pack the particles into a Neighbor Grid using the simulation to unit transform. 
+
+Simply put, particles positions will be transformed into a 3D grid's 0-1 space. If a particle falls into one of those grid's voxels, it's id will be stored. Other modules can then query the grid to effeciently find all of the nearest particle neighbors. 
+ 
+Use: 
+Enable simulation stages. 
+Create an Emitter level Neighborgrid variable. 
+
+Create a new particle iteration simulation stage. 
+
+Add this module to the new stack and reference the previously created Neighbor Grid variable. 
+路径：/Niagara/Modules/Collision/PopulateNeighborGrid.PopulateNeighborGrid","此模块使用从模拟空间到单位空间的变换，将粒子填入邻居网格。
+
+简单来说，粒子位置会转换到三维网格的 0–1 空间。如果粒子落入某个网格体素，就会在其中存储该粒子的 ID。其他模块随后可以查询此网格，高效查找最近的相邻粒子。
+
+使用方法：
+启用模拟阶段。
+创建一个发射器级别的邻居网格变量。
+
+新建一个按粒子迭代的模拟阶段。
+
+将此模块添加到新堆栈中，并引用之前创建的邻居网格变量。
+路径：/Niagara/Modules/Collision/PopulateNeighborGrid.PopulateNeighborGrid"
+"This module will sample a user defined bezier spline and then return the sampled position, Tangent, Normal, and Binormal.
+
+Values are output to 
+
+Particles.SampleBezierSpline.SplinePosition
+Particles.SampleBezierSpline.SplineTangent
+Particles.SampleBezierSpline.SplineNormal
+Particles.SampleBezierSpline.SplineBinormal
+路径：/Niagara/Modules/Update/Splines/SampleBezierSpline.SampleBezierSpline
+* 脚本未公开给库。","此模块采样用户指定的贝塞尔样条，并返回采样位置、切线、法线和副法线。
+
+各值分别输出到：
+Particles.SampleBezierSpline.SplinePosition
+Particles.SampleBezierSpline.SplineTangent
+Particles.SampleBezierSpline.SplineNormal
+Particles.SampleBezierSpline.SplineBinormal
+路径：/Niagara/Modules/Update/Splines/SampleBezierSpline.SampleBezierSpline
+* 脚本未公开给库。"
+"This node uses a mesh's adjacency information to walk across the surface.
+路径：/Niagara/Modules/Mesh/TraverseSkeletalMesh.TraverseSkeletalMesh","此节点使用网格体的邻接信息沿其表面遍历。
+路径：/Niagara/Modules/Mesh/TraverseSkeletalMesh.TraverseSkeletalMesh"
+"This position based dynamics module  finds and calculates interparticle collisions using a fully populated neighborgrid. 
+
+The algorithm checks up to 27 neighboring grid cells to find particle collisions. Larger grid cells will capture more potential collisions but it requires that the max number of neighbors per cell be higher. 
+
+In addition to requiring neighbor grid this effect also requires that each particle contian several parameters:
+
+Particles.CollisionRadius
+Particles.Position
+Particles.Unyielding
+Particles.Mass
+路径：/Niagara/Modules/Collision/PBD_IntraParticleCollision.PBD_IntraParticleCollision
+* 脚本未公开给库。","此基于位置的动力学模块使用已完整填充的邻居网格，查找并计算粒子之间的碰撞。
+
+算法最多检查 27 个相邻网格单元来查找粒子碰撞。更大的单元可覆盖更多潜在碰撞，但也需要提高每个单元允许的最大邻居数量。
+
+除邻居网格外，此效果还要求每个粒子包含以下参数：
+
+Particles.CollisionRadius
+Particles.Position
+Particles.Unyielding
+Particles.Mass
+路径：/Niagara/Modules/Collision/PBD_IntraParticleCollision.PBD_IntraParticleCollision
+* 脚本未公开给库。"
+"To reproduce a skeletal mesh with this module do the following: 
+
+-Place this module in the particle update stack
+ 
+-Place the ""Initialize_MeshReproductionSprite"" module in the particle spawn stack 
+
+-Set the sprite's render alignment setting to custom alignment
+
+-Set the facing mode to Custom 
+
+-Set the custom facing vector mask to 1,1,1  
+
+-Within your material, use ""Niagara_MeshReproductionSpriteUVs"" to sample the mesh's uvs 
+
+If ""Module.Overwrite Intrinsic Variables"" is set to false make sure that this module's output variables are used to drive the particle's position, alignment, etc.
+
+Note: this workflow will change as Niagara progresses.
+路径：/Niagara/Modules/Update/MeshInterface/Update_MeshReproductionSprite.Update_MeshReproductionSprite","要使用此模块重建骨骼网格体，请执行以下步骤：
+
+- 将此模块放入粒子更新堆栈。
+- 将 Initialize_MeshReproductionSprite 模块放入粒子生成堆栈。
+- 将精灵渲染器的对齐方式设置为“自定义对齐”。
+- 将朝向模式设置为“自定义”。
+- 将自定义朝向向量遮罩设置为 1,1,1。
+- 在材质中使用 Niagara_MeshReproductionSpriteUVs 采样网格体的 UV。
+
+如果 Module.Overwrite Intrinsic Variables 为假，请确保用此模块的输出变量驱动粒子的位置、对齐等属性。
+
+注意：随着 Niagara 的发展，此工作流程可能会发生变化。
+路径：/Niagara/Modules/Update/MeshInterface/Update_MeshReproductionSprite.Update_MeshReproductionSprite"
+"Transforms 12 instances of the BoundingBoxEdge mesh in such a way that they form a cube representing the bounding box of some vector field.
+
+Optionally applies a local translate, rotate and scale transformation.
+
+Note: Writes directly the Particles.Position, Particles.Scale and Particles.MeshOrientation!
+路径：/Niagara/VectorFields/ConstructBoundingBoxForVectorField.ConstructBoundingBoxForVectorField
+* 脚本未公开给库。","对 BoundingBoxEdge 网格体的 12 个实例进行变换，使它们组成一个表示向量场包围盒的立方体。
+
+可选择应用局部平移、旋转和缩放变换。
+
+注意：直接写入 Particles.Position、Particles.Scale 和 Particles.MeshOrientation！
+路径：/Niagara/VectorFields/ConstructBoundingBoxForVectorField.ConstructBoundingBoxForVectorField
+* 脚本未公开给库。"
+"Updates an active persistent audio component property or sets a sound cue parameter on it. Make sure to use the same data interface that spawned the audio effect in the first place, otherwise the handle will not find anything.
+路径：/Niagara/Modules/Audio/UpdatePersistentAudio.UpdatePersistentAudio","更新正在运行的持续音频组件属性，或设置其声音提示参数。请确保使用最初生成该音频效果的数据接口，否则句柄将无法找到对应对象。
+路径：/Niagara/Modules/Audio/UpdatePersistentAudio.UpdatePersistentAudio"
+"Use hardware raytracing to gather hit points from a line trace.
+路径：/Niagara/Modules/Update/Utility/AsyncGPUTrace.AsyncGPUTrace","使用硬件光线追踪获取线性射线检测的命中点。
+路径：/Niagara/Modules/Update/Utility/AsyncGPUTrace.AsyncGPUTrace"
+"Use this module to produce the output particle parameters that should be used within 3 ribbon emitters for a 3 dimensional grid. Replace references within the ribbon render modules to ribbon id and ribbon link order with Particles.RibbonID1,2 and 3 and link order 1,2 and 3. For a 2 dimensional grid create 2 ribbon emitters. 
+路径：/Niagara/Modules/Spawn/Location/GenerateGridRibbonIDs.GenerateGridRibbonIDs
+* 脚本未公开给库。","此模块生成粒子参数输出，供构建三维网格的 3 个条带发射器使用。在条带渲染模块中，将条带 ID 的引用分别替换为 Particles.RibbonID1、Particles.RibbonID2 和 Particles.RibbonID3，并分别使用对应的连接顺序 1、2 和 3。对于二维网格，创建 2 个条带发射器即可。
+路径：/Niagara/Modules/Spawn/Location/GenerateGridRibbonIDs.GenerateGridRibbonIDs
+* 脚本未公开给库。"
+"Utility to fill array values using dynamic inputs.
+路径：/Niagara/Modules/Arrays/FillBoolArray.FillBoolArray","使用动态输入填充数组值的工具。
+路径：/Niagara/Modules/Arrays/FillBoolArray.FillBoolArray"
+"Utility to fill array values using dynamic inputs.
+路径：/Niagara/Modules/Arrays/FillColorArray.FillColorArray","使用动态输入填充数组值的工具。
+路径：/Niagara/Modules/Arrays/FillColorArray.FillColorArray"
+"Utility to fill array values using dynamic inputs.
+路径：/Niagara/Modules/Arrays/FillFloatArray.FillFloatArray","使用动态输入填充数组值的工具。
+路径：/Niagara/Modules/Arrays/FillFloatArray.FillFloatArray"
+"Utility to fill array values using dynamic inputs.
+路径：/Niagara/Modules/Arrays/FillIntArray.FillIntArray","使用动态输入填充数组值的工具。
+路径：/Niagara/Modules/Arrays/FillIntArray.FillIntArray"
+"Utility to fill array values using dynamic inputs.
+路径：/Niagara/Modules/Arrays/FillPositionArray.FillPositionArray","使用动态输入填充数组值的工具。
+路径：/Niagara/Modules/Arrays/FillPositionArray.FillPositionArray"
+"Utility to fill array values using dynamic inputs.
+路径：/Niagara/Modules/Arrays/FillQuaternionArray.FillQuaternionArray","使用动态输入填充数组值的工具。
+路径：/Niagara/Modules/Arrays/FillQuaternionArray.FillQuaternionArray"
+"Utility to fill array values using dynamic inputs.
+路径：/Niagara/Modules/Arrays/FillVector2DArray.FillVector2DArray","使用动态输入填充数组值的工具。
+路径：/Niagara/Modules/Arrays/FillVector2DArray.FillVector2DArray"
+"Utility to fill array values using dynamic inputs.
+路径：/Niagara/Modules/Arrays/FillVector4Array.FillVector4Array","使用动态输入填充数组值的工具。
+路径：/Niagara/Modules/Arrays/FillVector4Array.FillVector4Array"
+"Utility to fill array values using dynamic inputs.
+路径：/Niagara/Modules/Arrays/FillVectorArray.FillVectorArray","使用动态输入填充数组值的工具。
+路径：/Niagara/Modules/Arrays/FillVectorArray.FillVectorArray"
+"WARNING: THIS MODULE ONLY PREVIEWS LIVE IN THE EDITOR WINDOW AS A GPU SIMULATION.
+
+CPU simulations need a bound camera, so to preview this module in the editor on CPU sims, hit simulate and then possess.
+路径：/Niagara/Modules/Update/Orientation/V2/OrientMeshToCamera.OrientMeshToCamera
+* 脚本未公开给库。","警告：此模块只有在 GPU 模拟模式下才能在编辑器窗口中实时预览。
+
+CPU 模拟需要绑定摄像机。要在编辑器中预览此模块的 CPU 模拟，请先点击“模拟”，再点击“控制”。
+路径：/Niagara/Modules/Update/Orientation/V2/OrientMeshToCamera.OrientMeshToCamera
+* 脚本未公开给库。"
+"Write to the Dynamic Parameter vertex interpolator node in the material editor.
+
+To use Indices 1-3, change the ""Parameter Index"" on the node itself in the material editor to the corresponding number.
+
+This allows the use of up to four unique dynamic parameter nodes in a given material.
+路径：/Niagara/Modules/Update/Material/DynamicMaterialParameters.DynamicMaterialParameters","写入材质编辑器中的动态参数顶点插值器节点。
+
+要使用索引 1–3，请在材质编辑器中将该节点的“参数索引”设置为对应数字。
+
+这样，一个材质最多可使用四个不同的动态参数节点。
+路径：/Niagara/Modules/Update/Material/DynamicMaterialParameters.DynamicMaterialParameters"
+"Writes the transform data for elements in a geometry collection. This only writes the initial rest transform, so if simulate physics is enabled on the component and it's no longer in the rest state then this won't affect the component geometry.
+路径：/ChaosNiagara/Modules/SetGeometryCollectionTransform.SetGeometryCollectionTransform","写入几何体集合中元素的变换数据。此操作仅写入初始静止变换；如果组件已启用物理模拟且已离开静止状态，则不会影响组件的几何体。
+路径：/ChaosNiagara/Modules/SetGeometryCollectionTransform.SetGeometryCollectionTransform"

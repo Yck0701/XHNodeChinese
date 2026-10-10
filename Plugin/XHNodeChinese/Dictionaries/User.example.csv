@@ -1,0 +1,4 @@
+# 用户自定义词典：一行一条，格式 "英文","中文"（请以 UTF-8 编码保存）
+Key,Value
+"MyCustomTerm","我的自定义词条"
+"MyOtherTerm","我的另一个词条"

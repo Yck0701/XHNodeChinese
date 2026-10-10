@@ -1,0 +1,24 @@
+{
+  "FileVersion": 3,
+  "Version": 19,
+  "VersionName": "0.2.8",
+  "FriendlyName": "XH Node Chinese / 星河节点汉化",
+  "Description": "Independent CSV localization tools for Niagara, Material and Blueprint, with a fingerprint-gated native display adapter.",
+  "Category": "Editor",
+  "CreatedBy": "XH",
+  "CanContainContent": true,
+  "EnabledByDefault": true,
+  "IsBetaVersion": true,
+  "Plugins": [
+    {
+      "Name": "PythonScriptPlugin",
+      "Enabled": true
+    }
+  ],
+  "LocalizationTargets": [
+    {
+      "Name": "XHNodeChinese",
+      "LoadingPolicy": "Editor"
+    }
+  ]
+}

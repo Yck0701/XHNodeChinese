@@ -1,0 +1,1462 @@
+﻿Key,Value
+0 if used in update scripts,在更新脚本中使用时为0
+2D Offset,2D 偏移
+A description that level designers can add (shows in the material editor UI).,关卡设计师可添加的描述（显示于材质编辑器界面中）
+About Unreal Editor,关于虚幻编辑器
+Absolute,绝对
+Absolute World Position,绝对世界位置
+ACTIONS,操作
+Active Module,激活模块
+Active Overview,激活概览
+Actor Motion,Actor运动
+Actor Position (Absolute),Actor位置（绝对）
+add,添加
+Add Apply,添加应用
+Add enable toggle,添加启用开关
+Add options to control gain and frequency per axis,添加用于控制各轴增益与频率的选项
+Add support for vector 2D,添加对二维向量的支持
+Add temperature color controls,添加温度颜色控件
+"Add toTransient.PhysicsForce using a curl noise field. Samples a medium resolution baked tiling curl noise field by default, can optionally sample a simplex derived curl function directly at increased cost.",使用旋度噪声场向 Transient.PhysicsForce 添加力。默认采样中等分辨率、已烘焙且可平铺的旋度噪声场；也可以直接采样由单纯形噪声推导的旋度函数，但计算开销更高。
+Add Velocity,添加速度
+Add Velocity in Cone,锥形范围内添加速度
+Added enable switch,已添加启用开关
+Additional Yaw,附加偏航角
+Additive,叠加
+AddVelocity.ConeAxis,添加速度.圆锥轴
+Adjustment,调整
+Advanced,高级
+Advect Scalars,平流标量
+Advect Velocity,平流速度
+Aerodynamic Drag,空气动力阻力
+AFTER PARTICLES FINISH,粒子结束后
+Age,年龄
+Age Sampling,年龄采样
+Align Particles with Collision Plane,使粒子与碰撞平面对齐
+All,所有
+All necessary data is passed via Emitter parameters,所有必要数据通过发射器参数传递
+All Node Previews,所有节点预览
+All Saved,全部已保存
+All the controls reside here,所有控件均位于此处
+Allow both source types to be used at the same time,允许同时使用两种源类型
+Allows them to go to sleep and reawaken,允许发射器进入休眠并重新唤醒
+Along Camera Vector,沿相机向量
+Alpha,透明度
+AlphaComposite (Premultiplied Alpha),透明度合成（AlphaComposite，预乘透明度）
+AlphaHoldout,透明度挖空（AlphaHoldout）
+AlphaMask,Alpha蒙版
+Ambient Occlusion Gain,环境光遮蔽增益
+AmbientOcclusion,环境光遮蔽
+An offset to the velocity origin,速度原点偏移量
+and can no longer spawn new particles,且无法再生成新粒子
+and so on,依此类推
+Append,追加
+Applied Alpha Scale,已应用Alpha缩放
+Applied Position Offset,已应用位置偏移
+Applied RGB Scale,已应用RGB缩放
+Applied Velocity Scale,已应用速度缩放
+"Applies Drag directly to particle velocity and/or rotational velocity, irrespective of Mass.",直接向粒子速度和/或旋转速度施加阻力，与质量无关。
+Apply changes to original material and its use in the world.,将更改应用于原始材质及其在世界中的使用。
+Apply Cloud Fogging,应用云层雾化
+Apply Color Grid To Fire,将颜色网格应用于火焰
+Apply Color Grid To Smoke,将颜色网格应用于烟雾
+Apply Fogging,应用雾化
+Apply Sampled Alpha,应用已采样Alpha
+Apply Sampled RGB,应用已采样RGB
+Apply Scratch,应用暂存
+Apply View MipBias,应用视图纹理层级偏移
+Array Sampling Mode,数组采样模式
+ArtTools,美术工具
+Asset Actions,资源操作
+Asset Filepath Length,资源文件路径长度
+Asset has unsaved changes,资源存在未保存的更改
+Asset Localization,资源本地化
+AssetActionsSubMenu,资产操作子菜单
+AssetContextExploreMenuOptions,资产上下文浏览菜单选项
+AssetContextReferences,资产上下文引用
+AssetViewCopyObjectPath,资产视图复制对象路径
+AssetViewCopyPackageName,资产视图复制包名
+At a speed of,速度为
+Atmosphere,大气
+Attempt to save the selected content,尝试保存所选内容
+Attribute Render Target Format,属性渲染目标格式
+Attribute Resolution Multiplier,属性分辨率乘数
+Attributes,属性
+Attributes Comp Mode,属性合成模式
+Attributes Resolution Multiplier,属性分辨率乘数
+Audio Playback Enabled,音频播放已启用
+Audio Playback Position,音频播放位置
+Audio Player,音频播放器
+Audio Position Coordinate Space,音频位置坐标空间
+Audio Rotation,音频旋转
+Auto Detect,自动检测
+Auto Exposure Histogram,自动曝光直方图
+Automatic,自动
+Automatic View Mip Bias,自动视图Mip偏移
+Automation,自动化
+AWAKEN,唤醒
+Baker,烘焙器
+Baker Mode,烘焙器模式
+Baker Tools,烘焙器工具
+BakerCameraSpaceRotation,烘焙器相机空间旋转
+BakerMultiplyColorWithExtinction,烘焙器颜色乘以消光系数
+BakerUseAO,烘焙器使用环境光遮蔽
+BakerUseEmissiveMaterial,烘焙器使用自发光材质
+BakerUseNormals,烘焙器使用法线
+Base,基础
+Base Color,基础颜色
+Base Grids,基础网格
+Base Material,基础材质
+BasicShapes,基础形状
+bCompleteOnInactive,停用时结束
+Beam Emitter Setup,光束发射器设置
+Beam End,光束终点
+Beam Start,光束起点
+behavior on the Emitter State module,发射器状态模块的行为
+being inactive from Scalability does not force the emitter to move into one of the completed,因可扩展性设置处于非活动状态，不会强制发射器进入任一完成状态
+Bias,偏差
+Bias Noise Field,偏移噪声场
+Black,黑色
+Blend Alpha,混合Alpha
+Blend Mode,混合模式
+Blend Space*,混合空间*
+BlendAlpha,混合Alpha
+BlendColor,混合颜色
+BlendMethod,混合方法
+Blends,混合
+Block Based,基于块
+Block Size,块大小
+Bloom,泛光
+Blue,蓝色
+Blueprints,蓝图
+Blur Scatter X,模糊散射X轴
+Blur Scatter Y,模糊散射Y轴
+Blur Scatter Z,模糊散射Z轴
+Blur Steps,模糊步数
+BlurSteps,模糊步数
+Boundary,边界
+BoundaryGrid,边界网格
+BoundaryIndex,边界索引
+BoundarySignedDistance,边界有向距离
+Bounds,边界
+Box Location,盒体位置
+Box Offset,盒体偏移
+Box Origin,盒体原点
+BoxLocation.BoxNormal,盒体位置.盒体法线
+BoxLocation.BoxVector,盒体位置.盒体向量
+Break Vector,拆分向量
+BufferVisualization,缓冲区可视化
+Build,构建
+but then wake back up when the emitter moves back into the distance range where it would have previously been active,但当发射器移回此前的活动距离范围时，会重新唤醒
+By default it will use the distance field typically associated with all rigid mesh assets if available,默认情况下，若存在距离场，将使用通常与所有刚体网格资源关联的距离场
+By default random numbers are generated at Spawn only,默认情况下，随机数仅在生成阶段生成
+C++ API Reference,C++ API参考
+Calculate Accurate Velocity,计算精确速度
+Calculate Actor Motion Force,计算Actor运动力
+Calculate Spawn Rate Per Particle,计算单粒子生成速率
+Calculate Vorticity Confinement,计算涡量约束
+Calculate Wind,计算风力
+Camera,摄像机
+Camera Offset,摄像机偏移
+Camera Plane,摄像机平面
+Camera Position,相机位置
+Camera Query,相机查询
+Camera Space Rotation,相机空间旋转
+Camera Vector,相机向量
+CameraOffset,摄像机偏移
+Cast Ray Traced Shadows,投射光线追踪阴影
+Center,中心
+Certificates,证书
+Channel Names,通道名称
+"Channels B, A",通道B、A
+"Channels R, G",通道R、G
+Characters,角色
+Checking for localized variants... This might take a long time.,正在检查本地化变体…此过程可能耗时较长。
+Chinese,中文
+Choose Files to Save,选择要保存的文件
+Chromatic Aberration,色差
+Cinematics,过场动画
+clamp to Max,钳制至最大值
+Clamps the value between 0 and 1. Saturate is free on most modern graphics hardware.,将值限制在0到1之间。在多数现代图形硬件上，饱和运算无性能开销。
+Clean Up,清理
+Clear Coat,清漆
+Clear Raster Scalar Grid,清除栅格标量网格
+Clear Raster Velocity Grid,清除栅格速度网格
+Clear Rasterization Scalar Grid,清除栅格化标量网格
+Clear Rasterization Scalar Grids,清除栅格化标量网格
+ClearCoat,清漆
+ClearCoatRoughness,清漆粗糙度
+Close Tab,关闭选项卡
+Cloth,布料
+Collections,集合
+Collide Against,碰撞对象
+Collision Data Interfaces,碰撞数据接口
+Collision Geometry Collection,碰撞几何体集合
+Collision Particle Reader,碰撞粒子读取器
+Collision Query,碰撞查询
+Collision Render Prep,碰撞渲染准备
+Collision Rigid Mesh Query,碰撞刚体网格查询
+Collisions,碰撞
+Color Curve,颜色曲线
+Color Curve：,颜色曲线：
+Color Grading,颜色分级
+Color Normal,颜色与法线
+Color Radius Scale,颜色半径缩放
+Color Render Target Format,颜色渲染目标格式
+Color Roughness,颜色与粗糙度
+Color Sampling,颜色采样
+Color Scale,颜色缩放
+Color Value To Scale,待缩放颜色值
+Colored Display Lines,彩色显示线
+Combine resample into the get module,将重采样合并至获取模块
+Comment,注释
+Common,通用
+CommonAssetActions,通用资产操作
+CompensateForActorMotion,补偿Actor运动
+Compile,编译
+Compiling,编译中
+Complete,完成
+Compute Curl,计算旋度
+Compute Divergence,计算散度
+Compute Fog Per Pixel,逐像素计算雾化
+Compute Owner Motion,计算所有者运动
+CONFIGURATION,配置
+Connect to Revision Control,连接到版本控制
+Console Variables,控制台变量
+Const A,常量A
+Const B,常量B
+Const Mip Value,常量Mip值
+Constants,常量
+Contact Shadows,接触阴影
+container,容器
+Content,内容
+Control Scalar,控制标量
+Control Type,控件类型
+Controls,控件
+"Controls the translucency of the Material. When Substrate is enabled, this input override alpha blending over the background when AlphaComposite blend mode is selected.",控制材质的半透明度。启用基底材质时，若选择Alpha合成混合模式，此输入将覆盖背景上的Alpha混合。
+Convert emitter parameters to inputs so this module can be used multiple times,将发射器参数转换为输入，以便该模块可多次使用
+Convert to Position types,转换为位置类型
+ConvertToVT,转换为体积纹理
+Convolution,卷积
+Cooking Filepath Length,烘焙文件路径长度
+Coordinate,坐标
+Coordinate Index,坐标索引
+Coordinates,坐标
+Copy,复制
+Copy File Path,复制文件路径
+Copy Object Path,复制对象路径
+Copy Package Path,复制包路径
+Copy Reference,复制引用
+Copy Temperature To Scatter,将温度复制至散射
+CopyFilePath,复制文件路径
+CopyStats,复制统计信息
+"Cost increases linearly as additional attributes are sampled, regardless of whether they are applied or only written as outputs, so only sample the ones you need.",采样属性越多，开销呈线性增长；无论属性是被应用还是仅作为输出写入，都会计入开销，因此仅采样你需要的属性即可。
+Coverage Accounted For,已计入覆盖率
+CPUCollision,CPU碰撞
+CPUSim,CPU 模拟
+Create and set default attributes used within fluid sourcing modules.,创建并设置流体源模块中使用的默认属性。
+Create Material Instance,创建材质实例
+Create Scatter Blur Kernel,创建散射模糊核
+CreateMaterial,创建材质
+Creates a parameterized material using this material as a base.,以此材质为基础创建参数化材质。
+CreateVolumeTexture,创建体积纹理
+Credits,致谢
+Cubemaps,立方体贴图
+Cubic,立方体
+Curl,旋度
+Curl Noise Force,旋度噪声力
+CurlNoise,卷曲噪声
+CurlNoiseForce.CurlNoiseForce,卷曲噪声力.卷曲噪声力
+CurrentLoopDelay,当前循环延迟
+CurrentLoopDuration,当前循环时长
+Curve Base,曲线基准
+Curve for Colors,颜色曲线
+Curve for Floats,浮点曲线
+Curve Index,曲线索引
+Curves,曲线
+Curve：,曲线：
+Custom Data,自定义数据
+Custom Facing Vector,自定义朝向向量
+Custom Primitive Data,自定义图元数据
+Cylinder,圆柱体
+data,数据
+Data Channel,数据通道
+Data Channel Position,数据通道位置
+Data Channel Reader,数据通道读取器
+Data Channel Writer,数据通道写入器
+DataChannelReader,数据通道读取器
+Debug,调试
+Debug Collision Volume,调试碰撞体积
+Debug Draw,调试绘制
+Debug Every N Particles,每N个粒子调试一次
+Debug Force Line Length,调试力线长度
+Debug Slice,调试切片
+Debug Vector Slice,调试向量切片
+Debug Vectors,调试向量
+Debug Volume,调试体积
+DebugCollisionVolume,调试碰撞体积
+DebugSliceAttribute,调试切片属性
+DebugSliceAxis,调试切片轴
+DebugSliceCenter,调试切片中心
+DebugSliceRemapCurve,调试切片重映射曲线
+DebugSliceRemapRangeMax,调试切片重映射范围最大值
+DebugSliceRemapRangeMin,调试切片重映射范围最小值
+DebugVectorShowCollisionVelocity,调试向量显示碰撞速度
+DebugVectorShowSmallScaleForce,调试向量显示小尺度力
+DebugVectorShowTurbulence,调试向量显示湍流
+DebugVectorShowVelocity,调试向量显示速度
+DebugVectorSliceCellOffset,调试向量切片单元格偏移
+DebugVectorSliceNormalize,调试向量切片归一化
+DebugVectorSlicePlane,调试向量切片平面
+DebugVectorSliceScale,调试向量切片缩放
+Decals,贴花
+Default (BC1 or BC3 with A),默认（BC1或带Alpha的BC3）
+Default Lit,默认光照
+Default Setting,默认设置
+Default Value,默认值
+Defaults to 'ConstCoordinate' if not specified,若未指定，默认为「常量坐标」
+DefaultValue = Custom expressions,默认值 = 自定义表达式
+Deferred Decal,延迟贴花
+Delete the selected items.,删除所选项目。
+Demo,演示
+Density Adjustments,密度调整
+Density Albedo,密度反照率
+Density Controls,密度控件
+Density Gain,密度增益
+Density Radius Scale,密度半径缩放
+Density Range,密度范围
+Density Scale,密度缩放
+DensityAndOrTemperature,密度和/或温度
+DensityBuoyancy,密度浮力
+DensityCurve,密度曲线
+DensityCurveOffset,密度曲线偏移
+DensityCurveRange,密度曲线范围
+DensityIndex,密度索引
+DensityMult,密度乘数
+Dependent,从属
+Depth Fade,深度衰减
+Depth of Field,景深
+Derivative (explicit derivative to compute mip level),导数（使用显式导数计算多级渐远纹理级别）
+Desc,描述
+Desktop,桌面
+Details,细节
+Deterministic Source,确定性源
+Dev Community,开发者社区
+Developer,开发者
+Device Output Log,设备输出日志
+Diagnostics,诊断
+Diff Against,对比差异
+Diff against previous revisions,与先前版本对比差异
+DiffAgainst,对比差异
+Direct Array Index,直接数组索引
+Direct Array Mode,直接数组模式
+Direct Normalized Angle (0-1),直接设置归一化角度（0–1）
+Directional Lighting Intensity,方向光强度
+DirectionalLight,平行光
+DirectX Mobile,DirectX 移动版
+DirectX SM5,DirectX 着色器模型5
+Dirt Mask,污垢遮罩
+Disk Size,磁盘大小
+Dismiss,忽略
+Dismiss note,忽略说明
+Dissipate Vector,耗散向量
+DissipateVector.DissipatedVector,耗散向量.已耗散向量
+Dissipation Rate Density,密度耗散速率
+Dissipation Rate Temperature,温度耗散速率
+DissipationRate,耗散速率
+DistanceFraction,距离小数部分
+DistanceTraveled,已移动距离
+Distribution Weight,分布权重
+Divergence Scale,散度缩放
+Documentation Home,文档首页
+Draw Grid Bounds,绘制网格边界
+Draw Guides,绘制参考线
+Draw Resolution Grid,绘制分辨率网格
+Draw Visualizer,绘制可视化器
+due to scalability,出于可扩展性考量
+dx_render,dx_渲染
+dx_scalars,dx_标量
+Dynamic,动态
+Dynamic Material Parameter Sampling,动态材质参数采样
+Dynamic Material Parameters,动态材质参数
+Dynamic Parameter,动态参数
+DynamicMaterialParameter,动态材质参数
+DynamicMaterialParameterChannelMask,动态材质参数通道遮罩
+Edit,编辑
+Editor Preferences,编辑器偏好设置
+Effect,效果
+Effects,特效
+"Else if ""Kill Particles When Lifetime Has Elapsed"" is disabled the particle lives indefinitely.",若“生命周期结束时销毁粒子”未启用，则粒子将永久存活。
+Emissive Color,自发光颜色
+EmissiveColor,自发光颜色
+Emit,发射
+Emitter Bounds,发射器边界
+Emitter Frame Counter,发射器帧计数器
+Emitter Properties,发射器属性
+Emitter Sampling Mode,发射器采样模式
+Emitter Spawn Script,发射器生成脚本
+Emitter State,发射器状态
+Emitter Summary,发射器摘要
+Emitter Update Script,发射器更新脚本
+Emitter.ColorRT,发射器.颜色渲染目标
+Emitter.SimRT,发射器.模拟渲染目标
+Emitters,发射器
+Enable Distance Culling,启用距离剔除
+Enable Exec Wire,启用执行连线
+Enable Fullscreen,启用全屏
+Enable Visibility Culling,启用可见性剔除
+Enables the culling of emitters based on distance from the camera,启用基于相机距离的发射器剔除
+Engine,引擎
+ENiagara_PositionInitializationMode,Niagara位置初始化模式枚举
+ENiagara_UnsetDirectSetRandom,Niagara_未设置直接设置随机枚举
+ENiagaraExecutionStateManagement,Niagara执行状态管理枚举
+Enumeration,枚举
+Enumeration Index,枚举索引
+Environment,环境
+Environment Floor Material,环境地面材质
+Euler Filter,欧拉滤波器
+Events,事件
+ExecutionState,执行状态
+ExecutionStateSource,执行状态来源
+Existing particles live out their lifetimes normally,现有粒子将正常走完生命周期
+Exp,指数
+explode,爆炸
+explore,扩散
+ExponentialHeightFog,指数高度雾
+Export,导出
+Exposed,已暴露
+Exposure,曝光
+ExternalAssets,外部资源
+Face Camera,面向摄像机
+Facing Coordinate Space,朝向坐标空间
+Fade,衰减
+Fade Distance Default,默认衰减距离
+FadeDistance,淡化距离
+FadeValue,衰减数值
+Fading,衰减
+Fallback Length,回退长度
+Fallback Threshold,回退阈值
+Fallback Vector,回退向量
+False Vector4,伪四维向量
+Favorites,收藏夹
+FEATURE LEVEL,功能级别
+File,文件
+Film,胶片
+Filmic,胶片风格
+Final,最终
+FinalAlpha,最终透明度
+Find in Content Browser,在内容浏览器中查找
+Find Results,查找结果
+FIndActors,查找Actor
+FindColliders,查找碰撞体
+FindInContentBrowser,在内容浏览器中查找
+FindInExplorer,在资源管理器中查找
+FindMaterials,查找材质
+Finds expressions and comments in the current Material,在当前材质中查找表达式与注释
+FindSourceFile,查找源文件
+fire,火焰
+Fire Color,火焰颜色
+First Person,第一人称
+FirstFrame,首帧
+Fix bug were Index 1 would not allow you to output Linear Color,修复索引1无法输出线性颜色的问题
+Fixed,固定
+Fixup mismatched samplers,修复不匹配的采样器
+Float,浮点型
+FloatValue,浮点值
+Fluids Gas Manager,流体气体管理器
+fluids_source_color,流体_源_颜色
+fluids_source_density,流体_源_密度
+fluids_source_divergence,流体_源_散度
+fluids_source_previous_radius,流体_源_上一帧半径
+fluids_source_radius,流体_源_半径
+fluids_source_temperature,流体_源_温度
+fluids_source_velocity,流体_源_速度
+foam,泡沫
+Folder,文件夹
+Font,字体
+for instance to disable a visually insignificant emitter as the distance from the camera increases,例如当发射器远离相机、视觉影响可忽略时将其禁用
+for instance to disable an expensive emitter as it gets close to the camera,例如在高开销发射器靠近相机时将其禁用
+for more,更多
+Force Color,强制颜色
+Forces,力
+Forums,论坛
+forward,正向
+Forward Selected Directional Light,前向选中方向光
+Fraction,小数
+FractionGrid,分数网格
+Frame Counter,帧计数器
+From Material Expression,来自材质表达式
+From Point,从点出发
+From texture asset,来自纹理资产
+FromTextureGroup,来自纹理组
+Full Volume,完整体积
+Function,函数
+Gain,增益
+Gas 3D,3D 气体
+Gather Mode,采集模式
+Gaussian,高斯
+General,通用
+Generate Collision Event,生成碰撞事件
+Generate Death Event,生成死亡事件
+Geometry Collection,几何体集合
+Get Post Process Setting,获取后期处理设置
+GetAssetActions,获取资产操作
+Global,全局
+Global Distance Field Dilation,全局距离场膨胀
+Global Illumination,全局光照
+Global SDF/Depth Map,全局有向距离场/深度图
+go to sleep,进入休眠
+Goes home on the canvas.,回到画布初始位置。
+GoToCodeForAsset,转到资产对应代码
+GPUCompute Sim,GPU 计算模拟
+GPUInit,GPU初始化
+GradCurl,梯度旋度
+Gradient,渐变
+Green,绿色
+Grid,网格
+Grid 2D Create Unit to World Transform*,二维网格（2D）：创建单位空间到世界空间变换*
+Grid 2D Init Bottom Capture,二维网格（2D）：初始化底部捕获
+Grid 2D Set Resolution*,二维网格（2D）：设置分辨率*
+Grid 2D SW Moving Window Get Delta*,二维网格（2D）：获取浅水（SW）移动窗口增量*
+Grid 2D SW Update Sim Attributes*,二维网格（2D）：更新浅水（SW）模拟属性*
+Grid 2D Update Sim Attributes*,二维网格（2D）：更新模拟属性*
+Grid 3D,3D网格
+Grid 3D Actor Motion Force,3D网格 Actor运动力
+Grid 3D Compute Curl,3D网格 计算旋度
+Grid 3D Create Grid Attribute Indices*,3D网格：创建网格属性索引*
+Grid 3D Create Unit to World Transform*,3D网格：创建单位空间到世界空间变换*
+Grid 3D Draw Bounds Overlay*,3D网格：绘制边界叠加层*
+Grid 3D FLIP Tank Spawn,3D网格：FLIP 水箱生成
+Grid 3D GAS CONTROLS UPDATE*,3D网格：更新气体控件*
+Grid 3D Gas Initialize Material Controls*,3D网格：初始化气体材质控件*
+Grid 3D Gas Material Controls*,3D网格：气体材质控件*
+Grid 3D GAS SCALABILITY UPDATE*,3D网格：更新气体可延展性*
+Grid 3D Gas Texture Update*,3D网格：更新气体纹理*
+Grid 3D Gas Update Baker Tools*,3D网格：更新气体烘焙器工具*
+Grid 3D Gas Update Emitter*,3D网格：更新气体发射器*
+Grid 3D Pressure Iteration,3D网格 压力迭代
+Grid 3D Set Resolution*,3D网格：设置分辨率*
+Grid 3D Update Sim Attributes*,3D网格：更新模拟属性*
+Grid 3D Wind,3D网格 风力
+Grid Details,网格详情
+Grid3D_Advect_FluidAttribute.Temperature,3D网格_平流_流体属性.温度
+Grid3D_Gas_GetAttributeFromRasterGrid.Divergence,3D网格_气体_从栅格网格获取属性.散度
+Grid3D_Wind.Wind,3D网格_风力.风力
+GridCenterPosition,网格中心位置
+GridOrientation,网格朝向
+GridRotation,网格旋转
+Hair,毛发
+Hair Attributes,毛发属性
+Has Per Instance Custom Data,拥有每实例自定义数据
+Has Per Instance Random,拥有每实例随机值
+Has Scene Color,拥有场景颜色
+Has Vertex Interpolator,拥有顶点插值器
+HasSpawnedThisFrame,本帧已生成
+HeightFogComponent0,高度雾组件0
+Help,帮助
+Heterogeneous Volume Quality,非均匀体积质量
+Hide Disabled,隐藏已禁用项
+Hide Unconnected Pins,隐藏未连接引脚
+High,高
+highlight,高亮
+Highlights,高光
+HighlightsMax,高光最大值
+HISTORY,历史记录
+Hold,保持
+Home Panel,主页面板
+How large a particle can be scaled based on its velocity,粒子基于速度可达到的最大缩放尺寸
+How much velocity to add to the existing Particles,向现有粒子施加的速度大小
+How much velocity to add to the system,向系统施加的速度大小
+How small a particle can be scaled based on its velocity,粒子基于速度可达到的最小缩放尺寸
+"If choosing Random, the system will determine the number of elements in the mesh array and randomly index into them.",若选择随机模式，系统将确定网格数组的元素总数，并随机索引访问其中的元素。
+"If localspace, returns 0,0,0","若为局部空间，则返回0,0,0"
+If rendering a debug slice,若渲染调试切片
+"If there is more than one mesh in the Mesh Array of your mesh renderer, you can index into the different elements of that array here.",若网格渲染器的网格数组中包含多个网格，可在此处索引访问该数组的不同元素。
+If you decide to look up into the scale factor with a curve,若选择通过曲线对缩放因子进行采样
+Image Effects,图像效果
+IMMEDIATELY,立即
+Import,导入
+Importance,重要性
+Inactive,非活动
+Incoming Density,传入密度
+Incoming RGBA,传入RGBA
+Incoming Temperature,传入温度
+Incoming Velocity,传入速度
+Index Of Refraction,折射率
+Inherit Source Movement,继承源的运动
+Init Scalar Grid,初始化标量网格
+Init Sim Grids,初始化模拟网格
+Initial Mesh Orientation,初始网格体朝向
+Initial Mesh Scale,初始网格缩放
+Initial Turbulence,初始湍流
+Initial.Color,初始颜色
+Initial.RibbonWidth,初始.丝带宽度
+Initial.Scale,初始.缩放
+Initialize common particle attributes using common settings and options.,使用通用设置和选项初始化通用粒子属性。
+Initialize Neighbor Grid*,初始化邻居网格*
+Initialize Particle,初始化粒子
+InitialRotation,初始旋转
+Inline Overview Display Name,内联概览显示名称
+InMaterial,输入材质
+Input 1,输入1
+InputMap,输入映射
+Inst,实例
+InstancedFoliageActor,实例化植被Actor
+Internal Scale Multiplier,内部缩放乘数
+Interpolate Over Time,随时间插值
+Interpolation,插值
+InvSize,尺寸倒数
+Is Default Meshpaint Texture,是否为默认网格绘制纹理
+Issue Tracker,问题追踪器
+It composites,它进行合成
+It is important to realize that the default behavior is to collide with ALL rigid meshes found inside the bounding box. In complex scenes this can be very expensive.,需要注意的是，默认行为是与包围盒内的所有刚体网格发生碰撞。在复杂场景中，这会产生极高的性能开销。
+It reads the particle data and splats it into a separate grid,它读取粒子数据并将其溅射至独立网格
+It would always apply the value,将始终应用该值
+Item Label,项目标签
+IterationGrid,迭代网格
+Jitter Amount,抖动量
+Jitter Delay,抖动延迟
+Jitter Offset,抖动偏移
+JitterDelayTimer,抖动延迟计时器
+"Jitters a particle in a random direction, on a delay timer.",根据延迟计时器，沿随机方向对粒子施加抖动。
+Key Data,键数据
+Keyboard Shortcuts,键盘快捷键
+kill immediately,立即销毁
+kill states,销毁状态
+Label,标签
+LandscapeStreamingProxy,地貌流式代理
+Largest,最大
+Layer Blend,图层混合
+Layer Parameters,图层参数
+Learning Library,学习库
+Lens,镜头
+Life Cycle,生命周期
+Lifetime Application,生命周期应用
+Lifetime Max,生命周期最大值
+Lifetime Min,生命周期最小值
+Lifetime Sampling,生命周期采样
+Light Function,灯光函数
+Light Mixer,光照混合器
+Lighting,光照
+Lighting Mode,光照模式
+Lightmass,Lightmass 静态光照
+Limit the magnitude of particle velocity,限制粒子速度的模长
+Linear,线性
+linear velocity,线速度
+Lit,光照
+Load Layout,加载布局
+Local Emit Position,局部发射位置
+Local Exposure,局部曝光
+Local Modules,本地模块
+Local Pivot,局部轴心
+Local Space Noise,局部空间噪声
+Local Space Particles,局部空间粒子
+Local Space Turbulence,局部空间湍流
+Local Space Wind,局部空间风力
+Local Velocity,局部速度
+Localization,本地化
+LocalPivot,局部轴心
+LocalSpace,局部空间
+LocalSpaceNDCSource,局部空间NDC源
+LocalSpaceParticleSource,局部空间粒子源
+LocalToUnit,局部转单位
+LocalToWorld,局部转世界
+LODDistanceFraction,LOD 距离小数部分
+LOG,日志
+Loop Count Limit,循环次数上限
+Loop Duration Mode,循环时长模式
+LoopCount,循环次数
+LoopedAge,当前循环已运行时间
+Low,低
+Lumen Global Illumination,Lumen 全局光照
+Lumen Reflections,Lumen 反射
+Magenta,品红色
+Main,主
+Maintain A Set Distance Between Points,保持点之间的固定距离
+make sure the render target has enough channels,确保渲染目标具有足够的通道
+Make Vector 2D,构造二维向量
+Manage Tags,管理标签
+Manages Particle Age/Lifetime.,管理粒子年龄/生命周期。
+Manages the Life Cycle behavior ,管理生命周期行为。
+ManageTags,管理标签
+ManualFocusDistance,手动对焦距离
+Map Get,映射取值
+MapResources,地图资源
+Maps,地图
+Mask,遮罩
+Mask ( A ),蒙版（A通道）
+Mask ( G ),蒙版（G通道）
+Mask ( R ),蒙版（R通道）
+Mask by SceneDepth Bias,按场景深度偏移蒙版
+Mask By SceneDepth Intersection,按场景深度相交蒙版
+Mask by SceneDepth Thicknes,按场景深度厚度蒙版
+Mask Channel,蒙版通道
+Mask Range,蒙版范围
+Mask Type,蒙版类型
+Mask-Enabled,蒙版-已启用
+MaskByBoundary,按边界蒙版
+Masked,已遮罩
+Mass Application,质量应用
+Mass Sampling,质量采样
+MasterMaterial,主材质
+MasterMaterials,主材质
+Material,材质
+MATERIAL ACTIONS,材质操作
+Material Attributes,材质属性
+Material Controls,材质控件
+Material Domain,材质域
+Material Expression,材质表达式
+Material Expression Component Mask,材质表达式 分量蒙版
+Material Expression Constant,材质表达式 常量
+Material Expression Depth Fade,材质表达式 深度衰减
+Material Expression Material Function Call,材质表达式 材质函数调用
+Material Expression Panner,材质表达式 平移器
+Material Expression Scalar Parameter,材质表达式 标量参数
+Material Expression Subtract,材质表达式 减法
+Material Expression Texture Base,材质表达式 纹理基础
+Material Expression Texture Sample,材质表达式 纹理采样
+Material Function,材质函数
+Material Instance,材质实例
+Material Instance Constant,材质实例常量
+Material Layer Blend,材质图层混合
+Material Random Sampling,材质随机采样
+MaterialExpressionTextureSample,材质表达式 纹理采样
+MaterialInstanceConstant,材质实例常量
+MaterialRandom,材质随机值
+Max EV100,最大 EV100
+Max Occluded Depth,最大遮蔽深度
+Max Streak Samples,最大条纹采样数
+Maximum Age Spawn Threshold,最大年龄生成阈值
+Maximum Sampled Particle Age,最大已采样粒子年龄
+MaxNumSteps,最大步数
+Mesh,网格
+Mesh Orientation Sampling,网格朝向采样
+Mesh Paint Texture,网格体绘制纹理
+Mesh Renderer Array Visibility Mode,网格渲染器数组可见性模式
+Mesh Renderer Bindings,网格渲染器绑定
+Mesh Renderer：,网格渲染器：
+Mesh Scale Mode,网格缩放模式
+Mesh Scale Sampling,网格缩放采样
+MeshCollision,网格碰撞
+MeshIndex,网格体索引
+MeshOrientation,网格朝向
+MeshScaleFactor,网格缩放系数
+Message Log,消息日志
+Method,方法
+Midtones,中间调
+Min EV100,最小 EV100
+Min Scale Factor is applied,应用最小缩放因子
+Minimize,最小化
+Minimum Age Spawn Threshold,最小年龄生成阈值
+Minimum Sampled Particle Age,最小已采样粒子年龄
+MipBias (relative to the computed mip level),多级渐远纹理级别偏差（MipBias，相对于计算得到的级别）
+"MipLevel (absolute, 0 is full resolution)",多级渐远纹理级别（MipLevel，绝对级别，0 为完整分辨率）
+MipValueMode,Mip值模式
+Misc,杂项
+Mobile Depth of Field,移动端景深
+Model,模型
+Modulate,调制
+Module,模块
+Move Here,移动到此处
+"Move the dragged items to this folder, preserving the structure of any copied folders.",将拖动的项目移动到此文件夹，保留所有已复制文件夹的结构。
+Multiple Values,多值
+Multiplier,乘数
+Multiply Color With Extinction,颜色乘以消光系数
+Named Reroutes,命名重路由
+Nanite,Nanite 虚拟几何体
+Near,近距
+Neural Network,神经网络
+New Comment,新建注释
+Niagara Log,Niagara日志
+Niagara Parameter Map,Niagara参数映射
+Niagara System,Niagara系统
+NiagaraComponent0,Niagara组件0
+NiagaraSystem,Niagara系统
+Nodes Overview,节点概览
+Noise Exponent,噪声指数
+Noise Frequency,噪声频率
+Noise Intensity,噪声强度
+Noise Speed,噪声速度
+Non-Uniform Curve,非均匀曲线
+None,无
+None (use computed mip level),无（使用计算得到的多级渐远纹理级别）
+Normal Flatness,法线平坦度
+Normal Roughness,法线与粗糙度
+Normalize Thickness,归一化厚度
+Normalized Box Rotation Angle,归一化盒体旋转角度
+Normalized Interpolation,归一化插值
+NormalizedLoopAge,归一化循环进度
+Normals To Camera Space,法线转相机空间
+Normals To Texture Range,法线转纹理范围
+Note that these behaviors live alongside of the,注意：这些行为与……并存
+"NOTE: These override values for Min and Max distance do not supercede the settings in your system level effect type, i.e. if the Effect Type culls at 5000 units, setting max distance to 5001 will have no effect.",注意：这些最小/最大距离覆盖值不会优先于系统级效果类型设置。例如，若效果类型的剔除距离为5000单位，将最大距离设为5001不会生效。
+NOTE: Unexpected results can occur if both emitters are not in the same coordinate space (local vs. world),注意：若两个发射器不处于同一坐标空间（局部空间/世界空间），可能会产生异常结果。
+Num Cells X,单元格数量X轴
+Num Cells Y,单元格数量Y轴
+Num Cells Z,单元格数量Z轴
+NumCellsMaxAxisScalar,标量最大轴单元格数
+NumCellsMaxAxisVelocity,速度最大轴单元格数
+NumCellsTotalScalar,标量总单元格数
+NumCellsTotalVelocity,速度总单元格数
+NumCellsXRenderTarget,X轴渲染目标单元格数
+NumCellsXScalar,X轴标量单元格数
+NumCellsXVelocity,X轴速度单元格数
+NumCellsYRenderTarget,Y轴渲染目标单元格数
+NumCellsYScalar,Y轴标量单元格数
+NumCellsYVelocity,Y轴速度单元格数
+NumCellsZRenderTarget,Z轴渲染目标单元格数
+NumCellsZScalar,Z轴标量单元格数
+NumCellsZVelocity,Z轴速度单元格数
+NumParticles,粒子数量
+NumPressureDispatchCellsX,X轴压力调度单元格数
+NumPressureDispatchCellsY,Y轴压力调度单元格数
+NumPressureDispatchCellsZ,Z轴压力调度单元格数
+OffsetSamplePosition,偏移采样位置
+One has an effect if the Solve Rotation Forces and Velocity module is active,当「求解旋转力与速度」模块处于激活状态时，其中一项生效
+only used if Coordinate is not hooked up,仅在坐标未连接时使用
+Opacity Default,默认不透明度
+Opacity Mask,不透明度蒙版
+OpacityMask,不透明度蒙版
+Opaque,不透明
+Open Asset,打开资源
+Open Boundary -Z,开放边界 -Z轴
+Open the edit menu,打开编辑菜单
+Open the file menu,打开文件菜单
+OpenAssetsOrFolders,打开资产或文件夹
+OpenInExternalEditor,在外部编辑器中打开
+Opens the selected item(s) for edit,打开所选项目进行编辑
+Option,选项
+Orientation,朝向
+Outliner,大纲视图
+OutMaterial,输出材质
+Output 1,输出1
+Output Alpha,输出Alpha
+Output Depth and Velocity,输出深度与速度
+Output Dynamic Input,输出动态输入
+Output Log,输出日志
+Output only the fractional part of the pan calculation for greater precision. Output is greater than or equal to 0 and less than 1.,仅输出平移计算的小数部分以提升精度。输出值范围为大于等于0且小于1。
+Override.Attribute Resolution Multiplier,覆盖.属性分辨率乘数
+OVERRIDE.AttributeResolutionMultiplier,覆盖.属性分辨率乘数
+Override.Draw Bounds,覆盖.绘制边界
+Override.Draw Resolution Grid,覆盖.绘制分辨率网格
+OVERRIDE.DrawBounds,覆盖.绘制边界
+OVERRIDE.DrawResolutionGrid,覆盖.绘制分辨率网格
+Override.Pressure Solve Iterations,覆盖.压力求解迭代次数
+OVERRIDE.PressureSolveIterations,覆盖.压力求解迭代次数
+Override.Resolution Max Axis,覆盖.分辨率最大轴
+OVERRIDE.ResolutionMaxAxis,覆盖.分辨率最大轴
+Owner.Acceleration,所有者.加速度
+Owner.LODDistance,所有者.LOD距离
+Owner.PreviousVelocity,所有者.上一帧速度
+Pack,包
+Painter,绘制器
+Palette,面板
+Param,参数
+Param Tex Object,参数纹理对象
+Param2D,二维参数
+Param3,参数3
+Param4,参数4
+Parameter,参数
+Parameter Groups,参数组
+Parameter Name,参数名称
+Parameters,参数
+parameters for Density,密度参数
+Parented Sims,父级关联模拟
+Particle Color,粒子颜色
+Particle data can be sourced into the gas simulation from a separate emitter,粒子数据可从独立发射器导入气体模拟
+Particle Emitter becomes,粒子发射器变为
+Particle Emitter is,粒子发射器处于
+Particle Event Script,粒子事件脚本
+Particle ID (Ribbon ID),粒子ID（丝带ID）
+Particle ID Sampling,粒子ID采样
+Particle Position (Absolute),粒子位置（绝对）
+Particle Reader,粒子读取器
+Particle Simulation Stage Script,粒子模拟阶段脚本
+Particle Source,粒子源
+Particle Spawn Script,粒子生成脚本
+Particle State,粒子状态
+Particle Update Script,粒子更新脚本
+ParticleColorScaleFactor,粒子颜色缩放系数
+ParticleReader,粒子读取器
+PARTICLES,粒子
+ParticleSource_AttributesCompMode,粒子源_属性合成模式
+ParticleSource_SampleDivergence,粒子源_采样散度
+ParticleSource_SampleRGBA,粒子源_采样RGBA
+ParticleSource_SampleTemperature,粒子源_采样温度
+ParticleSource_SampleVelocityOnly,粒子源_仅采样速度
+ParticleSource_UseRadiusFalloff,粒子源_使用半径衰减
+ParticleSource_VelocityCompMode,粒子源_速度合成模式
+ParticleSourceGrid_Density_TemperatureIndex,粒子源网格_密度_温度索引
+ParticleSourceGrid_DensityIndex,粒子源网格_密度索引
+ParticleSourceGrid_DivergenceIndex,粒子源网格_散度索引
+ParticleSourceGrid_RGBAIndex,粒子源网格_RGBA索引
+ParticleSourceGrid_TemperatureIndex,粒子源网格_温度索引
+ParticleSourceGrid_Velocity_DivergenceIndex,粒子源网格_速度_散度索引
+ParticleSourceGrid_VelocityIndex,粒子源网格_速度索引
+ParticleSourceReader,粒子源读取器
+PBD Intra Particle Collision*,基于位置的动力学（PBD）粒子间碰撞*
+PCD3D_SM5,PC端 Direct3D 着色器模型5
+Pendulum Constraint,摆锤约束
+Pendulum Setup,摆锤设置
+Performance,性能
+Performance and scalability tools tied to this viewport.,与此视口关联的性能与可扩展性工具。
+Perspective,透视
+PhysicsForceLocal,局部物理力
+Pivot Painter,轴心绘制器
+Pivot Space,轴心空间
+PivotOffset,枢轴点偏移
+Pixel,像素
+Pixel Depth Offset,像素深度偏移
+Pixel Shader,像素着色器
+PixelDepthOffset,像素深度偏移
+PixelPosition,像素位置
+Place a new node.,放置新节点。
+PlaneOffset,平面偏移
+Platform Stats,平台统计信息
+Platforms,平台
+Play Audio Mode,播放音频模式
+Play Audio Probability,播放音频概率
+Play Audio Random Evaluation,播放音频随机计算
+Play Audio Trigger,播放音频触发器
+Play Looping Audio,播放循环音频
+Play Once Per Particle,每个粒子播放一次
+Plays one-shot audio effects at a location,在指定位置播放一次性音频特效
+Plugins,插件
+Point,点
+Point Attraction Force,点吸引力
+Polar,极坐标
+Position Array,位置数组
+Position Offset,位置偏移
+Position Sampling,位置采样
+Post Process,后期处理
+Post Process Materials,后处理材质
+Post Sim Scalars,模拟后标量
+Post Solve,求解后处理
+PostProcessVolume,后期处理体积
+Pow,幂运算
+Pre Sim Velocity,模拟前速度
+Preintegrated Skin,预积分皮肤
+Prepare Traverse Skeletal Mesh,准备遍历骨骼网格体
+Prepares attributes used to carry data into a gas simulation. The source modules in the gas simulation expect attributes of a specific type and name. This module sets them up for you.,准备用于将数据传入气体模拟的属性。气体模拟中的源模块需要特定类型与名称的属性。此模块会为你完成这些设置。
+Pressure,压力
+PressureGradient,压力梯度
+Preview,预览
+Preview Material,预览材质
+Preview Movie Path,预览影片路径
+Preview Scene Settings,预览场景设置
+"Preview the graph state for a given feature level, material quality, or static switch value.",预览指定功能级别、材质质量或静态开关值对应的图表状态。
+Previous Frame Fraction,上一帧分数
+PreviousWorldToUnit,上一帧世界转单位
+Primitive Data Index,图元数据索引
+Programmable,可编程
+Project Pressure,投影压力
+Project Settings,项目设置
+Properties,属性
+Python,Python 脚本
+QUALITY LEVEL,质量级别
+Quality Override,质量覆盖
+Quality Overrides,质量覆盖
+rain,雨水
+Ramp,渐变
+RandomU,随机U向
+Range,范围
+RasterGridScalar,栅格网格标量
+RasterGridVelocity,栅格网格速度
+rasterization and application of the particle data,粒子数据的栅格化与应用
+RasterizationGridScalar,栅格化标量网格
+RasterizationGridVelocity_X_Y,栅格化速度网格_X_Y轴
+RasterizationGridVelocity_Z_Weight,栅格化速度网格_Z轴权重
+Read Divergence,读取散度
+Realtime Nodes,实时节点
+Recalculate Duration Each Loop,每次循环重新计算时长
+Red,红色
+Reduces each particle,减少每个粒子
+Reference Count,引用计数
+Reference Viewer,引用查看器
+REFERENCES,引用
+Reflection,反射
+Reimport,重新导入
+ReimportWithNewFile,使用新文件重新导入
+Reject Particle By Sampled Age,按已采样年龄拒绝粒子
+Reject Particle If Sampled Index Is Invalid,若已采样索引无效则拒绝粒子
+Reject Particle on Sampled Particle's First Frame,在已采样粒子首帧拒绝粒子
+Relaxation,松弛
+RelaxationMult,松弛乘数
+Remove Layout,删除布局
+Rename the selected item.,重命名所选项目。
+Renaming assets,正在重命名资源
+Render Advanced Controls,渲染高级控件
+Render Advanced Options,渲染高级选项
+Render Color,渲染颜色
+Render Density,渲染密度
+Render Material,渲染材质
+Render Scale,渲染缩放
+Render Scale Multiplier,渲染缩放乘数
+Render Scatter,渲染散射
+Render Target Format,渲染目标格式
+Render Temperature,渲染温度
+Render Write Density Threshold,渲染写入密度阈值
+RenderColorGridToFire,渲染颜色网格至火焰
+RenderColorGridToSmoke,渲染颜色网格至烟雾
+RenderDensity,渲染密度
+RenderDensityAlbedo,渲染密度反照率
+RenderDensityGain,渲染密度增益
+RenderDensityMode,渲染密度模式
+RenderDensityOffset,渲染密度偏移
+RenderDensityRange,渲染密度范围
+RenderFireColor,渲染火焰颜色
+RenderGridScaleFactor,渲染网格缩放因子
+Rendering Features,渲染功能
+RenderQuality,渲染质量
+RenderSmokeColor,渲染烟雾颜色
+RenderTempColorGain,渲染温度颜色增益
+RenderTemperature,渲染温度
+RenderTemperatureMode,渲染温度模式
+RenderTemperatureOffset,渲染温度偏移
+RenderTemperatureOpacity,渲染温度不透明度
+RenderTemperatureRange,渲染温度范围
+RenderTempOpacityGain,渲染温度不透明度增益
+RenderUseBlackbodyCurve,渲染使用黑体曲线
+RenderUseDensityCurve,渲染使用密度曲线
+RenderUseScatterMask,渲染使用散射蒙版
+RenderUseTemperatureCurve,渲染使用温度曲线
+RenderUseTemperatureOpacityCurve,渲染使用温度不透明度曲线
+RenderWriteDensityThreshold,渲染写入密度阈值
+Report a Bug,报告错误
+Reset Age On Awaken,唤醒时重置年龄
+Resolution Grid,分辨率网格
+Resolution Multiplier,分辨率乘数
+Resource Limit,资源限制
+Result,结果
+Result node of the Material,材质的结果节点
+Revision Control,版本控制
+Ribbon,条带
+Ribbon UV Distance,丝带UV距离
+RibbonUVDistance,条带 UV 距离
+RibbonWidthScaleFactor,丝带宽度缩放因子
+RigidMeshCollisionQuery,刚体网格碰撞查询
+RootComponent,根组件
+"Rotate a sprite over time. Input is in Degrees, use the NormalizedAngleToDegrees dynamic input to remap the input range to 0-1 if desired.",随时间旋转精灵。输入单位为度，如需将输入范围重映射为0-1，可使用归一化角度转度动态输入。
+Rotate Around Point,绕点旋转
+Rotate Box On Axis,沿轴旋转盒体
+rotational velocity,旋转速度
+Roughness,粗糙度
+Run Update Script,运行更新脚本
+s own stage and fills the rasterization grids from the particle data,专属阶段，根据粒子数据填充栅格化网格
+Safe Frequency,安全频率
+Safe Length Calculation,安全长度计算
+Sample the attributes of particles in another emitter.,采样另一个发射器中粒子的属性。
+SampleParticlesFromOtherEmitter.IsSampledParticlesFirstFrame,从其他发射器采样粒子.是否为已采样粒子首帧
+SampleParticlesFromOtherEmitter.SampledAge,从其他发射器采样粒子.已采样年龄
+SampleParticlesFromOtherEmitter.SampledIndex,从其他发射器采样粒子.已采样索引
+SampleParticlesFromOtherEmitter.SampledPosition,从其他发射器采样粒子.已采样位置
+SampleParticlesFromOtherEmitter.SampleIsValid,从其他发射器采样粒子.采样是否有效
+Sampler,采样器
+Sampler Source,采样器源
+Sampler Type,采样器类型
+Sand,沙尘
+Save All,全部保存
+Save As,另存为
+Save Content,保存内容
+Save Layout,保存布局
+Save Selected,保存所选
+SaveSelectedAsset,保存所选资产
+Saving asset,正在保存资源
+Saving packages,正在保存包
+Scalability,可延展性
+Scalability Mode,可延展性模式
+ScalabilityEmitterExecutionState,可延展性发射器执行状态
+ScalabilityEmitterSpawnCountScale,可延展性发射器生成数量范围
+ScalabilityExecutionState,可延展性执行状态
+ScalarGrid,标量网格
+Scalars,标量
+Scale Added Velocity,缩放附加速度
+Scale Beam Width,缩放光束宽度
+Scale Color,缩放颜色
+Scale Color by Speed,根据速度缩放颜色
+Scale Emission by dt,按增量时间缩放发射量
+Scale factor on the Alpha component of the Linear Color,线性颜色Alpha分量的缩放因子
+Scale Mesh Size by Speed,按速度缩放网格体大小
+Scale RGBA,缩放RGBA
+Scale Ribbon Width,缩放条带宽度
+Scale Sprite Size,缩放精灵尺寸
+Scale Sprite Size by Speed,根据速度缩放Sprite大小
+Scale the Initial velocity as set in the particle spawn script,按粒子生成脚本中设置的初始速度进行缩放
+Scale Velocity,缩放速度
+Scales Sprite Size by the magnitude of the velocity vector.,根据速度向量的模长缩放精灵尺寸。
+Scatter Mask Contribution,散射蒙版贡献度
+Scatter Mask Position,散射蒙版位置
+Scatter Mask Width,散射蒙版宽度
+Scatter Resolution Factor,散射分辨率因子
+ScatterMaskContribution,散射蒙版贡献度
+ScatterMaskPosition,散射蒙版位置
+ScatterMaskWidth,散射蒙版宽度
+Scene Color After Tonemapping,色调映射后的场景颜色
+Scratch Dynamic Input,临时动态输入
+ScratchDynamicInput,临时动态输入
+Screen Space Reflections,屏幕空间反射
+ScreenPosition,屏幕位置
+Script Source,脚本源
+Script Stats,脚本统计数据
+Scripted Asset Actions,脚本化资源操作
+Second,次要
+Select,选择
+Select an object to view details.,选择一个对象以查看细节。
+Select Content to Save,选择要保存的内容
+Selected Directional Light,选中方向光
+Selection Mode,选择模式
+Set the elements of the Material Editor UI to update in realtime,设置材质编辑器界面元素实时更新
+"Setup Module for Beam Emitters which manages startpoints, endpoints, and tangents.",光束发射器的设置模块，用于管理起点、终点与切线。
+Setup Rigid Body DI,设置刚体数据接口（DI）
+Shader Code,着色器代码
+Shading,着色
+Shading Model,着色模型
+Shadows,阴影
+Shape Location,形状位置
+ShapeBitangent,形状副切线
+ShapeNormal,形状法线
+ShapePosition,形状位置
+ShapeTangent,形状切线
+ShapeVector,形状向量
+Shared: Clamp,共享：限制范围
+Shared: Wrap,共享：循环寻址
+Show in Explorer,在资源管理器中显示
+Show in Folder View,在文件夹视图中显示
+Show Inactive,显示未激活项
+Show Log,显示日志
+Show the material instance parameters currently hidden behind static switches.,显示当前被静态开关隐藏的材质实例参数。
+Sim Adjustments,模拟调整
+Sim Grid,模拟网格
+SimGrid,模拟网格
+SimGrid_Density_TemperatureIndex,模拟网格_密度_温度索引
+SimGrid_DensityIndex,模拟网格_密度索引
+SimGrid_PressureIndex,模拟网格_压力索引
+SimGrid_RGBAIndex,模拟网格_RGBA索引
+SimGrid_SimFloatIndex,模拟网格_模拟浮点索引
+SimGrid_SolidVelocity_BoundaryIndex,模拟网格_固体速度_边界索引
+SimGrid_TemperatureIndex,模拟网格_温度索引
+SimGrid_VelocityIndex,模拟网格_速度索引
+SimRT,模拟渲染目标
+"Simulate the self-shadowing that happens within crevices of a surface, or of a volume for volumetric clouds only",模拟表面缝隙内的自阴影效果，或仅用于体积云的体积自阴影效果
+Simulation,模拟
+Simulation Grid,模拟网格
+SimulationPosition,模拟位置
+SingleLayerWater,单层水体
+SkyAtmosphere,天空大气
+SkyLight,天空光
+SLEEP AND CLEAR PARTICLES,休眠并清除粒子
+SLEEP AND LET PARTICLES FINISH,休眠并等待粒子结束
+Slider Max,滑块最大值
+Slider Min,滑块最小值
+SM_SkySphere,静态网格_天空球
+Small Scale Force,小尺度力
+Small Scale Turbulence,小尺度湍流
+Smallest,最小
+Smoke,烟雾
+Snippets,代码片段
+SolidVelocity,固体速度
+Solve Forces and Velocity,求解力与速度
+Solve Pressure,求解压力
+Sort Priority,排序优先级
+Sound,声音
+Source,源
+Source Color,源颜色
+Sources,粒子源
+Sourcing,源导入
+Spawn Burst Instantaneous,瞬时爆发生成
+Spawn by Trigger,按触发器生成
+Spawn Particles from Other Emitter,从其他发射器生成粒子
+Spawn Particles from Sim Cache,从模拟缓存生成粒子
+"Spawn particles in a sphere shape, with options for hemisphere shaping and density functions.",以球体形状生成粒子，支持半球塑形与密度函数选项。
+Spawn Per Frame,每帧生成
+Spawn Rate Per Particle Cap,单粒子生成速率上限
+SpawnBurst,突发生成
+SpawnCountScale,生成数量范围
+Spawning Enabled,生成已启用
+SpawnParticlesAttributeReader,生成粒子属性读取器
+SpawnParticlesFromOtherEmitter.NumParticlesInOtherEmitter,从其他发射器生成粒子.其他发射器内粒子数量
+SpawnParticlesFromOtherEmitter.ParticlesSpawnedThisFrame,从其他发射器生成粒子.本帧生成粒子数
+SpawnParticlesFromOtherEmitter.PreviousTotalSpawnedParticles,从其他发射器生成粒子.此前累计生成粒子总数
+SpawnParticlesFromOtherEmitter.SpawnOutputInfo,从其他发射器生成粒子.生成输出信息
+SpawnParticlesFromOtherEmitter.SpawnRemainder,从其他发射器生成粒子.生成余数
+SpawnParticlesFromOtherEmitter.TotalSpawnedParticles,从其他发射器生成粒子.累计生成粒子总数
+Spawns a burst of particles instantaneously.,瞬间生成一批粒子。
+Speed,速度
+Speed Threshold,速度阈值
+Speed X,速度X轴
+Speed Y,速度Y轴
+Sphere,球体
+Sphere Source,球形体源
+SphereLocation.Position,球体位置.位置
+SphereLocation.SphereNormal,球体位置.球体法线
+SphereLocation.SphereVector,球体位置.球体向量
+splash,溅射
+Splat Data Channel into Raster Grid,将数据通道溅射至栅格网格
+Splat Particle Data into Raster Grids,将粒子数据溅射至栅格网格
+Spline Position Error Threshold,样条位置误差阈值
+Split,拆分
+Spring Force,弹簧力
+Sprite,精灵
+Sprite Alignment Sampling,精灵对齐采样
+Sprite Facing and Alignment,精灵朝向与对齐
+Sprite Facing Sampling,精灵朝向采样
+Sprite Renderer Bindings,精灵渲染器绑定
+Sprite Renderer：,精灵渲染器：
+Sprite Rotation Angle,精灵旋转角度
+Sprite Rotation Sampling,精灵旋转采样
+Sprite Size Sampling,精灵尺寸采样
+Sprite UV Mode,精灵 UV 模式
+SpriteAlignment,精灵对齐
+SpriteFacing,精灵朝向
+SpriteRotation,精灵旋转
+SpriteSize,精灵尺寸
+SpriteSizeScaleFactor,精灵尺寸缩放系数
+Stage,阶段
+Standard,标准
+Start,起点
+Start Time,开始时间
+Starter,启动器
+StarterContent,启动内容
+StartVelocity,初始速度
+StaticMeshActor,静态网格体 Actor
+Stationary surface,静止表面
+Stats,统计信息
+Steps,步数
+Streak Rate,条纹速率
+Strength,强度
+Stuff,素材
+SubImageIndex,子图索引
+Subsurface,次表面
+Subsurface Color,次表面颜色
+Subsurface Profile,次表面轮廓
+SubsurfaceColor,次表面颜色
+Subtraction Amount,抵消量
+SubUV Curve,子UV曲线
+SubUV Lookup Index,子UV查找索引
+SubUV Loop Count,子UV循环次数
+SubUV Play Rate Time,子UV播放速率时间
+Suggested,建议
+supplied direct position,提供的直接位置
+SUPPORT,支持
+Support Evaluation Type parameter,支持计算类型参数
+Support transforming data from the source emitter space to the destination emitter space,支持将数据从源发射器空间转换至目标发射器空间
+Support weight grid on color query,支持颜色查询的权重网格
+Surface Thickness,表面厚度
+Swap to the reduced fluid attribute list,切换至精简流体属性列表
+Switch Param,开关参数
+SWITCH PARAMS,开关参数
+Switch to reduced fluid attribute list,切换至精简流体属性列表
+System,系统
+System Overview,系统总览
+System Spawn Script,系统生成脚本
+System Update Script,系统更新脚本
+SystemLocalToWorld,系统局部转世界
+SystemLocalToWorldNoScale,系统局部转世界（不含缩放）
+SystemWorldToLocal,系统世界转局部
+SystemWorldToLocalNoScale,系统世界转局部（不含缩放）
+Takes in a texture or value that simulates the index of refraction of the surface,输入用于模拟表面折射率的纹理或数值
+"Takes the initial particle scale as set in the spawn script, and scales it by a scale factor.",采用生成脚本中设置的初始粒子缩放值，并按缩放因子对其进行缩放。
+Tangents,切线
+Temp,临时
+Temperature,温度
+Temperature Color Curve,温度颜色曲线
+Temperature Color Gain,温度颜色增益
+Temperature Opacity Curve,温度不透明度曲线
+Temperature Opacity Gain,温度不透明度增益
+Temperature Range,温度范围
+Temperature Scale,温度缩放
+TemperatureBuoyancy,温度浮力
+TemperatureIndex,温度索引
+Templates,模板
+TemporaryGrid,临时网格
+Texture,纹理
+Texture Sample,纹理采样
+Texture2D,二维纹理
+Texture2DArray,二维纹理数组
+The 4-float vector used to send custom data to renderer.,4浮点向量用于将自定义数据发送至渲染器。
+The above modules get all the information they need from Emitter parameters created by this module,上述模块从该模块创建的发射器参数中获取所需的全部信息
+The deterministic Rasterization Grid and the faster Grid 3D Collection,确定性栅格化网格与更快速的3D网格集合
+The distance from the camera INSIDE of which the emitter is considered to be culled,相机内侧剔除距离
+The distance from the camera OUTSIDE of which the emitter is considered to be culled,相机外侧剔除距离
+The material's attributes describe a 3d surface.,材质属性用于描述三维表面。
+the Max Scale Factor is applied,应用最大缩放因子
+The overridden value for the first dynamic material parameter,第一个动态材质参数的覆盖值
+The particle source controls all reside on the Initialize Particle Source module,粒子源控件全部位于初始化粒子源模块上
+The speed,速度
+the system itself completes,系统自身完成
+There are two rasterization grid types available,提供两种栅格化网格类型
+Thin Translucent,薄层半透明
+ThirdPerson,第三人称
+This allows emitters to be deactivated or completed based on whether they are inside the min distance,这使得发射器可根据是否处于最小距离以内，被停用或标记为完成
+This allows emitters to be deactivated or completed based on whether they are outside the max distance,这使得发射器可根据是否超出最大距离，被停用或标记为完成
+This allows the use of up to four unique dynamic parameter nodes in a given material.,允许在指定材质中使用最多四个独立的动态参数节点。
+This allows you to have an emitter,这允许你创建一个发射器
+This mode will also find collision capsules attached to Skeleton Mesh actors,此模式还会查找附加到骨架网格Actor上的碰撞胶囊体
+This mode will cause the simulation to collide against all static meshes within the bounds of the simulation,此模式将使模拟与模拟范围内的所有静态网格发生碰撞
+This module initializes the controls and rasterization grids for that process,此模块为该流程初始化控件与栅格化网格
+This module iterates over the particle reader created by the Grid3D_Gas_InitializeParticleSource module,此模块遍历由3D网格_气体_初始化粒子源模块创建的粒子读取器
+This module samples data from the rasterization grid which contains the particle source data,此模块从包含粒子源数据的栅格化网格中采样数据
+This module works with two other modules to perform the reading,此模块与另外两个模块协同执行读取操作
+Thumbnail,缩略图
+Time Based State Machine,基于时间的状态机
+Timeline,时间轴
+to a specific number of centimeters per second,精确到指定的厘米每秒数值
+To be used in conjunction with the InitializeParticleSource module,需与初始化粒子源模块配合使用
+To be used in conjunction with the SplatParticleDataIntoRasterGrid module,需与将粒子数据溅射至栅格网格模块配合使用
+To Texture,到纹理
+"To use Indices 1-3, change the ""Parameter Index"" on the node itself in the material editor to the corresponding number.",若要使用索引1-3，请在材质编辑器中将节点自身的「参数索引」修改为对应数值。
+Toggles displaying of the material's stats.,切换材质统计信息的显示。
+Toggles hiding nodes which are unrelated to the selected nodes automatically.,切换是否自动隐藏与选中节点无关的节点。
+Toggles the window that shows material stats and compilation errors for multiple platforms.,切换用于显示多平台材质统计数据与编译错误的窗口。
+Tools,工具
+Tools to help clean up graph nodes and connections,用于清理图表节点与连接的工具
+Trace,跟踪
+Trail,拖尾
+Transform Data Option,变换数据选项
+Transform To WorldSpace,变换至世界空间
+TransformVector,变换向量
+Transient.Density,瞬态.密度
+Transient.RGBA,瞬态.RGBA
+Transient.Temperature,瞬态.温度
+TransientGrid,瞬态网格
+Translucent,半透明
+True,真
+True Vector4,真四维向量
+Turbulence,湍流
+Turbulence Bias,湍流偏移
+Turbulence Frequency,湍流频率
+Turbulence Gain,湍流增益
+Turbulence Speed,湍流速度
+Two Sided,双面
+Two Sided Foliage,双面植被
+Type,类型
+UE Delta,UE增量
+UEEditor,虚幻编辑器
+UGradient,U向渐变
+UMaterial Expression Actor Position WS,材质表达式 Actor世界空间位置
+UMaterial Expression Particle Position WS,材质表达式 粒子世界空间位置
+Uncategorized,未分类
+Undo History,撤销历史
+Unexposed,未公开
+Uniform Curve,均匀曲线
+Units,单位
+UnitToLocal,单位转局部
+UnitToWorld,单位转世界
+Unlit,无光照
+Unset / (Mass of 1),未设置（质量为 1）
+Untitled,未命名
+Update Beam,更新光束
+Update data transform option to be more clear,更新数据变换选项以提升清晰度
+Update Decal Orientation,更新贴花朝向
+Update Particles from Other Emitter,从其他发射器更新粒子
+Updating Texture Streaming Data,正在更新纹理流送数据
+Use Beam Tangents,使用光束切线
+Use Custom Primitive Data,使用自定义图元数据
+Use Data Channel Source,使用数据通道源
+Use Emissive Material,使用自发光材质
+Use Emitter Source,使用发射器源
+Use function,使用函数
+Use GBuffer Velocity,使用GBuffer速度
+Use High Precision Collisions,使用高精度碰撞
+Use Material Attributes,使用材质属性
+Use Mesh Size,使用网格尺寸
+Use NeighborGrid,使用邻域网格
+Use Predefined Index,使用预定义索引
+Use Radius Falloff,使用半径衰减
+Use Scatter Mask,使用散射蒙版
+Use Stack Context,使用堆栈上下文
+Use StackContext,使用堆栈上下文
+Use Streaking,使用条纹效果
+UseBaker,使用烘焙器
+Used in the 3D Gas template to prep attributes for the baker convenience tools.,用于3D气体模板中，为烘焙器便捷工具准备属性。
+Used with Curves,用于曲线
+Used with Instanced Skinned Mesh,用于实例化蒙皮网格
+Used with Mesh Deformer,用于网格变形器
+Used with Voxels,用于体素
+UseDebugSlice,使用调试切片
+UseDensityAndTemperature,使用密度与温度
+UseDensityCurve,使用密度曲线
+UseDensityOnly,仅使用密度
+UseEmitterParticleSource,使用发射器粒子源
+UseLegacyTransform,使用旧版变换
+UseLegacyVolumeSample,使用旧版体积采样
+UseNDCParticleSource,使用NDC粒子源
+UseParticleSource,使用粒子源
+UseRasterGridSource,使用栅格网格源
+UseRasterizationGridSource,使用栅格化网格源
+UseRGBA,使用RGBA
+Users,用户
+UseScatter,使用散射
+UseVolumeMaterial,使用体积材质
+Utility,工具
+UV Channel,UV通道
+UV Offset,UV偏移
+UVs,UV 坐标
+UVScale,UV缩放
+Validating,正在验证
+Value From Grid,来自网格的值
+Values above,高于该值
+Vector,向量
+Vector Field,向量场
+Vector Field：,向量场：
+VectorFields,向量场
+VectorInput,向量输入
+Vectors,向量
+VectorScale,向量缩放
+VectorValue,向量值
+Velocity and RGBA which can then be written back to the simulation grids,速度与RGBA，随后可写回模拟网格
+Velocity Application,速度应用
+Velocity Based Turbulence Gain,基于速度的湍流增益
+Velocity Comp Mode,速度合成模式
+Velocity Falloff,速度衰减
+Velocity From Depth Only,仅从深度获取速度
+Velocity Radius Scale,速度半径缩放
+Velocity Sampling,速度采样
+VelocityScale,速度缩放
+Version upgrade note,版本更新注释
+VGradient,V向渐变
+View Distance,视图距离
+View Documentation,查看文档
+View Recycler,查看回收站
+ViewDir,视线方向
+ViewReferences,查看引用
+Virtual Texture,虚拟纹理
+VisibilityTag,可见性标签
+Volume,体积
+Volume Renderer,体积渲染器
+Volumetric NonDirectional,体积无方向
+VolumetricCloud,体积云
+VolumetricScattering,体积散射
+Vortex Force,涡旋力
+Vorticity,涡量
+VorticityMult,涡量乘数
+VT,体积纹理
+water,水
+waterfall,瀑布
+When all emitters inside of a system are complete,当系统内所有发射器均完成时
+When all particles are dead,当所有粒子消亡时
+"While the global distance field is very convenient as it includes almost all actors within the level, it is generally low resolution. This can be an issue when collision fidelity is important.",全局距离场包含关卡内几乎所有Actor，使用非常便捷，但通常分辨率较低。当碰撞精度要求较高时，这可能会成为问题。
+White,白色
+Wind Direction,风向
+Wind Force,风力
+Wind Magnitude,风力大小
+Window,窗口
+World,世界
+World Position Offset,世界位置偏移
+WorldCellSizeScalar,世界单元格尺寸 标量
+WorldCellSizeVelocity,世界单元格尺寸 速度
+WorldGridExtents,世界网格范围
+WorldPositionOffset,世界位置偏移
+WorldRenderGridScale,世界渲染网格缩放
+WorldToLocal,世界转局部
+WorldToUnit,世界转单位
+Write to Data Channel,写入数据通道
+Write to Intrinsic Variables,写入固有变量
+Write To PhysicsForce,写入物理力
+Write to the Dynamic Parameter vertex interpolator node in the material editor.,写入材质编辑器中的动态参数顶点插值器节点。
+WriteAttributesToRT,写入属性至渲染目标
+Y Axis,Y轴
+Yellow,黄色
+"You can add Component Tags to the specific actors that you want to collide with, excluding anything that does not have the tag. This can greatly reduce the cost of your simulation.",你可以为需要碰撞的特定Actor添加组件标签，排除所有不带该标签的对象。这可以大幅降低模拟的性能开销。
+you can vary how the scale is applied over the velocity variation,可调整缩放效果随速度变化的作用规律
+Zen Server,Zen服务器
+zh-CN,简体中文

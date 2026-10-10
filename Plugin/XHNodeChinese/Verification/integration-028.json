@@ -1,0 +1,16 @@
+{
+  "version": "0.2.8",
+  "XH_SelfTest": 0,
+  "XH_SearchSelfTest": 0,
+  "XH_GraphSelfTest": 0,
+  "XH_CaptureSelfTest": 0,
+  "XH_ParameterSelfTest": 0,
+  "XH_SynonymSelfTest": 0,
+  "provider_menus": true,
+  "web_import": true,
+  "api_mock_import": true,
+  "no_codex_config": true,
+  "hot_reload": true,
+  "capture_off_search_supported": true,
+  "passed": true
+}

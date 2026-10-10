@@ -1,0 +1,20 @@
+{
+  "version": "2026.10.10",
+  "input_terms": 1922,
+  "input_long_texts": 199,
+  "shared_terms": 1461,
+  "shared_long_texts": 153,
+  "excluded_counts": {
+    "private_or_runtime_noise": 26,
+    "unverified_term": 414,
+    "missing_code_or_placeholder": 14,
+    "not_chinese_translation": 8,
+    "unverified_long_text": 6,
+    "empty_translation": 39
+  },
+  "policy": "Exact engine localization/source/asset evidence; unverified content stays private. Original user files unchanged.",
+  "files": {
+    "User.csv": "68d1bcd64cfcd49f42bd427e25a237dc3aeb9da08270537e42057676f0e0bd96",
+    "LongText.csv": "481752e857f5dde989f18a471dc42a8a68e84d39f0b4e1b163be5bf21edb63d4"
+  }
+}

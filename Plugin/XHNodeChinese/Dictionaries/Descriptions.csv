@@ -1,0 +1,49 @@
+Source,Translation,Namespace,Key,Category
+"Important usage notes: 
+
+This module must be placed immediately before a Solve Forces and Velocity module. 
+
+Simulation stage usage: 
+A Solve Forces and Velocity module should be placed at the end of particle update. This module can be placed in a simulation stage. The simulation stage should operate on particles and perform 1 iteration. A Solve Forces and Velocity module should be placed immediately after this module. That module's ""Write to Intrinsic Properties"" Bool should be driven by [Transient]CollisionValid.
+
+When used in CPU emitters, the module will cast rays to calculate it's collision with the world. 
+
+When used with GPU emitters, the module will either use the scene depth,  global distance field, or GPU Ray Tracing to find collision surfaces.
+
+GPU Ray Tracing Notes: You must have a gpu ray tracing enabled video card, the project settings also have to allow gpu ray traces.
+路径：/Niagara/Modules/Collision/Collision.Collision","重要使用说明：
+
+此模块必须紧挨着放在“求解力与速度”模块之前。
+
+在模拟阶段中的用法：
+应在粒子更新阶段的末尾放置一个“求解力与速度”模块。此模块可以放在模拟阶段中；该模拟阶段应以粒子为处理对象，并执行 1 次迭代。还应在此模块之后紧接着放置一个“求解力与速度”模块，并将该求解模块的“写入内在属性（Write to Intrinsic Properties）”布尔值设为由 [Transient]CollisionValid 驱动。
+
+用于 CPU 发射器时，此模块通过发射射线来计算粒子与世界的碰撞。
+
+用于 GPU 发射器时，此模块使用场景深度、全局距离场或 GPU 光线追踪来查找碰撞表面。
+
+GPU 光线追踪说明：显卡必须支持并启用 GPU 光线追踪，项目设置也必须允许 GPU 射线追踪。
+路径：/Niagara/Modules/Collision/Collision.Collision",,,
+"Important usage notes: 
+
+This module must be placed immediately before a Solve Forces and Velocity module. 
+
+Simulation stage usage: 
+A Solve Forces and Velocity module should be placed at the end of particle update. This module can be placed in a simulation stage. The simulation stage should operate on particles and perform 1 iteration. A Solve Forces and Velocity module should be placed immediately after this module. That module's ""Write to Intrinsic Properties"" Bool should be driven by [Transient]CollisionValid.
+
+When used in CPU emitters, the module will cast rays to calculate it's collision with the world. 
+
+When used with GPU emitters, the module will either use the scene depth,  global distance field, or GPU Ray Tracing to find collision surfaces.
+
+GPU Ray Tracing Notes: You must have a gpu ray tracing enabled video card, the project settings also have to allow gpu ray traces.","重要使用说明：
+
+此模块必须紧挨着放在“求解力与速度”模块之前。
+
+在模拟阶段中的用法：
+应在粒子更新阶段的末尾放置一个“求解力与速度”模块。此模块可以放在模拟阶段中；该模拟阶段应以粒子为处理对象，并执行 1 次迭代。还应在此模块之后紧接着放置一个“求解力与速度”模块，并将该求解模块的“写入内在属性（Write to Intrinsic Properties）”布尔值设为由 [Transient]CollisionValid 驱动。
+
+用于 CPU 发射器时，此模块通过发射射线来计算粒子与世界的碰撞。
+
+用于 GPU 发射器时，此模块使用场景深度、全局距离场或 GPU 光线追踪来查找碰撞表面。
+
+GPU 光线追踪说明：显卡必须支持并启用 GPU 光线追踪，项目设置也必须允许 GPU 射线追踪。",,,

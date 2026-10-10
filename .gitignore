@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+Intermediate/
+Saved/
+DerivedDataCache/
+dist/
+build/
+*.spec
+TranslationAPI.json
+CodexConnection.json
+*.zip
