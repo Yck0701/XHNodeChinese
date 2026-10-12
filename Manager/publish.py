@@ -7,6 +7,28 @@ import zipfile
 import manager_core as core
 
 
+def default_dictionary_payloads(plugin):
+    """Every approved bundled dictionary; never copy a maintainer's User.csv."""
+    root=Path(plugin)/'Dictionaries'
+    payloads={'Dictionaries/'+p.name:p.read_bytes() for p in sorted(root.iterdir())
+              if p.is_file() and p.suffix.lower() in ('.csv','.json') and p.name!='User.csv'}
+    payloads['Dictionaries/User.csv']=b'Key,Value\n'
+    if 'Dictionaries/UI.csv' not in payloads:raise ValueError('缺少界面基础词典。')
+    return payloads
+
+
+def verify_packaged_defaults(package,plugin):
+    """Reject stale or omitted dictionaries even when reusing native binaries."""
+    expected=default_dictionary_payloads(plugin)
+    with zipfile.ZipFile(package) as z:
+        actual={n.removeprefix('XHNodeChinese/') for n in z.namelist()
+                if n.startswith('XHNodeChinese/Dictionaries/') and not n.endswith('/')}
+        if actual!=set(expected):raise ValueError('安装包词典清单与当前源码不一致。')
+        for name,data in expected.items():
+            if z.read('XHNodeChinese/'+name)!=data:raise ValueError('安装包词典过期：'+name)
+    return True
+
+
 def public_plugin(package,dest):
     """Remove maintainer sources while leaving all runtime bytes unchanged."""
     dest=Path(dest);dest.parent.mkdir(parents=True,exist_ok=True)

@@ -239,13 +239,29 @@ class Session:
         if self.state['phase'] not in ('sending','waiting','error'):return False
         folder=Path(self.state.get('folder',''))
         if not self.state.get('folder'):return False
-        paths=sorted(p for p in folder.glob('response-*.json') if re.fullmatch(r'response-\d{4,}\.json',p.name))
-        if (folder/'response.json').exists():paths.append(folder/'response.json')
+        # Windows directory enumeration already supplies size and modification
+        # time. Path.stat() per accepted batch can stall the editor for tens of
+        # milliseconds on every poll. Re-enumerate to detect edits, but reuse
+        # each fresh DirEntry's cached metadata instead of reopening each file.
+        paths=[]
+        try:
+            with os.scandir(folder) as entries:
+                for entry in entries:
+                    if entry.name!='response.json' and not re.fullmatch(r'response-\d{4,}\.json',entry.name):continue
+                    try:
+                        if not entry.is_file():continue
+                        stat=entry.stat()
+                    except FileNotFoundError:continue  # Atomic replacement during enumeration.
+                    paths.append((entry.name,(stat.st_mtime_ns,stat.st_size)))
+        except FileNotFoundError:return False
+        paths.sort(key=lambda item:(item[0]=='response.json',item[0]))
         request=None
-        for path in paths:
-            stamp=(path.stat().st_mtime_ns,path.stat().st_size)
-            if self._file_stamps.get(path.name)==stamp:continue
-            payload=path.read_bytes();digest=hashlib.sha256(payload).hexdigest()
+        for name,stamp in paths:
+            if self._file_stamps.get(name)==stamp:continue
+            path=folder/name
+            try:payload=path.read_bytes()
+            except FileNotFoundError:continue  # Pick up the replacement next poll.
+            digest=hashlib.sha256(payload).hexdigest()
             accepted=self.state.get('accepted_files',{})
             if path.name in accepted:
                 if accepted[path.name]!=digest:

@@ -1,4 +1,5 @@
-import json,sys,tempfile,unittest
+import hashlib,json,sys,tempfile,unittest
+from unittest.mock import patch
 from pathlib import Path
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'Content/Python'))
 from xh_node_chinese import core,personal,codex_translate as ct
@@ -144,6 +145,42 @@ class CodexTests(unittest.TestCase):
         self.assertFalse(session.poll());self.assertEqual(self.user.read_bytes(),before)
         core.write_json(folder/'response-0002.json',dict(resp,translations=resp['translations'][1:]))
         self.assertTrue(session.poll());self.assertEqual(session.state['phase'],'done')
+
+    def test_large_accepted_queue_stays_idle_but_detects_new_and_edited_batches(self):
+        session,folder,req,resp=self.start_session()
+        previous=[{'id':'old-'+str(i),'kind':'term','source':'Old Label '+str(i)} for i in range(600)]
+        req['items']=previous+req['items'];core.write_json(folder/'request.json',req)
+        accepted={}
+        for index,item in enumerate(previous,1):
+            path=folder/f'response-{index:04}.json'
+            core.write_json(path,{'request_id':req['request_id'],'translations':[],
+                                 'skipped':[{'id':item['id'],'reason':'已处理'}]})
+            accepted[path.name]=hashlib.sha256(path.read_bytes()).hexdigest()
+        session.state.update(processed_ids=[i['id'] for i in previous],accepted_files=accepted,
+                             total=len(req['items']),completed=len(previous))
+        session.persist()
+        # Startup verifies persisted hashes once. Subsequent unchanged polls must
+        # neither reopen files nor call Path.stat() once per accepted batch.
+        self.assertFalse(session.poll())
+        with (patch.object(Path,'stat',side_effect=AssertionError('per-file stat')),
+              patch.object(Path,'read_bytes',side_effect=AssertionError('unchanged file reopened'))):
+            self.assertFalse(session.poll())
+        core.write_json(folder/'response-0601.json',dict(resp,translations=resp['translations'][:1]))
+        self.assertTrue(session.poll());self.assertEqual(session.state['completed'],601)
+        self.assertEqual(len(core.load_dictionary(self.user)),1)
+        core.write_json(folder/'response-0001.json',{'modified':'已导入批次不允许改写'})
+        self.assertFalse(session.poll())
+        self.assertEqual(session.state['phase'],'error')
+        self.assertIn('response-0001.json',session.state['error'])
+        self.assertEqual(session.state['completed'],601)
+
+    def test_missing_queue_and_temporary_or_directory_responses_are_ignored(self):
+        session,folder,req,resp=self.start_session()
+        (folder/'response-0001.json').mkdir()
+        core.write_json(folder/'response-0002.json.tmp',resp)
+        self.assertFalse(session.poll())
+        session.state['folder']=str(folder/'missing')
+        self.assertFalse(session.poll())
 
     def test_partial_preserves_manual_edit_and_cancelled_remaining(self):
         session,folder,req,resp=self.start_session()

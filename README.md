@@ -23,3 +23,7 @@
 ## 当前版本
 
 管理器 1.0.3、插件 0.2.10；内置共享词库 2026.10.12。公开下载见 https://github.com/Yck0701/XHNodeChinese-new/releases/latest 。共享词库与个人译文分离；修复 Windows 拒绝移动插件目录时的安装失败，保留完整备份并支持逐文件更新。
+
+## 当前版本
+
+管理器 1.0.4、插件 0.2.11；内置共享词库 2026.10.12。公开下载见 https://github.com/Yck0701/XHNodeChinese-new/releases/latest 。共享词库与个人译文分离；补齐界面基础词典，优化大量翻译结果的轮询开销，并增加完整词典打包校验。

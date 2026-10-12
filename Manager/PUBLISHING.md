@@ -8,7 +8,7 @@
 
 1. 在仓库的 **Releases → Draft a new release** 新建版本。
 2. 上传本工具 `release` 文件夹内的 **manifest.json 和所有 ZIP**。它们必须是同一个 Release 的附件，不要只提交到源码分支。
-3. 上传便携管理器包 `XHPluginManager-1.0.1-win64.zip`。不要上传管理器源码 ZIP 或编译用插件源码包。
+3. 上传同版本便携管理器包（例如 `XHPluginManager-1.0.4-win64.zip`）。不要上传管理器源码 ZIP 或编译用插件源码包。
 4. 确认附件完整后发布，并将其设为 **Latest**（不选 Pre-release）。
 
 管理器使用 `https://github.com/Yck0701/XHNodeChinese-new/releases/latest/download/manifest.json`。版本清单引用相邻附件的文件名，在线和离线共用一套文件。公开清单不包含源码下载项。
@@ -66,6 +66,8 @@ python -m PyInstaller --noconfirm --clean --onedir --windowed --name XHPluginMan
 
 ## 更新保护
 
+- 复用已验证的引擎二进制时，必须重新打入当前运行脚本及所有基础词典。使用 `default_dictionary_payloads` 生成词典内容，并以 `verify_packaged_defaults` 逐份校验最终 ZIP；禁止只覆盖 Shared.csv、SharedLongText.csv 而遗漏 UI.csv 等基础词典。
+- 发布包中的 User.csv 必须是空白模板；基础词典中不放个人覆盖项。实际发布 ZIP 仍需在每个目标引擎的隔离工程中验证。
 - 下载先写临时文件，校验后才使用；拒绝路径越界、符号链接、重复压缩条目与超大压缩包。
 - 插件安装使用暂存目录，保留个人词典，工程 Saved 数据不替换，旧插件目录另行备份。
 - 词典替换/恢复先备份两份文件；执行出错时尝试恢复原内容。意外断电后可用 ZIP 备份恢复。

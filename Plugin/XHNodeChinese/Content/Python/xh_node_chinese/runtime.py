@@ -9,6 +9,7 @@ import unreal
 from . import core
 from .hotkey import ForegroundHotkey
 
+RUNTIME_VERSION = '0.2.11'
 PLUGIN = Path(__file__).resolve().parents[3]
 SAVE = Path(unreal.Paths.convert_relative_path_to_full(unreal.Paths.project_saved_dir())) / 'XHNodeChinese'
 _catalogue = None
@@ -271,7 +272,7 @@ def write_diagnostics(live_report=None, detailed=False):
     current = _bridge.current() if _bridge is not None and detailed else []
     pairs = _bridge.bindings() if _bridge is not None and detailed else []
     personal = _bridge.personal if _bridge is not None else {}
-    data = {'version':'0.2.9', 'time':time.strftime('%Y-%m-%d %H:%M:%S'),
+    data = {'version':RUNTIME_VERSION, 'time':time.strftime('%Y-%m-%d %H:%M:%S'),
             'codex_poll_interval_ms':250,
             'capture_untranslated':state()['capture_untranslated'],
             'native_scan_ms':_bridge.dll.XH_ScanMs() if _bridge else None,
@@ -832,7 +833,7 @@ def startup():
     _indexer=Indexer(PLUGIN,SAVE,catalogue(),cached_only=True)
     import atexit
     atexit.register(shutdown)
-    unreal.log(f'[XHNodeChinese] Ready 0.2.9: {_preloaded} preloaded; progressive Codex translation.')
+    unreal.log(f'[XHNodeChinese] Ready {RUNTIME_VERSION}: {_preloaded} preloaded; progressive Codex translation.')
 
 
 def shutdown():
