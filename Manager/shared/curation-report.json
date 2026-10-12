@@ -1,13 +1,13 @@
 {
-  "version": "2026.10.12.1",
+  "version": "2026.10.12.2",
   "input_files": 10,
   "input_rows": 44798,
   "empty_rows_excluded": 453,
   "duplicate_rows_removed": 92,
   "conflicts_resolved_by_input_priority": 9,
   "numbered_aliases_removed": 0,
-  "shared_terms": 32655,
-  "shared_long_texts": 4205,
+  "shared_terms": 32689,
+  "shared_long_texts": 4217,
   "excluded_counts": {
     "unverified_source": 7128,
     "missing_code_identifier": 18,
@@ -19,8 +19,9 @@
   },
   "policy": "Exact stock engine source/localization evidence. Personal inputs unchanged. Unverified entries retained only in private review.",
   "files": {
-    "User.csv": "952e735f24591306b696f7d9775a031e8ddf47aa6be5119ff07e01a0f396ec9a",
-    "LongText.csv": "91d3f759f483fe8ad89f110a341cd5b52dda5dfe7f8f6427f1475f5595c8c8bd"
+    "User.csv": "1653a36070354a03e719f46867c9d1b5c7d0a2bfefff2be79131e9861a2345b3",
+    "LongText.csv": "d9f2a3e03cf06bf2b6183ce93661b5f16fd19f2ea0e20fa8f22b4baf6ac8c2dd"
   },
-  "reviewed_niagara_additions": 77
+  "reviewed_niagara_additions": 77,
+  "reviewed_vortex_tooltip_additions": 46
 }

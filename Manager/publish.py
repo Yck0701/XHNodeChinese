@@ -1,5 +1,6 @@
 """Create a GitHub Releases asset set locally. Never upload credentials or user data."""
 import argparse
+import hashlib
 import json
 from pathlib import Path
 import shutil
@@ -52,8 +53,29 @@ def public_plugin(package,dest):
         core.zip_members(z)
         assert not any('/Source/' in n or n.endswith('/build_bridge.py') or '/CompilerHost/' in n for n in z.namelist())
         if z.testzip():raise ValueError('公开插件包校验失败。')
+        verify_packaged_components(z)
     temp.replace(dest)
     return dest
+
+
+def verify_packaged_components(z):
+    """Reject incomplete new packages before they reach any public release."""
+    prefix='XHNodeChinese/'
+    descriptor=json.loads(z.read(prefix+'XHNodeChinese.uplugin'))
+    if descriptor.get('XHModuleIndexVersion',0)<1:return
+    binary=prefix+'Binaries/Win64/'
+    try:
+        bridge=json.loads(z.read(binary+'bridge-manifest.json'))
+        index=json.loads(z.read(binary+'module-index-manifest.json'))
+        if index['engine_sha256']!=bridge['engine_sha256']:
+            raise ValueError('内部参数索引组件的引擎指纹不匹配。')
+        for manifest in (bridge,index):
+            name=manifest['bridge_file']
+            if '/' in name or '\\' in name or ':' in name:raise ValueError('动态组件路径无效。')
+            if hashlib.sha256(z.read(binary+name)).hexdigest()!=manifest['bridge_sha256']:
+                raise ValueError('动态组件校验失败：'+name)
+    except (KeyError,json.JSONDecodeError) as error:
+        raise ValueError('安装包缺少有效的内部参数索引或显示组件。') from error
 
 
 def prepare(plugin_zip,shared,dest,engine_version='5.8.3',label='定制 UE 5.8.3',verification=None):

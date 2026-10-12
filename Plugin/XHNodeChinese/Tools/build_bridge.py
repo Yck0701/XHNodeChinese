@@ -90,7 +90,7 @@ rsp=out/'compile.rsp';rsp.write_text('\n'.join(lines),encoding='utf-8')
 cmd=out/'build.cmd';cmd.write_text('@echo off\ncall "'+str(Path(args.vcvars).resolve())+'" -vcvars_ver='+args.compiler_version+'\nif errorlevel 1 exit /b %errorlevel%\ncl @"'+str(rsp)+'"\n',encoding='utf-8')
 subprocess.run(['cmd.exe','/d','/c',str(cmd)],cwd=out,check=True)
 dest=plugin/'Binaries/Win64';dest.mkdir(parents=True,exist_ok=True)
-bridge_file='XHSlateBridge027.dll'
+bridge_file='XHSlateBridge0213.dll'
 shutil.copy2(out/'XHSlateBridge.dll',dest/bridge_file)
 files=[f'Binaries/Win64/UnrealEditor-{mod}.dll' for mod in ('Core','CoreUObject','Slate','SlateCore','ApplicationCore','InputCore','Engine','GraphEditor')]
 files += [f'Plugins/FX/Niagara/Binaries/Win64/UnrealEditor-{mod}.dll' for mod in ('NiagaraEditor','NiagaraEditorWidgets','Niagara','NiagaraCore')]

@@ -1,9 +1,30 @@
-import tempfile,unittest,zipfile
+import tempfile,unittest,zipfile,json,hashlib
 from pathlib import Path
 import publish
 
 
 class PackageDefaultsTests(unittest.TestCase):
+    def test_index_component_cannot_be_omitted_from_new_public_packages(self):
+        with tempfile.TemporaryDirectory() as temp:
+            package=Path(temp)/'test.zip'
+            dll=b'fixture';manifest={'engine_sha256':{'engine':'fingerprint'},
+                'bridge_file':'XHSlateBridge0213.dll','bridge_sha256':hashlib.sha256(dll).hexdigest()}
+            index=dict(manifest,bridge_file='XHModuleIndex030_2.dll')
+            payload={'XHNodeChinese.uplugin':json.dumps({'XHModuleIndexVersion':1}),
+                'Binaries/Win64/bridge-manifest.json':json.dumps(manifest),
+                'Binaries/Win64/XHSlateBridge0213.dll':dll}
+            def check(values):
+                with zipfile.ZipFile(package,'w') as z:
+                    for name,data in values.items():z.writestr('XHNodeChinese/'+name,data)
+                with zipfile.ZipFile(package) as z:publish.verify_packaged_components(z)
+            with self.assertRaisesRegex(ValueError,'缺少'):check(payload)
+            payload['Binaries/Win64/module-index-manifest.json']=json.dumps(index)
+            with self.assertRaisesRegex(ValueError,'缺少'):check(payload)
+            payload['Binaries/Win64/XHModuleIndex030_2.dll']=dll
+            check(payload)
+            payload['Binaries/Win64/XHModuleIndex030_2.dll']=b'corrupt'
+            with self.assertRaisesRegex(ValueError,'校验失败'):check(payload)
+
     def test_all_defaults_are_current_and_personal_dictionary_is_empty(self):
         with tempfile.TemporaryDirectory() as temp:
             root=Path(temp);plugin=root/'Plugin';d=plugin/'Dictionaries';d.mkdir(parents=True)

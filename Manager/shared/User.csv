@@ -32660,3 +32660,39 @@ Use Advection,使用平流,,,Niagara
 Use Endcaps in Surface Only Mode,仅表面模式下使用端盖,,,Niagara
 Use Non Uniform Scale,使用非均匀缩放,,,Niagara
 Write to Physics Force,写入物理力,,,Niagara
+Input Map,输入参数映射,,,Niagara
+Output Map,输出参数映射,,,Niagara
+Influence Falloff Exponent,影响衰减指数,,,Niagara
+Influence Falloff Radius,影响衰减半径,,,Niagara
+Vortex Force Amount,涡旋力强度,,,Niagara
+Debug Draw Interface,调试绘制接口,,,Niagara
+Offset from Center,相对中心的偏移,,,Niagara
+Additional Rotation,附加旋转,,,Niagara
+Vortex Axis Coordinate Space,涡旋轴坐标空间,,,Niagara
+Vortex Origin Offset,涡旋原点偏移,,,Niagara
+Vortex Origin Offset Coordinate Space,涡旋原点偏移坐标空间,,,Niagara
+Use Origin Offset,使用原点偏移,,,Niagara
+Average Collision normals for future particle alignment operations,对碰撞法线取平均值，供后续粒子对齐操作使用。,,,Niagara
+Static distance field texture and static mesh sdf collision support can be added here,可在此处添加静态距离场纹理和静态网格体有符号距离场（SDF）碰撞支持。,,,Niagara
+GPU Depth Buffer Only Variables,仅用于 GPU 深度缓冲的变量,,,Niagara
+"angle of the segment * R
+c=rotationrate(Theta * radius)","线段对应的角度 * R
+c=rotationrate(Theta * radius)",,,Niagara
+Query against the force vector and update if nessesary. Store off key variables.,沿力向量查询，必要时更新，并保存关键变量。,,,Niagara
+Collision Normals,碰撞法线,,,Niagara
+Query along the velocity vector,沿速度向量进行查询。,,,Niagara
+Kill depth buffer particles if they're offscreen for a defined amount of time,使用深度缓冲碰撞的粒子离开屏幕达到指定时长后将被销毁。,,,Niagara
+Async Gpu Query,异步 GPU 查询,,,Niagara
+CPUFriction Merge Type,CPU 摩擦合并类型,,,Niagara
+Use Simple Friction,使用简化摩擦,,,Niagara
+CPUCollision Method,CPU 碰撞方式,,,Niagara
+GPUCollision Method,GPU 碰撞方式,,,Niagara
+Query Custom Depth Buffer,查询自定义深度缓冲,,,Niagara
+Kill Offscreen Particles,销毁屏幕外粒子,,,Niagara
+Particle Mass,粒子质量,,,Niagara
+Scale Rate Of Rotation,缩放旋转速率,,,Niagara
+Num XSegments,X 轴分段数,,,Niagara
+Num YSegments,Y 轴分段数,,,Niagara
+Unbounded Plane,无限平面,,,Niagara
+Off,关闭,,,Niagara
+Trace Properties,检测属性,,,Niagara

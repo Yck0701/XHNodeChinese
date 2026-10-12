@@ -117,6 +117,7 @@ struct FBinding {
     uint64 LastRevision = ~uint64(0);
     bool Overview = false;
     bool Graph = false;
+    bool Tooltip = false;
 };
 static TMap<STextBlock*, TSharedPtr<FBinding>> Bindings;
 struct FRichBinding : FBinding { TWeakPtr<SRichTextBlock> RichWidget; };
@@ -253,6 +254,8 @@ static bool HasChinese(const FString& Value) {
     for(TCHAR C:Value)if(C>=0x3400 && C<=0x9fff)return true;
     return false;
 }
+#include "TooltipText.inl"
+
 // Graph menu aliases live only in transient action search caches. Node names,
 // categories, context filters and activation delegates remain engine-owned.
 struct FGraphCache {
@@ -396,7 +399,7 @@ static FText Translate(FBinding& Binding) {
     if (Binding.LastRevision == Revision && Binding.LastSource == Source) return Binding.LastResult;
     Binding.LastSource = Source;
     Binding.LastRevision = Revision;
-    auto ValueString = Binding.Graph ? GraphLookup(std::wstring(*Source)) : Lookup(std::wstring(*Source));
+    auto ValueString = DisplayText(Text, Binding.Graph, Binding.Tooltip);
     if (!Enabled || ValueString == std::wstring(*Source)) Binding.LastResult = Text;
     else {
         FString Value(ValueString.c_str());
@@ -415,13 +418,14 @@ static bool OwnsRich(SRichTextBlock& Widget,const FRichBinding& Binding) {
     const auto& Attr=Widget.*TextAttribute(FRichTextTag{});
     return Attr.IsBound() && Attr.GetBinding().GetHandle()==Binding.Handle;
 }
-static void VisitRichText(const TSharedRef<SRichTextBlock>& Widget,bool Graph=false) {
+static void VisitRichText(const TSharedRef<SRichTextBlock>& Widget,bool Graph=false,bool Tooltip=false) {
     auto Existing=RichBindings.Find(&Widget.Get());
     const FText Text=Existing?(*Existing)->Original.Get():Widget->GetText();
-    const FString Source=Text.ToString();CaptureSource(Source,Graph);
+    const FString Source=Text.ToString();
+    const auto Value=DisplayText(Text,Graph,Tooltip,true);
     // Preserve rich-text decorators; translate complete plain labels in any panel.
-    if(!Existing && Enabled && !Source.Contains(TEXT("<")) && (Graph?GraphLookup(std::wstring(*Source)):Lookup(std::wstring(*Source)))!=std::wstring(*Source)) {
-        auto B=MakeShared<FRichBinding>();B->RichWidget=Widget;B->Graph=Graph;
+    if(!Existing && Enabled && !Source.Contains(TEXT("<")) && Value!=std::wstring(*Source)) {
+        auto B=MakeShared<FRichBinding>();B->RichWidget=Widget;B->Graph=Graph;B->Tooltip=Tooltip;
         B->Original=Widget.Get().*TextAttribute(FRichTextTag{});
         auto Getter=TAttribute<FText>::FGetter::CreateLambda([B](){return Translate(*B);});
         B->Handle=Getter.GetHandle();Widget->SetText(TAttribute<FText>::Create(Getter));
@@ -480,9 +484,10 @@ static void Restore() {
     }
     EditGuards.Empty();
 }
-static void VisitWidget(const TSharedRef<SWidget>& Widget, int Depth = 0, bool Overview = false, bool NiagaraMenu = false, bool GraphMenu = false) {
+static void VisitWidget(const TSharedRef<SWidget>& Widget, int Depth = 0, bool Overview = false, bool NiagaraMenu = false, bool GraphMenu = false, bool Tooltip = false) {
     if (Depth > 100 || !Widget->GetVisibility().IsVisible()) return;
     const FString Type = Widget->GetTypeAsString();
+    Tooltip=Tooltip || Type==TEXT("SToolTip");
     if(Type==TEXT("SNiagaraParameterPanel")) {
         auto Panel=StaticCastSharedRef<SNiagaraParameterPanel>(Widget);
         if(auto Selector=Panel.Get().*TextAttribute(FParameterSelectorTag{}))IndexParameterSelector(Selector.ToSharedRef());
@@ -491,7 +496,7 @@ static void VisitWidget(const TSharedRef<SWidget>& Widget, int Depth = 0, bool O
     if(Type==TEXT("SGraphActionMenu"))IndexGraphMenu(StaticCastSharedRef<SGraphActionMenu>(Widget));
     NiagaraMenu=NiagaraMenu || Type==TEXT("SNiagaraStackItemGroupAddMenu");
     if(Type==TEXT("SNiagaraStackItemGroupAddMenu"))IndexMenu(StaticCastSharedRef<SNiagaraStackItemGroupAddMenu>(Widget));
-    if(Type==TEXT("SRichTextBlock"))VisitRichText(StaticCastSharedRef<SRichTextBlock>(Widget),GraphMenu);
+    if(Type==TEXT("SRichTextBlock"))VisitRichText(StaticCastSharedRef<SRichTextBlock>(Widget),GraphMenu,Tooltip);
     Overview = Overview || Type.Contains(TEXT("NiagaraOverview")) || Type.Contains(TEXT("NiagaraSystemOverview"));
     if (Type.Contains(TEXT("EditableText")) && !Type.Contains(TEXT("InlineEditableText"))) return;
     if (Type.Contains(TEXT("InlineEditableText")) && Type != TEXT("SInlineEditableTextBlock")) return;
@@ -499,13 +504,14 @@ static void VisitWidget(const TSharedRef<SWidget>& Widget, int Depth = 0, bool O
     if (Type == TEXT("STextBlock")) {
         auto TextWidget = StaticCastSharedRef<STextBlock>(Widget);
         const auto Existing=Bindings.Find(&TextWidget.Get());
-        const FString Source=Existing ? (*Existing)->Original.Get().ToString() : TextWidget->GetText().ToString();
-        CaptureSource(Source,GraphMenu);
+        const FText Text=Existing ? (*Existing)->Original.Get() : TextWidget->GetText();
+        const FString Source=Text.ToString();
+        const auto Value=DisplayText(Text,GraphMenu,Tooltip,true);
         if (!Bindings.Contains(&TextWidget.Get())) {
-            if (Enabled && (GraphMenu?GraphLookup(std::wstring(*Source)):Lookup(std::wstring(*Source))) != std::wstring(*Source)) {
+            if (Enabled && Value != std::wstring(*Source)) {
                 auto Binding = MakeShared<FBinding>();
                 Binding->Widget = TextWidget;
-                Binding->Overview = Overview;Binding->Graph=GraphMenu;
+                Binding->Overview = Overview;Binding->Graph=GraphMenu;Binding->Tooltip=Tooltip;
                 Binding->Original = Attribute(TextWidget.Get()).ToAttribute(TextWidget.Get());
                 auto Getter = TAttribute<FText>::FGetter::CreateLambda([Binding]() { return Translate(*Binding); });
                 Binding->Handle = Getter.GetHandle();
@@ -517,7 +523,7 @@ static void VisitWidget(const TSharedRef<SWidget>& Widget, int Depth = 0, bool O
     // Cached Niagara overview cards intentionally expose no ordinary children.
     // GetAllChildren preserves their cache and exposes the owned widget tree.
     FChildren* Children = Widget->GetAllChildren();
-    if (Children) for (int32 I=0; I<Children->Num(); ++I) VisitWidget(Children->GetChildAt(I), Depth+1, Overview, NiagaraMenu, GraphMenu);
+    if (Children) for (int32 I=0; I<Children->Num(); ++I) VisitWidget(Children->GetChildAt(I), Depth+1, Overview, NiagaraMenu, GraphMenu, Tooltip);
 }
 
 #define XH_EXPORT extern "C" __declspec(dllexport)
@@ -588,7 +594,7 @@ XH_EXPORT int XH_Tick() {
         // call every widget's tooltip getter (which can start preview movies).
         FSlateApplication::Get().ForEachUser([&Windows](FSlateUser& User){
             if(auto Window=(User.*TextAttribute(FTooltipWindowTag{})).Pin())
-                if(Window->IsVisible() && !Windows.Contains(Window.ToSharedRef()))VisitWidget(Window.ToSharedRef());
+                if(Window->IsVisible() && !Windows.Contains(Window.ToSharedRef()))VisitWidget(Window.ToSharedRef(),0,false,false,false,true);
         });
     }
     LastScanMs=(FPlatformTime::Seconds()-ScanStart)*1000.0;
@@ -907,6 +913,8 @@ XH_EXPORT int XH_CaptureSelfTest(){
     if(ComboLabel->GetText().ToString()!=TEXT("Surface") || Rich->GetText().ToString()!=TEXT("User Interface"))return 311;
     XH_Collect(0);XH_Clear();PendingCapture.clear();PendingKeys.clear();Observed.clear();return 0;
 }
+
+#include "TooltipTests.inl"
 
 XH_EXPORT int XH_SelfTest() {
     // Run in an isolated test editor: static text, live getter, restoration,
