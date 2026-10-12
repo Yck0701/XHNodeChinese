@@ -35,7 +35,7 @@ def find_vcvars():
 class App(tk.Tk):
     def __init__(self):
         super().__init__()
-        self.title('星河插件管理器 · 安装、共享词典与编译')
+        self.title(core.PRODUCT_NAME+' · 安装、共享词典与编译')
         interface.configure(self)
         self.messages=queue.Queue(); self.busy=False; self.feed=None; self.feed_origin=''
         self.checking=False
@@ -214,7 +214,7 @@ class App(tk.Tk):
         if not self.feed or self.feed_origin!=self.feed_var.get():self.check(False);return
         item=self.feed.get('manager')
         if not item:
-            webbrowser.open(core.REPOSITORY+'/releases/latest');return
+            webbrowser.open(core.DOCS_URL);return
         item=dict(item)
         def done(path):
             self.log('新版工具已校验并解压：'+str(path))

@@ -85,5 +85,12 @@ class UpdateTests(unittest.TestCase):
         self.assertTrue(c.newer_version('0.2.10','0.2.9'))
         self.assertFalse(c.newer_version('1.0.0','1.0'))
 
+    def test_update_prefers_new_chinese_name_with_legacy_entry_present(self):
+        archive=self.archive('renamed.zip',{'XHPluginManager/XHPluginManager.exe':b'legacy',
+            'XHPluginManager/虚幻翻译插件.exe':b'renamed','XHPluginManager/_internal/a.dll':b'dependency'})
+        exe=c.prepare_manager_update({'version':'1.0.11','_location':str(archive),'sha256':c.digest(archive)},self.root/'cache')
+        self.assertEqual(exe.name,'虚幻翻译插件.exe');self.assertEqual(exe.read_bytes(),b'renamed')
+        self.assertTrue((exe.parent/'XHPluginManager.exe').is_file())
+
 
 if __name__=='__main__':unittest.main()

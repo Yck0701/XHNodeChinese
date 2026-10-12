@@ -9,7 +9,8 @@ import unreal
 from . import core
 from .hotkey import ForegroundHotkey
 
-RUNTIME_VERSION = '0.2.14'
+RUNTIME_VERSION = '0.2.15'
+DOCS_URL = 'https://365.kdocs.cn/l/cpi4ASG5Izsi?source=wiki'
 PLUGIN = Path(__file__).resolve().parents[3]
 SAVE = Path(unreal.Paths.convert_relative_path_to_full(unreal.Paths.project_saved_dir())) / 'XHNodeChinese'
 _catalogue = None
@@ -54,7 +55,7 @@ def status_display(kind):
         from .multi_translate import PROVIDERS
         session=external_session()
         if session.state.get('provider')==state()['translation_provider']:return session.display()
-        return {'label':PROVIDERS[state()['translation_provider']][0]+'翻译','tooltip':'点击开始；可在节点汉化 → 翻译方式中选择网页工具、API 或 Codex。','icon':'Icons.Comment'}
+        return {'label':PROVIDERS[state()['translation_provider']][0]+'翻译','tooltip':'点击开始；可在虚幻翻译插件 → 翻译工具中选择网页工具、API 或 Codex。','icon':'Icons.Comment'}
     if kind == 'auto':
         active=state()['auto_translate']
         detail=f'本次会话自动写入 {_auto_total} 条。'
@@ -384,7 +385,7 @@ def external_session():
 
 def choose_translation(provider):
     from .multi_translate import PROVIDERS
-    if provider not in PROVIDERS:raise ValueError('未知翻译方式')
+    if provider not in PROVIDERS:raise ValueError('未知翻译工具')
     for session in (codex_session(),external_session()):
         if session.state['phase'] in ('sending','waiting','error') and session.state.get('folder'):
             active='codex' if session is codex_session() else session.state.get('provider')
@@ -418,7 +419,7 @@ def translate_selected(include_export=False,show_dialog=True):
             return True
         url=multi_translate.PROVIDERS[provider][1]
         if url:unreal.SystemLibrary.launch_url(url)
-        if show_dialog:unreal.EditorDialog.show_message('翻译任务已复制','在网页对话框粘贴并发送。回答完成后复制回答（JSON 或表格），再选择“节点汉化 → 粘贴译文”。\n每次复制一批，导入后再点击翻译按钮复制下一批。网页免费额度与登录要求以服务商为准。',unreal.AppMsgType.OK)
+        if show_dialog:unreal.EditorDialog.show_message('翻译任务已复制','在网页对话框粘贴并发送。回答完成后复制回答（JSON 或表格），再选择“虚幻翻译插件 → 粘贴译文”。\n每次复制一批，导入后再点击翻译按钮复制下一批。网页免费额度与登录要求以服务商为准。',unreal.AppMsgType.OK)
         return True
     except Exception as error:
         if show_dialog:unreal.EditorDialog.show_message('翻译未开始',str(error),unreal.AppMsgType.OK)
@@ -654,6 +655,10 @@ def export_untranslated(all_entries=False):
     return path
 
 
+def open_guide():
+    unreal.SystemLibrary.launch_url(DOCS_URL)
+
+
 def show_status():
     report = json.loads((SAVE / 'report.json').read_text(encoding='utf-8')) if (SAVE / 'report.json').exists() else rebuild()
     status = '已启用' if state()['enabled'] else '已停用'
@@ -666,7 +671,7 @@ def show_status():
                'Ctrl+Alt+L 启用／停用汉化。支持整条匹配及个人词典短语匹配，仅修改显示。'
                '未匹配文本可导出后补译；资产原名、数值、脚本和可编辑注释不会被写入或改名。'
                '\n如节点仍显示英文，请在编辑器偏好设置中启用“使用本地化的节点和引脚名称”，并重新打开节点编辑器。')
-    unreal.EditorDialog.show_message('星河节点汉化', message, unreal.AppMsgType.OK)
+    unreal.EditorDialog.show_message('虚幻翻译插件', message, unreal.AppMsgType.OK)
 
 
 MENU_NAMES = ('LevelEditor.MainMenu', 'AssetEditor.Niagara.MainMenu',
@@ -686,7 +691,8 @@ def register_menus():
     for menu_name in MENU_NAMES:
         menus.remove_menu(menu_name+'.XHNodeChinese')
         main=menus.extend_menu(menu_name)
-        menu=main.add_sub_menu('XHNodeChinese','Tools','XHNodeChinese','节点汉化','汉化与翻译')
+        menu=main.add_sub_menu('XHNodeChinese','Tools','XHNodeChinese','虚幻翻译插件','汉化与翻译')
+        add(menu,'Help','Guide','使用说明与下载','open_guide()','打开金山文档：安装步骤、下载与维护记录')
         add(menu,'Quick','ImportWeb','粘贴译文','import_web_translation()','复制网页回答后点这里；支持 JSON、表格、两列 CSV，可分次导入')
         add(menu,'Quick','Progress','任务进度／中断后继续','show_translation_progress()')
         providers=menu.add_sub_menu('XHNodeChinese','Settings','TranslationProviders','翻译工具','选择豆包、DeepSeek、Codex 或 API')

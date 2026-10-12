@@ -46,7 +46,7 @@ def public_plugin(package,dest):
             if relative=='ADVANCED.md':
                 text=data.decode('utf-8')
                 text=text.split('## 引擎兼容与重新编译')[0]
-                text+='## 引擎兼容与重新编译\n\n本包仅适配随包指纹记录对应的引擎构建。即使版本号相同，也不能强行加载不匹配的动态组件。\n\n公开安装包不包含 C++ 源码或维护工具。需要编译其他版本时，请向维护者申请授权源码包，在星河插件管理器的编译页选择本地源码包进行构建与验证。\n'
+                text+='## 引擎兼容与重新编译\n\n本包仅适配随包指纹记录对应的引擎构建。即使版本号相同，也不能强行加载不匹配的动态组件。\n\n公开安装包不包含 C++ 源码或维护工具。需要编译其他版本时，请向维护者申请授权源码包，在虚幻翻译插件的编译页选择本地源码包进行构建与验证。\n'
                 data=text.encode('utf-8')
             new.writestr(info,data)
     with zipfile.ZipFile(temp) as z:
@@ -95,7 +95,7 @@ def prepare(plugin_zip,shared,dest,engine_version='5.8.3',label='定制 UE 5.8.3
             if (shared/name).is_file():z.write(shared/name,name)
     contents=core.shared_contents(dest/shared_name)
     manifest={'schema':1,'manager_version':core.VERSION,'repository':core.REPOSITORY,
-              'plugins':[{'label':label+' / 星河 '+descriptor['VersionName'],'version':descriptor['VersionName'],
+              'plugins':[{'label':label+' / 虚幻翻译插件 '+descriptor['VersionName'],'version':descriptor['VersionName'],
                           'url':plugin_name,'sha256':core.digest(dest/plugin_name),'verified':True,
                           'engine':{'version':engine_version,'sha256':bridge['engine_sha256']}}],
               'shared':{'version':'2026.10.10','url':shared_name,'sha256':core.digest(dest/shared_name),

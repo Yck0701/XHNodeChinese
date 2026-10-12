@@ -95,7 +95,7 @@ def prepare(package,result,output,custom_consent=False):
 
 
 def issue_body(meta,archive_hash):
-    return ('星河插件编译结果投稿（等待维护者验证，不能直接安装）\n\n'
+    return ('虚幻翻译插件编译结果投稿（等待维护者验证，不能直接安装）\n\n'
             '请将管理器生成的 XH-contribution-*.zip 拖到下面，等待上传完成，再点击 Submit new issue。\n\n'
             '投稿类型：'+('已登记官方指纹' if meta['kind']=='official' else '定制／未认证构建，独立存放')+'\n'
             'UE '+meta['engine']['version']+' / Win64 / 插件 '+meta['plugin_version']+'\n\n'

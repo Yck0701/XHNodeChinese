@@ -272,5 +272,5 @@ class Session(ct.Session):
         elif phase == 'done':
             count = self.state.get('result',{}).get('terms',0) + self.state.get('result',{}).get('long_texts',0)
             label, tip = f'{name}：已译 {count} 条', '本次已完成；点击翻译新采集的内容。'
-        else: label, tip = name+'翻译', '选择“节点汉化 → 翻译方式”后点击。暂无待译内容。' if phase=='empty' else '点击开始翻译当前词条和长文本。'
+        else: label, tip = name+'翻译', '选择“虚幻翻译插件 → 翻译工具”后点击。暂无待译内容。' if phase=='empty' else '点击开始翻译当前词条和长文本。'
         return {'label':label, 'tooltip':tip, 'icon':'Icons.Comment'}

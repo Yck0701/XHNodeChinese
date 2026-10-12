@@ -1,10 +1,11 @@
-# 星河节点汉化 · 源码仓库
+# 虚幻翻译插件 · 源码仓库
 
 此仓库用于维护插件与管理器源码，应保持私密。
 
 - `Plugin/XHNodeChinese`：可构建的插件源码及已验证定制引擎二进制参考。
 - `Manager`：更新器、共享词典及发布脚本源码。
-- 公开下载与更新仓库：https://github.com/Yck0701/XHNodeChinese-new
+- 说明、维护与下载入口：https://365.kdocs.cn/l/cpi4ASG5Izsi?source=wiki
+- 自动更新文件仓库：https://github.com/Yck0701/XHNodeChinese-new
 
 普通用户无需访问此仓库。安装包由 `Manager/publish.py` 去除 C++ 源码和维护工具后生成。运行时 Python 脚本仍需随插件分发。
 
@@ -18,4 +19,4 @@
 
 ## 当前版本
 
-管理器 1.0.10、插件 0.2.14；内置共享词库 2026.10.12.3。公开下载见 https://github.com/Yck0701/XHNodeChinese-new/releases/latest 。共享词库与个人译文分离；新增独立编译目标、本地与云端版本复用、UBA 卡住修复和可取消构建。保留更新下载与正常关闭 UE 提醒。
+管理器 1.0.11、插件 0.2.15；内置共享词库 2026.10.12.3。公开下载见 https://github.com/Yck0701/XHNodeChinese-new/releases/latest 。共享词库与个人译文分离；统一产品名称为虚幻翻译插件，金山文档作为说明、维护与下载入口，自动更新保持可用。保留更新下载与正常关闭 UE 提醒。

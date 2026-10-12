@@ -23,7 +23,9 @@ import zipfile
 SOURCE_REPOSITORY = 'https://github.com/Yck0701/XHNodeChinese'
 REPOSITORY = 'https://github.com/Yck0701/XHNodeChinese-new'
 DEFAULT_FEED = REPOSITORY + '/releases/latest/download/manifest.json'
-VERSION = '1.0.10'
+VERSION = '1.0.11'
+PRODUCT_NAME = '虚幻翻译插件'
+DOCS_URL = 'https://365.kdocs.cn/l/cpi4ASG5Izsi?source=wiki'
 PROTECTED = ('Plugins/XHNodeChinese/Dictionaries/User.csv', 'Saved/XHNodeChinese/LongText.csv')
 SHARED_FILES = tuple('Plugins/XHNodeChinese/Dictionaries/'+n for n in
                      ('Shared.csv','SharedLongText.csv','SharedVersion.json'))
@@ -203,14 +205,15 @@ def prepare_manager_update(item, cache):
     archive=fetch(item,cache)
     with zipfile.ZipFile(archive) as z:
         members=zip_members(z)
-        if 'XHPluginManager/XHPluginManager.exe' not in members:raise ValueError('管理器包缺少程序。')
+        executable=next((n for n in ('虚幻翻译插件.exe','XHPluginManager.exe') if 'XHPluginManager/'+n in members),None)
+        if not executable:raise ValueError('管理器包缺少程序。')
         if any(PurePosixPath(n).parts[0]!='XHPluginManager' for n in members):raise ValueError('管理器包包含无关目录。')
         dest=Path(cache)/'versions'/(item['version']+'-'+uuid.uuid4().hex[:8])
         no_links(dest);dest.mkdir(parents=True)
         for name,info in members.items():
             p=dest.joinpath(*PurePosixPath(name).parts);p.parent.mkdir(parents=True,exist_ok=True)
             with z.open(info) as source,p.open('xb') as output:shutil.copyfileobj(source,output)
-    return dest/'XHPluginManager/XHPluginManager.exe'
+    return dest/'XHPluginManager'/executable
 
 
 def update_summary(feed, project='', selected=None):
@@ -298,7 +301,7 @@ def unpack_plugin(archive, dest):
     dest=Path(dest)
     with zipfile.ZipFile(archive) as z:
         members=zip_members(z)
-        if 'XHNodeChinese/XHNodeChinese.uplugin' not in members: raise ValueError('不是有效的星河插件包。')
+        if 'XHNodeChinese/XHNodeChinese.uplugin' not in members: raise ValueError('不是有效的虚幻翻译插件包。')
         for name,info in members.items():
             p=PurePosixPath(name)
             if p.parts[0]!='XHNodeChinese': raise ValueError('插件包包含无关目录。')
