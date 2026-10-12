@@ -1,6 +1,7 @@
 """Portable plugin manager. No third-party runtime dependencies."""
 from __future__ import annotations
 import csv
+from contextlib import contextmanager
 from functools import wraps
 from datetime import datetime
 import hashlib
@@ -12,6 +13,7 @@ import re
 import shutil
 import subprocess
 import tempfile
+import time
 from urllib.parse import urljoin, urlparse
 from urllib.error import HTTPError
 from urllib.request import Request, urlopen
@@ -21,7 +23,7 @@ import zipfile
 SOURCE_REPOSITORY = 'https://github.com/Yck0701/XHNodeChinese'
 REPOSITORY = 'https://github.com/Yck0701/XHNodeChinese-new'
 DEFAULT_FEED = REPOSITORY + '/releases/latest/download/manifest.json'
-VERSION = '1.0.2'
+VERSION = '1.0.3'
 PROTECTED = ('Plugins/XHNodeChinese/Dictionaries/User.csv', 'Saved/XHNodeChinese/LongText.csv')
 SHARED_FILES = tuple('Plugins/XHNodeChinese/Dictionaries/'+n for n in
                      ('Shared.csv','SharedLongText.csv','SharedVersion.json'))
@@ -116,9 +118,9 @@ def project_path(path):
 
 def ensure_closed():
     if os.name != 'nt': return
-    output = subprocess.run(['tasklist.exe','/FI','IMAGENAME eq UnrealEditor.exe','/FO','CSV','/NH'],
+    output = subprocess.run(['tasklist.exe','/FO','CSV','/NH'],
                             capture_output=True, check=True, creationflags=subprocess.CREATE_NO_WINDOW).stdout
-    if b'UnrealEditor.exe' in output:
+    if re.search(rb'"(?:UnrealEditor|UE4Editor)(?:-Cmd|-Win64-(?:Debug|DebugGame|Development|Shipping))?\.exe"',output,re.I):
         raise RuntimeError('请先保存并关闭 UE 编辑器，再安装、替换或恢复文件。备份操作无需关闭。')
 
 
@@ -440,14 +442,118 @@ def verify_bridge(plugin, info):
     if digest(p/name)!=m.get('bridge_sha256'): raise ValueError('包内动态组件校验失败。')
 
 
+def replace_retry(source, destination, log=lambda _: None):
+    """Retry transient Windows sharing/access errors without weakening permissions."""
+    for attempt in range(4):
+        try:
+            os.replace(source,destination)
+            return
+        except OSError as error:
+            if getattr(error,'winerror',None) not in (5,32,33) or attempt==3:raise
+            log('Windows 暂时无法移动 '+str(source)+'，正在重试（'+str(attempt+1)+'/3）…')
+            time.sleep((.25,.5,1.0)[attempt])
+
+
+@contextmanager
+def replacement_access(paths):
+    """Preflight delete access without changing ACLs; rollback covers later races."""
+    handles=[]
+    if os.name!='nt':
+        yield
+        return
+    import ctypes
+    from ctypes import wintypes as w
+    kernel=ctypes.WinDLL('kernel32',use_last_error=True)
+    kernel.CreateFileW.argtypes=[w.LPCWSTR,w.DWORD,w.DWORD,ctypes.c_void_p,w.DWORD,w.DWORD,w.HANDLE]
+    kernel.CreateFileW.restype=w.HANDLE;kernel.CloseHandle.argtypes=[w.HANDLE]
+    try:
+        for path in paths:
+            handle=kernel.CreateFileW(str(path),0x10000,7,None,3,0x02000000,None)
+            if handle==ctypes.c_void_p(-1).value:
+                error=ctypes.WinError(ctypes.get_last_error())
+                raise RuntimeError('文件被占用或没有替换权限，原插件未修改。请关闭使用此文件的程序后重试：\n'
+                                   +str(path)+'\n'+str(error)) from error
+            handles.append(handle)
+    finally:
+        for handle in handles:kernel.CloseHandle(handle)
+    # MoveFileEx cannot overwrite a destination with our own delete handle open.
+    yield
+
+
+def install_files(target, stage, old, saved, recovery, log):
+    """Keep a Windows-held root directory while replacing files transactionally."""
+    no_links(target)
+    existing={p.relative_to(target):p for p in target.rglob('*') if p.is_file()}
+    incoming={p.relative_to(stage):p for p in stage.rglob('*') if p.is_file()}
+    original={name:digest(p) for name,p in existing.items()}
+    changed=sorted((name for name in existing.keys()|incoming.keys()
+                    if name not in original or name not in incoming or original[name]!=digest(incoming[name])),
+                   key=lambda p:(p.name=='XHNodeChinese.uplugin',p.as_posix()))
+    for name in changed:
+        destination=target/name
+        if destination.is_dir() or any(p.is_file() for p in destination.parents if p!=target):
+            raise RuntimeError('插件路径类型冲突，原插件未修改：'+str(destination))
+    # An unchanged DLL need not be touched. Changed/removed files must all permit
+    # replacement before the first write; a real file lock is never bypassed.
+    with replacement_access([existing[n] for n in changed if n in existing]):
+        shutil.copytree(target,old)
+        if original!={p.relative_to(old):digest(p) for p in old.rglob('*') if p.is_file()}:
+            raise RuntimeError('旧插件备份校验失败，原插件未修改。备份：'+str(old))
+        log('旧插件已完整复制并校验：'+str(old))
+        details={'mode':'files','target':str(target),'old_plugin':str(old),'staged_plugin':str(stage),
+                 'dictionary_backup':str(saved),'planned_files':[n.as_posix() for n in changed]}
+        write_json(recovery,details)
+        touched=[];created=[]
+        try:
+            for name in changed:
+                destination=target/name
+                if name in incoming:
+                    missing=[];parent=destination.parent
+                    while not parent.exists():missing.append(parent);parent=parent.parent
+                    for directory in reversed(missing):directory.mkdir();created.append(directory)
+                    replace_retry(incoming[name],destination,log)
+                else:destination.unlink()
+                touched.append(name)
+        except BaseException as error:
+            failures=[]
+            for name in reversed(touched):
+                try:
+                    if name in existing:atomic(target/name,(old/name).read_bytes())
+                    else:(target/name).unlink(missing_ok=True)
+                except OSError as rollback_error:failures.append(str(target/name)+': '+str(rollback_error))
+            for directory in reversed(created):
+                try:directory.rmdir()
+                except OSError:pass
+            if failures:
+                details.update(error=str(error),rollback_errors=failures)
+                try:write_json(recovery,details)
+                except OSError as record_error:log('恢复记录更新失败：'+str(record_error))
+                raise RuntimeError('逐文件安装失败，部分文件未能自动恢复。请先恢复旧插件后再打开 UE。\n'
+                                   '完整备份：'+str(old)+'\n恢复记录：'+str(recovery)) from error
+            recovery.unlink(missing_ok=True)
+            raise RuntimeError('逐文件安装失败，已恢复原插件。完整备份：'+str(old)+'\n系统原因：'+str(error)) from error
+        recovery.unlink(missing_ok=True)
+        log('已逐文件更新 '+str(len(changed))+' 项；原插件目录保留。')
+
+
 @exclusive_update
-def install(project, archive, info):
+def install(project, archive, info, log=lambda _: None):
     project=project_path(project); ensure_closed()
     target=project/'Plugins/XHNodeChinese'; no_links(target)
     target.parent.mkdir(exist_ok=True)
+    recovery=project/'Saved/XHNodeChinese/UpdaterBackups/install-recovery.json'
+    no_links(recovery)
+    if recovery.exists():
+        raise RuntimeError('上次安装尚未恢复，请先按此记录恢复旧插件：'+str(recovery))
     saved=backup(project)
-    with tempfile.TemporaryDirectory(prefix='.xh-install-',dir=target.parent) as temp:
-        stage=unpack_plugin(archive,Path(temp)/'new')
+    log('个人词典和长文本已备份：'+str(saved))
+    # Keep staging and the complete old plugin outside Plugins. A failed rollback
+    # must never be erased by TemporaryDirectory cleanup or discovered by UE.
+    stage=Path(tempfile.mkdtemp(prefix='install-stage-',dir=saved.parent))
+    old=saved.parent/('plugin-'+saved.stem)
+    moved=False;finished=False;keep_stage=False
+    try:
+        unpack_plugin(archive,stage)
         verify_bridge(stage,info)
         # Plugin update never replaces the user's dictionary implicitly.
         personal=target/'Dictionaries/User.csv'
@@ -460,16 +566,58 @@ def install(project, archive, info):
                 for name in ('Shared.csv','SharedLongText.csv','SharedVersion.json'):
                     atomic(stage/'Dictionaries'/name,(target/'Dictionaries'/name).read_bytes())
         except (OSError,ValueError,KeyError):pass
-        old=Path(temp)/'old'
+        ensure_closed()
+        write_json(recovery,{'target':str(target),'old_plugin':str(old),'staged_plugin':str(stage),
+                             'dictionary_backup':str(saved),'state':'prepared'})
         if target.exists():
-            archive_dir=saved.parent/('plugin-'+saved.stem)
-            shutil.copytree(target,archive_dir,ignore=shutil.ignore_patterns('__pycache__','Intermediate'))
-            os.replace(target,old)
-        try: os.replace(stage,target)
-        except Exception:
-            if old.exists(): os.replace(old,target)
-            raise
-    return saved
+            try:
+                replace_retry(target,old,log)
+                moved=True
+                log('旧插件已完整备份：'+str(old))
+            except OSError as error:
+                if getattr(error,'winerror',None) in (5,32,33) and target.is_dir() and not old.exists():
+                    log('整个目录无法移动，改为完整备份后逐文件更新。')
+                    # Remove the directory-swap journal. The file transaction
+                    # writes its own durable plan before changing any files.
+                    recovery.unlink(missing_ok=True)
+                    try:install_files(target,stage,old,saved,recovery,log)
+                    except BaseException:
+                        keep_stage=recovery.exists()
+                        raise
+                    finished=True
+                    log('插件安装完成；个人词典和长文本已保留。')
+                    return saved
+                raise RuntimeError('无法移动旧插件，原插件未替换。请关闭使用插件文件的程序，并检查此目录的修改权限后重试。\n'
+                                   +str(target)+'\n词典备份：'+str(saved)+'\n系统原因：'+str(error)) from error
+        try:
+            replace_retry(stage,target,log)
+        except OSError as error:
+            if moved:
+                try:
+                    replace_retry(old,target,log)
+                    moved=False
+                except OSError as rollback_error:
+                    keep_stage=True
+                    details={'target':str(target),'old_plugin':str(old),'staged_plugin':str(stage),
+                             'dictionary_backup':str(saved),'error':str(error),'rollback_error':str(rollback_error)}
+                    try:write_json(recovery,details)
+                    except OSError as record_error:log('恢复记录写入失败：'+str(record_error))
+                    raise RuntimeError('安装失败，自动恢复也被 Windows 阻止。完整旧插件已保留，请先恢复后再打开 UE。\n'
+                                       '旧插件：'+str(old)+'\n恢复到：'+str(target)+'\n恢复记录：'+str(recovery)
+                                       +'\n系统原因：'+str(rollback_error)) from error
+                raise RuntimeError('安装失败，已恢复原插件。词典备份：'+str(saved)+'\n系统原因：'+str(error)) from error
+            raise RuntimeError('未能安装插件。请检查文件占用和目录修改权限后重试。\n'+str(error)) from error
+        log('插件安装完成；个人词典和长文本已保留。')
+        finished=True
+        return saved
+    finally:
+        keep_stage=keep_stage or (moved and not finished)
+        if not keep_stage:
+            try:recovery.unlink(missing_ok=True)
+            except OSError as error:log('恢复记录清理失败：'+str(recovery)+'；'+str(error))
+        if stage.exists() and not keep_stage:
+            try:shutil.rmtree(stage)
+            except OSError as error:log('暂存文件稍后可清理：'+str(stage)+'；'+str(error))
 
 
 def zip_plugin(plugin, dest):

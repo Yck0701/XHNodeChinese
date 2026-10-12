@@ -7,6 +7,7 @@ import queue
 import shutil
 import sys
 import threading
+import traceback
 import tkinter as tk
 from tkinter import filedialog, messagebox, ttk
 import webbrowser
@@ -199,7 +200,9 @@ class App(tk.Tk):
         self.save_settings();self.busy=True;self.status.set('正在处理，请查看进度日志…');self.progress.start(12)
         def work():
             try: self.messages.put(('done',(done,fn())))
-            except Exception as e:self.messages.put(('error',(str(e),quiet)))
+            except Exception as e:
+                self.log('操作失败：'+traceback.format_exc())
+                self.messages.put(('error',(str(e),quiet)))
         threading.Thread(target=work,daemon=False).start()
 
     def pump(self):
@@ -301,8 +304,8 @@ class App(tk.Tk):
             info=core.engine_info(engine,self.log)
             if not core.matching({'plugins':[item]},info):raise ValueError('引擎在检查后发生变化，请重新检查。')
             self.log('下载并校验安装包…'); archive=core.fetch(item,STATE/'cache')
-            return core.install(project,archive,info)
-        self.start(task,lambda p:self.log('安装完成，备份：'+str(p)))
+            return core.install(project,archive,info,self.log)
+        self.start(task,lambda p:(self.log('安装完成，备份：'+str(p)),self.check(True)))
 
     def download_plugin(self):
         if not self.require_package():return
