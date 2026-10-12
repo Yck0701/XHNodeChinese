@@ -1,1 +1,1 @@
-{"FileVersion":3,"Version":1,"VersionName":"0.1","FriendlyName":"XH bridge compiler configuration","Modules":[{"Name":"BridgeBuild","Type":"Editor","LoadingPhase":"Default"}]}
+{"FileVersion":3,"Version":1,"VersionName":"0.1","FriendlyName":"XH bridge compiler configuration","Modules":[{"Name":"BridgeBuild","Type":"Editor","LoadingPhase":"Default"}],"Plugins":[{"Name":"Niagara","Enabled":true}]}

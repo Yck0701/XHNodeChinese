@@ -186,7 +186,9 @@ def build(app,core,base):
         ttk.Button(row,text=text,command=fn).pack(side='left',padx=(0,8))
     ttk.Button(shared,text='打开词典与备份目录  ↗',style='Ghost.TButton',command=app.open_folders).pack(anchor='w')
 
-    heading(buildpage,'03  /  BUILD','引擎编译','维护者功能 · 使用已授权源码包，为其他引擎构建测试包。')
+    heading(buildpage,'03  /  BUILD','引擎编译','先检测本地与云端版本；需要编译时，为下方“编译目标”生成插件，SDK 仅提供依赖。')
+    app.path_row(buildpage,'编译目标',app.build_engine,lambda:app.choose_dir(app.build_engine),label_width=9)
+    ttk.Button(buildpage,text='以 SDK 为编译目标',style='Ghost.TButton',command=app.use_sdk_target).pack(anchor='w')
     rows=[('插件源码包',app.source_package,lambda:app.choose_file(app.source_package,[('插件源码包','*.zip')])),
           ('完整 SDK',app.sdk,lambda:app.choose_dir(app.sdk)),
           ('VC 环境',app.vcvars,lambda:app.choose_file(app.vcvars,[('VS 环境脚本','vcvars64.bat')])),
@@ -200,8 +202,10 @@ def build(app,core,base):
     row=ttk.Frame(buildpage);row.pack(anchor='w')
     ttk.Button(row,text='检查编译环境',command=app.check_build).pack(side='left',padx=(0,8))
     ttk.Button(row,text='编译测试包  →',style='Accent.TButton',command=app.compile).pack(side='left')
+    app.cancel_build_button=ttk.Button(row,text='取消编译',command=app.cancel_compile,state='disabled')
+    app.cancel_build_button.pack(side='left',padx=(8,0))
     row=ttk.Frame(buildpage);row.pack(anchor='w',pady=(8,0))
-    ttk.Button(row,text='检查云端构建',command=app.check_cloud).pack(side='left',padx=(0,8))
+    ttk.Button(row,text='检测已有版本',command=app.check_cloud).pack(side='left',padx=(0,8))
     ttk.Button(row,text='投稿已有编译包  ↗',command=app.submit_compiled).pack(side='left')
     ttk.Label(buildpage,textvariable=app.cloud_status,style='Muted.TLabel',wraplength=760).pack(anchor='w',pady=(8,0))
     row=ttk.Frame(buildpage);row.pack(anchor='w',pady=(8,0))

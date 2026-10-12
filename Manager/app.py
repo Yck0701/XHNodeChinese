@@ -15,6 +15,7 @@ import manager_core as core
 import editor_process
 import interface
 import community
+import build_preflight
 
 BASE=Path(sys.executable).parent if getattr(sys,'frozen',False) else Path(__file__).resolve().parent
 STATE=Path(os.environ.get('LOCALAPPDATA',str(Path.home())))/'XHPluginManager'
@@ -46,6 +47,7 @@ class App(tk.Tk):
         except (OSError,ValueError): pass
         self.project=tk.StringVar(value=settings.get('project',''))
         self.engine=tk.StringVar(value=settings.get('engine',''))
+        self.build_engine=tk.StringVar(value=settings.get('build_engine',settings.get('engine','')))
         self.feed_var=tk.StringVar(value=settings.get('feed',core.REPOSITORY))
         if core.feed_location(self.feed_var.get())==core.feed_location(core.SOURCE_REPOSITORY):
             self.feed_var.set(core.REPOSITORY)
@@ -62,6 +64,7 @@ class App(tk.Tk):
         self.status=tk.StringVar(value='先选择工程和引擎。已有用户可直接备份词典。')
         self.cloud_status=tk.StringVar(value='编译前检查云端；官方与定制投稿分区保存，审核通过后共享。')
         self.last_compiled=None
+        self.build_cancel=None
         interface.build(self,core,BASE)
         self.protocol('WM_DELETE_WINDOW',self.close)
         if not self.closing:self.after(100,self.pump)
@@ -96,7 +99,7 @@ class App(tk.Tk):
 
     def save_settings(self):
         core.write_json(STATE/'settings.json',dict(project=self.project.get(),engine=self.engine.get(),feed=self.feed_var.get(),
-            sdk=self.sdk.get(),vcvars=self.vcvars.get(),python=self.python.get(),msvc=self.msvc.get(),output=self.out.get(),source_package=self.source_package.get(),auto_check=self.auto_check.get()))
+            sdk=self.sdk.get(),build_engine=self.build_engine.get(),vcvars=self.vcvars.get(),python=self.python.get(),msvc=self.msvc.get(),output=self.out.get(),source_package=self.source_package.get(),auto_check=self.auto_check.get()))
 
     def start(self,fn,done=lambda result:None,quiet=False):
         if self.busy:
@@ -126,6 +129,8 @@ class App(tk.Tk):
                 if not self.busy:self.status.set('自动检查未完成，可手动重试或使用离线包：'+value)
             else:
                 self.busy=False;self.progress.stop()
+                if self.build_cancel is not None:
+                    self.build_cancel=None;self.cancel_build_button.configure(state='disabled')
                 if kind=='error':
                     error,quiet=(value if isinstance(value,tuple) else (value,False))
                     self.status.set('操作未完成：'+error)
@@ -320,7 +325,7 @@ class App(tk.Tk):
             self.open_path(project/relative)
 
     def build_args(self):
-        return dict(engine=self.engine.get(),sdk=self.sdk.get(),vcvars=self.vcvars.get(),python=self.python.get(),
+        return dict(engine=self.build_engine.get(),sdk=self.sdk.get(),vcvars=self.vcvars.get(),python=self.python.get(),
                     output=self.out.get(),compiler_version=self.msvc.get(),log=self.log)
 
     def check_build(self):
@@ -335,29 +340,50 @@ class App(tk.Tk):
         self.start(task)
 
     def compile(self):
-        args=self.build_args();source=self.source_package.get()
-        if not source or not Path(source).is_file():
-            messagebox.showinfo('选择源码包','请先选择维护者提供的本地插件源码 ZIP。公开安装包不能用于编译。',parent=self);return
-        def preflight():
-            info=core.engine_info(args['engine'],self.log)
-            try:return community.check(info,community.source_version(source),STATE/'cache'),None
-            except Exception as error:return None,str(error)
-        def ready(data):
-            result,error=data
-            if error:
-                self.cloud_status.set('云端检查失败；本次只在本地编译，不自动投稿。')
-                self.log('云端检查失败：'+error)
-                if not messagebox.askyesno('云端检查未完成','无法确认是否已有共享包。是否继续本地编译？\n本次不会自动生成投稿。',parent=self):return
-            else:
-                self.show_cloud_result(result)
-                if result['state']=='available':
-                    if messagebox.askyesno('已有兼容共享包','云端已有匹配的已验证插件包，无需重复编译。\n是否直接下载？',parent=self):
-                        self.start(lambda:core.fetch(result['item'],STATE/'cache'),lambda p:(self.log('已下载：'+str(p)),self.check(True,notify=False)))
-                    return
-                if result['state'] in ('pending_review','approved'):
-                    if not messagebox.askyesno('云端已收录','该构建已收录，正在等待审核或正式发布。\n是否仍为本机编译？本次不会重复投稿。',parent=self):return
-            self.compile_local(source,args,result)
-        self.start(preflight,ready)
+        self.check_versions(then_compile=True)
+
+    def use_sdk_target(self):
+        try:self.build_engine.set(str(core.engine_path(self.sdk.get())))
+        except ValueError as error:messagebox.showerror('SDK 路径需检查',str(error),parent=self)
+
+    def check_versions(self,then_compile=False):
+        args=self.build_args();source=self.source_package.get();project=self.project.get();feed=self.feed_var.get()
+        def task():
+            return build_preflight.probe(args['engine'],source,args['output'],STATE/'cache',BASE/'release',project,feed,self.log)
+        def ready(result):
+            if args['engine']!=self.build_engine.get() or source!=self.source_package.get() or args['output']!=self.out.get():
+                self.cloud_status.set('编译设置已改变，请重新检测版本。');return
+            self.log('编译目标：'+args['engine']+' / UE '+result['engine']['version'])
+            if result['cloud_error']:self.log('云端检查失败，本地检测仍有效：'+result['cloud_error'])
+            origin,item=build_preflight.preferred(result)
+            if item:
+                label=item.get('label','兼容插件包')+' · v'+item['version']
+                self.cloud_status.set(('本地可用：' if origin=='local' else '云端可用：')+label)
+                if origin=='local':
+                    detail='检测到'+label+'。\n'+item['path']+'\n\n'
+                    detail+=('这是未经过发布验证的本地测试包，只供隔离测试。\n' if item['kind']=='package' and not item['verified'] else '')
+                    if messagebox.askyesno('已有本地版本',detail+'是否使用现有版本并打开所在目录？选择“否”也不会自动开始重复编译。',parent=self):
+                        self.start(lambda:build_preflight.reuse(item,args['output']),lambda p:(self.log('使用本地版本：'+str(p)),self.open_path(p if Path(p).is_dir() else Path(p).parent)))
+                else:
+                    if messagebox.askyesno('云端已有匹配版本',label+'\n无需重复编译，是否下载到输出目录？',parent=self):
+                        def download():
+                            cached=core.fetch(item,STATE/'cache')
+                            candidate={'kind':'package','path':str(cached),'sha256':item['sha256'],'filename':Path(item['url']).name}
+                            return build_preflight.reuse(candidate,args['output'])
+                        self.start(download,lambda p:(self.log('已下载匹配包：'+str(p)),self.open_path(Path(p).parent)))
+                return
+            self.cloud_status.set('未找到可复用的本地版本。'+('云端检查未完成。' if result['cloud_error'] else '云端暂无匹配包。'))
+            if not then_compile:return
+            if not source or not Path(source).is_file():
+                messagebox.showinfo('需要源码包','未找到可复用版本，请先选择维护者提供的新版源码 ZIP。',parent=self);return
+            if result['cloud_error'] and not messagebox.askyesno('云端检查未完成','本地没有可复用版本，但无法确认云端状态。是否继续本地编译？',parent=self):return
+            contribution=result.get('contribution')
+            if contribution and contribution['state'] in ('pending_review','approved'):
+                self.cloud_status.set('云端已有投稿，等待验证／正式发布；暂不能直接安装。')
+                if not messagebox.askyesno('已有待发布构建',self.cloud_status.get()+'\n是否仍为本机编译测试包？',parent=self):return
+            # A failed query is never treated as a confirmed missing cloud build.
+            self.compile_local(source,args,contribution or ({'state':'missing'} if not result['cloud_error'] else None))
+        self.start(task,ready)
 
     def show_cloud_result(self,result):
         kind='官方指纹已确认' if result['kind']=='official' else '定制／未认证指纹'
@@ -366,20 +392,25 @@ class App(tk.Tk):
         self.cloud_status.set(kind+' · '+states[result['state']]);self.log(self.cloud_status.get())
 
     def check_cloud(self):
-        engine=self.engine.get();source=self.source_package.get()
-        def task():
-            if not source or not Path(source).is_file():raise ValueError('请先选择插件源码包，以便匹配插件版本。')
-            return community.check(core.engine_info(engine,self.log),community.source_version(source),STATE/'cache')
-        self.start(task,self.show_cloud_result)
+        self.check_versions()
 
     def compile_local(self,source,args,cloud_result):
-        if not messagebox.askyesno('开始编译','编译可能耗时数分钟，将在输出目录生成独立测试包，不改动当前工程。\n首次编译会运行目标 SDK 的构建工具。继续？',parent=self):return
+        target=core.engine_path(args['engine']);sdk=core.engine_path(args['sdk'])
+        detail='编译目标：'+str(target)+'\n依赖 SDK：'+str(sdk)+'\n输出目录：'+args['output']+'\n\n'
+        if target!=sdk:detail+='目标与 SDK 路径不同。生成的插件适用于上面的编译目标；如果要编译 SDK 对应引擎，请先使用“以 SDK 为编译目标”。\n\n'
+        if not messagebox.askyesno('确认编译目标',detail+'本次使用独立目录。连续 5 分钟无输出或单阶段超过 20 分钟会停止，并保留日志；也可随时取消。继续？',parent=self):return
+        cancel=threading.Event();self.build_cancel=cancel;self.cancel_build_button.configure(state='normal')
         def task():
-            return core.compile_package(source,**args)
+            return core.compile_package(source,**args,cancel_event=cancel)
         def done(path):
             self.last_compiled=path;self.log('生成测试包：'+str(path))
             if cloud_result and cloud_result['state'] in ('missing','rejected'):self.submit_compiled(path)
         self.start(task,done)
+
+    def cancel_compile(self):
+        if self.build_cancel is not None:
+            self.build_cancel.set();self.cloud_status.set('正在停止本次编译，保留工作目录和日志…')
+            self.cancel_build_button.configure(state='disabled')
 
     def submit_compiled(self,package=None):
         if package is None:

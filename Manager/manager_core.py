@@ -23,7 +23,7 @@ import zipfile
 SOURCE_REPOSITORY = 'https://github.com/Yck0701/XHNodeChinese'
 REPOSITORY = 'https://github.com/Yck0701/XHNodeChinese-new'
 DEFAULT_FEED = REPOSITORY + '/releases/latest/download/manifest.json'
-VERSION = '1.0.9'
+VERSION = '1.0.10'
 PROTECTED = ('Plugins/XHNodeChinese/Dictionaries/User.csv', 'Saved/XHNodeChinese/LongText.csv')
 SHARED_FILES = tuple('Plugins/XHNodeChinese/Dictionaries/'+n for n in
                      ('Shared.csv','SharedLongText.csv','SharedVersion.json'))
@@ -686,7 +686,8 @@ def run_logged(args, cwd, log):
         if process.wait(): raise RuntimeError('构建命令失败，请查看上方日志。')
 
 
-def compile_package(source, engine, sdk, vcvars, python, output, log=print, compiler_version='14.50'):
+def compile_package(source, engine, sdk, vcvars, python, output, log=print, compiler_version='14.50',cancel_event=None):
+    import build_process
     engine=engine_path(engine); sdk=engine_path(sdk); output=Path(output).resolve()
     for p in (engine,sdk,Path(vcvars),output,Path(python)):
         if re.search(r'[\r\n"%&|<>!^]',str(p)): raise ValueError('编译路径不能包含引号或命令行特殊字符。')
@@ -700,13 +701,16 @@ def compile_package(source, engine, sdk, vcvars, python, output, log=print, comp
     stage=unpack_plugin(source,build/'XHNodeChinese')
     if not (stage/'Tools/build_bridge.py').is_file() or not (stage/'Source/SlateBridge/Bridge.cpp').is_file():
         raise ValueError('请选择维护者提供的源码包；公开安装包不包含编译源码。')
+    config=stage/'Tools/build-config.json'
+    if not config.is_file() or json_read(config).get('schema',0)<2:
+        raise ValueError('源码包中的构建工具过旧，可能卡在 UBA。请使用 0.2.14-source-r2 或更新的授权源码包；本次尚未启动编译。')
     for file in (stage/'Binaries/Win64').glob('*'): file.unlink()
     log('开始构建动态组件；其他 UE 版本可能需要适配 C++ 源码。')
-    run_logged([python,stage/'Tools/build_bridge.py','--engine',engine,'--sdk',sdk,'--vcvars',vcvars,
-                '--compiler-version',compiler_version],stage,log)
+    build_process.run([python,stage/'Tools/build_bridge.py','--engine',engine,'--sdk',sdk,'--vcvars',vcvars,
+                '--compiler-version',compiler_version],stage,log,build/'build.log',cancel_event)
     verify_bridge(stage,info)
     log('为目标引擎重新生成语言资源。')
-    run_logged([python,stage/'Tools/build.py','--engine',engine],stage,log)
+    build_process.run([python,stage/'Tools/build.py','--engine',engine],stage,log,build/'build.log',cancel_event)
     target_documentation(stage,info)
     fingerprint=hashlib.sha256(json.dumps(info['sha256'],sort_keys=True).encode()).hexdigest()[:12]
     plugin_version=json_read(stage/'XHNodeChinese.uplugin')['VersionName']
@@ -716,5 +720,6 @@ def compile_package(source, engine, sdk, vcvars, python, output, log=print, comp
     report={'schema':1,'engine':info,'package':dest.name,'sha256':digest(dest),
             'verified':False,'note':'编译成功不代表兼容，必须在该目标引擎的独立工程验证后才能发布。'}
     write_json(dest.with_suffix('.json'),report)
+    if cancel_event is not None and cancel_event.is_set():log('取消请求到达时安装包已生成，已保留输出。')
     log('编译完成：'+str(dest)); log(report['note'])
     return dest
