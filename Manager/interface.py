@@ -201,6 +201,10 @@ def build(app,core,base):
     ttk.Button(row,text='检查编译环境',command=app.check_build).pack(side='left',padx=(0,8))
     ttk.Button(row,text='编译测试包  →',style='Accent.TButton',command=app.compile).pack(side='left')
     row=ttk.Frame(buildpage);row.pack(anchor='w',pady=(8,0))
+    ttk.Button(row,text='检查云端构建',command=app.check_cloud).pack(side='left',padx=(0,8))
+    ttk.Button(row,text='投稿已有编译包  ↗',command=app.submit_compiled).pack(side='left')
+    ttk.Label(buildpage,textvariable=app.cloud_status,style='Muted.TLabel',wraplength=760).pack(anchor='w',pady=(8,0))
+    row=ttk.Frame(buildpage);row.pack(anchor='w',pady=(8,0))
     ttk.Button(row,text='Visual Studio  ↗',style='Ghost.TButton',command=lambda:webbrowser.open('https://visualstudio.microsoft.com/visual-cpp-build-tools/')).pack(side='left')
     ttk.Button(row,text='Python  ↗',style='Ghost.TButton',command=lambda:webbrowser.open('https://www.python.org/downloads/windows/')).pack(side='left')
     def bind_wheel(widget,callback):

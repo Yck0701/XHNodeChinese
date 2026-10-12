@@ -40,6 +40,20 @@ python publish.py add --manifest release/manifest.json --package path/to/UNVERIF
 
 命令核对包、编译报告和验证记录，并在清单中加入新包。同一引擎指纹的新条目替换旧条目，其他构建继续保留。将更新后的清单、共享包、全部仍被引用的引擎 ZIP 一起上传到新的 Latest Release。
 
+## 处理云端编译投稿
+
+公开仓库的 `community-official-*` 与 `community-custom-*` 是相互独立的投稿预发布存档，不能加入自动安装。收录机器人只检查格式和哈希，不执行上传的 DLL。详细投稿流程见公开仓库的 CONTRIBUTING.md。
+
+维护者先审查来源，在隔离环境准备对应目标引擎。可以用下面命令将投稿组件与同插件版本的可信基础包组合为验证包：
+
+```text
+python review_contribution.py --bundle components.zip --catalog official-engines.json --base trusted-plugin.zip --expected-base-sha256 <可信基础包SHA256> --output candidate-UNVERIFIED.zip
+```
+
+该命令只组合文件，不安装或加载组件。验证通过后，沿用上文 `publish.py add` 的报告与验证记录流程发布正式包。云端正式清单优先于待审核目录，所以正式发布后管理器会直接匹配安装包。
+
+官方目录 `catalog/official-engines.json` 仅由维护者依据独立取得并验证的官方引擎更新，不能根据用户自报的版本或指纹自动授信。定制包保留独立指纹及分类。用户关闭分享时不应要求其上传指纹。
+
 ## 更新共享译文
 
 编辑 `shared/User.csv` 和 `shared/LongText.csv`，使用 UTF-8，保留两列表头 `Key,Value`。不要包含空译文、私有路径或工程名称。带作用域的词典可以使用五列格式。

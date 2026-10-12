@@ -14,6 +14,7 @@ import webbrowser
 import manager_core as core
 import editor_process
 import interface
+import community
 
 BASE=Path(sys.executable).parent if getattr(sys,'frozen',False) else Path(__file__).resolve().parent
 STATE=Path(os.environ.get('LOCALAPPDATA',str(Path.home())))/'XHPluginManager'
@@ -59,6 +60,8 @@ class App(tk.Tk):
         self.auto_check=tk.BooleanVar(value=bool(settings.get('auto_check',True)))
         self.selection=tk.StringVar(value='both')
         self.status=tk.StringVar(value='先选择工程和引擎。已有用户可直接备份词典。')
+        self.cloud_status=tk.StringVar(value='编译前检查云端；官方与定制投稿分区保存，审核通过后共享。')
+        self.last_compiled=None
         interface.build(self,core,BASE)
         self.protocol('WM_DELETE_WINDOW',self.close)
         if not self.closing:self.after(100,self.pump)
@@ -335,10 +338,78 @@ class App(tk.Tk):
         args=self.build_args();source=self.source_package.get()
         if not source or not Path(source).is_file():
             messagebox.showinfo('选择源码包','请先选择维护者提供的本地插件源码 ZIP。公开安装包不能用于编译。',parent=self);return
+        def preflight():
+            info=core.engine_info(args['engine'],self.log)
+            try:return community.check(info,community.source_version(source),STATE/'cache'),None
+            except Exception as error:return None,str(error)
+        def ready(data):
+            result,error=data
+            if error:
+                self.cloud_status.set('云端检查失败；本次只在本地编译，不自动投稿。')
+                self.log('云端检查失败：'+error)
+                if not messagebox.askyesno('云端检查未完成','无法确认是否已有共享包。是否继续本地编译？\n本次不会自动生成投稿。',parent=self):return
+            else:
+                self.show_cloud_result(result)
+                if result['state']=='available':
+                    if messagebox.askyesno('已有兼容共享包','云端已有匹配的已验证插件包，无需重复编译。\n是否直接下载？',parent=self):
+                        self.start(lambda:core.fetch(result['item'],STATE/'cache'),lambda p:(self.log('已下载：'+str(p)),self.check(True,notify=False)))
+                    return
+                if result['state'] in ('pending_review','approved'):
+                    if not messagebox.askyesno('云端已收录','该构建已收录，正在等待审核或正式发布。\n是否仍为本机编译？本次不会重复投稿。',parent=self):return
+            self.compile_local(source,args,result)
+        self.start(preflight,ready)
+
+    def show_cloud_result(self,result):
+        kind='官方指纹已确认' if result['kind']=='official' else '定制／未认证指纹'
+        states={'available':'已有兼容共享包，可直接下载','missing':'云端尚未收录','pending_review':'已收录，等待审核',
+                'approved':'已审核，等待正式发布','rejected':'此前投稿未通过，可重新提交'}
+        self.cloud_status.set(kind+' · '+states[result['state']]);self.log(self.cloud_status.get())
+
+    def check_cloud(self):
+        engine=self.engine.get();source=self.source_package.get()
+        def task():
+            if not source or not Path(source).is_file():raise ValueError('请先选择插件源码包，以便匹配插件版本。')
+            return community.check(core.engine_info(engine,self.log),community.source_version(source),STATE/'cache')
+        self.start(task,self.show_cloud_result)
+
+    def compile_local(self,source,args,cloud_result):
         if not messagebox.askyesno('开始编译','编译可能耗时数分钟，将在输出目录生成独立测试包，不改动当前工程。\n首次编译会运行目标 SDK 的构建工具。继续？',parent=self):return
         def task():
             return core.compile_package(source,**args)
-        self.start(task,lambda p:self.log('生成测试包：'+str(p)))
+        def done(path):
+            self.last_compiled=path;self.log('生成测试包：'+str(path))
+            if cloud_result and cloud_result['state'] in ('missing','rejected'):self.submit_compiled(path)
+        self.start(task,done)
+
+    def submit_compiled(self,package=None):
+        if package is None:
+            package=filedialog.askopenfilename(parent=self,title='选择编译生成的测试 ZIP（同目录需有构建报告 JSON）',filetypes=[('编译测试包','*.zip')])
+        if not package:return
+        package=Path(package)
+        def task():
+            report=core.json_read(package.with_suffix('.json'))
+            if core.digest(package)!=report['sha256']:raise ValueError('编译包与报告不一致。')
+            return community.check(report['engine'],community.source_version(package),STATE/'cache')
+        def ready(result):
+            self.show_cloud_result(result)
+            if result['state'] not in ('missing','rejected'):
+                messagebox.showinfo('无需重复投稿',self.cloud_status.get(),parent=self);return
+            consent=False
+            if result['kind']=='custom':
+                consent=messagebox.askyesno('是否公开分享定制构建？',
+                    '这个引擎的指纹尚未登记为官方构建。\n\n是否同意将插件编译组件、引擎指纹和版本信息公开投稿到 GitHub？\n'
+                    '它会存入独立的“定制／未认证”区。投稿包不包含引擎文件、源码、个人词典或工程内容。\n\n选择“否”会保留本地编译结果，不创建投稿。',parent=self)
+                if not consent:
+                    self.cloud_status.set('已保留本地结果；未同意分享，未创建定制投稿。');return
+            def prepared(data):
+                path,url=data;self.log('投稿包已准备，尚未上传：'+str(path))
+                self.cloud_status.set('投稿包已就绪，等待在 GitHub 上传附件并提交。')
+                if messagebox.askyesno('提交到 GitHub',
+                    '投稿包已准备。接下来登录你自己的 GitHub 账号，将下列 ZIP 拖入投稿正文，等待上传完成后提交。\n\n'+str(path)+
+                    '\n\n提交后云端会校验、去重并分区收录；通过维护者验证后才会供其他用户安装。\n是否打开投稿页面和文件夹？',parent=self):
+                    webbrowser.open(url);self.open_path(path.parent)
+            self.start(lambda:community.prepare(package,result,package.parent/'contributions',consent),prepared)
+        self.start(task,ready)
 
     def close(self):
         if self.busy:
