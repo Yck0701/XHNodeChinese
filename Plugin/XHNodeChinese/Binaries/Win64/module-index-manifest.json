@@ -13,6 +13,6 @@
     "Plugins/FX/Niagara/Binaries/Win64/UnrealEditor-Niagara.dll": "351fd73c936c04ea373428f95996683d5079ceb9a0771b334a06394629e37c21",
     "Plugins/FX/Niagara/Binaries/Win64/UnrealEditor-NiagaraCore.dll": "7e5aff3df9ec4e0245f0dc11814ac10ce4e161d6f049f6d0dc81ee5ffd73ab38"
   },
-  "bridge_file": "XHModuleIndex030_2.dll",
-  "bridge_sha256": "c8bda4bcf8affe3fa512336eef44d6f3e0b34fd0ede9116f89ba64854e6f6a01"
+  "bridge_file": "XHModuleIndex0214.dll",
+  "bridge_sha256": "60d372fb7f375cb5c9fead296b1880ff7769509c4bcc1436b8a7aa2d765042eb"
 }

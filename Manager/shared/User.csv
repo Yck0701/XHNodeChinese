@@ -32696,3 +32696,42 @@ Num YSegments,Y 轴分段数,,,Niagara
 Unbounded Plane,无限平面,,,Niagara
 Off,关闭,,,Niagara
 Trace Properties,检测属性,,,Niagara
+Physics Collides This Frame,本帧发生物理碰撞,,,Niagara
+Collision Valid,碰撞有效,,,Niagara
+Incoming Collision Velocity,碰撞前速度,,,Niagara
+Module Collision {Index} Normal,模块碰撞 {Index} 法线,,,Niagara
+Module Collision {Index} Valid,模块碰撞 {Index} 有效,,,Niagara
+Allow Offscreen Depth Buffer Particles to Live,允许屏幕外深度缓冲粒子存活,,,Niagara
+Bounce Collision Friction,反弹碰撞摩擦力,,,Niagara
+Collision Is Resting,碰撞后处于静止状态,,,Niagara
+Collision Normal Randomization Percentage,碰撞法线随机化百分比,,,Niagara
+Collision Particle Mass Replacement,碰撞粒子质量替代值,,,Niagara
+Collision Particle Physics Force Replacement,碰撞粒子物理力替代值,,,Niagara
+Collision Particle Position Replacement,碰撞粒子位置替代值,,,Niagara
+Collision Particle Velocity Replacement,碰撞粒子速度替代值,,,Niagara
+Collision Predicted Particle Position for Sim Stages,模拟阶段碰撞预测粒子位置,,,Niagara
+Collision World Position,碰撞世界位置,,,Niagara
+Dynamic Friction Coefficient,动摩擦系数,,,Niagara
+Max Intersection Correction Distance,最大相交修正距离,,,Niagara
+Max Scene Depth Collision Distance,最大场景深度碰撞距离,,,Niagara
+Module Combined Collision Normal,模块合并碰撞法线,,,Niagara
+Offscreen Counter,屏幕外计数器,,,Niagara
+Particle Restitution Coeffiecient,粒子恢复系数,,,Niagara
+Safe Combined Collision Normal,安全合并碰撞法线,,,Niagara
+Static Friction Coefficient,静摩擦系数,,,Niagara
+Trace Vector Length Multiplier,检测向量长度乘数,,,Niagara
+Update Rotational Velocity,更新旋转速度,,,Niagara
+Collision {Index} Material Index,碰撞 {Index} 材质索引,,,Niagara
+Collision Distance to Collision,距碰撞点距离,,,Niagara
+Collision Friction,碰撞摩擦力,,,Niagara
+Collision ID,碰撞 ID,,,Niagara
+Collision Particle Inverse Mass Replacement,碰撞粒子质量倒数替代值,,,Niagara
+Collision Particle Relative Collision Location,碰撞粒子相对碰撞位置,,,Niagara
+Collision Particle World Position,碰撞粒子世界位置,,,Niagara
+Collision Restitution,碰撞恢复系数,,,Niagara
+Collision Size,碰撞尺寸,,,Niagara
+Col Normal,碰撞法线,,,Niagara
+Col Normal Local,局部碰撞法线,,,Niagara
+Temp Returned Collision Valid,临时返回的碰撞有效性,,,Niagara
+Temp Returned Friction,临时返回的摩擦力,,,Niagara
+Temp Returned Restitution,临时返回的恢复系数,,,Niagara

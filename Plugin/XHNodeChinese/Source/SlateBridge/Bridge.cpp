@@ -160,6 +160,7 @@ static FNormalized Normalize(const std::wstring& Source) {
     }
     return Result;
 }
+#include "LabelAliases.inl"
 static bool HasUntranslatedWord(const std::wstring& Source, size_t Begin, size_t End) {
     // Keep named placeholders intact, but never publish a partially translated
     // sentence/label just because a few personal dictionary phrases matched.
@@ -178,6 +179,8 @@ static std::wstring LookupUncached(const std::wstring& Source) {
     auto Normal=Normalize(Source);
     auto Canonical=NormalizedDictionary.find(Normal.Text);
     if (Canonical!=NormalizedDictionary.end()) return Canonical->second;
+    std::wstring Alias;
+    if(LookupLabelAlias(Source,Alias))return Alias;
     // Numbered compact parameter labels share a base translation. Exact entries
     // above still win; preserve the index and leave dimension/type names alone.
     size_t Digit=Source.size();
@@ -193,6 +196,7 @@ static std::wstring LookupUncached(const std::wstring& Source) {
             auto Stem=Source.substr(0,Digit);
             auto Base=NormalizedDictionary.find(Normalize(Stem).Text);
             if(Base!=NormalizedDictionary.end())return Base->second+L" "+Source.substr(Digit);
+            if(LookupLabelAlias(Stem,Alias))return Alias+L" "+Source.substr(Digit);
         }
     }
     std::wstring Result;
@@ -527,9 +531,10 @@ static void VisitWidget(const TSharedRef<SWidget>& Widget, int Depth = 0, bool O
 }
 
 #define XH_EXPORT extern "C" __declspec(dllexport)
-XH_EXPORT void XH_Clear() { Restore(); GraphDictionary.clear(); Dictionary.clear(); LookupCache.clear(); NormalizedDictionary.clear();PhraseTrie.clear();PhraseTrie.emplace_back(); ++Revision; }
+XH_EXPORT void XH_Clear() { Restore(); GraphDictionary.clear(); Dictionary.clear(); LookupCache.clear(); NormalizedDictionary.clear();LabelAliases.clear();PhraseTrie.clear();PhraseTrie.emplace_back(); ++Revision; }
 XH_EXPORT void XH_Add(const wchar_t* Source, const wchar_t* Translation) {
     Dictionary[Source] = Translation;NormalizedDictionary[Normalize(Source).Text]=Translation;LookupCache.clear(); ++Revision;
+    AddLabelAlias(Source,Translation);
 }
 XH_EXPORT void XH_AddGraph(const wchar_t* Source,const wchar_t* Translation) {
     GraphDictionary[Normalize(Source).Text]=Translation;++Revision;
@@ -915,6 +920,7 @@ XH_EXPORT int XH_CaptureSelfTest(){
 }
 
 #include "TooltipTests.inl"
+#include "LabelTests.inl"
 
 XH_EXPORT int XH_SelfTest() {
     // Run in an isolated test editor: static text, live getter, restoration,

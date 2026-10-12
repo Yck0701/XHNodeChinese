@@ -28,7 +28,13 @@ static void ReadValue(FProperty* P, const void* V, int Depth) {
         const FString Owner=P->GetOwnerStruct()->GetName();
         FString S=N->GetPropertyValue(V).ToString();
         if(Name==TEXT("Name") && Owner.StartsWith(TEXT("NiagaraVariable"))) {
-            if(S.StartsWith(TEXT("Module."))) S.RightChopInline(7);
+            // Parameters in Output/Transient/Particles namespaces used to be
+            // skipped entirely. Collect their visible leaf, never their path.
+            for(const TCHAR* Prefix:{TEXT("Module."),TEXT("Output."),TEXT("Transient."),TEXT("Particles."),TEXT("Emitter."),TEXT("System.")}) {
+                if(S.StartsWith(Prefix)) {
+                    int32 Dot=INDEX_NONE;S.FindLastChar(TEXT('.'),Dot);S=S.Mid(Dot+1);break;
+                }
+            }
             if(!S.Contains(TEXT("."))) Add(FName::NameToDisplayString(S,false));
         } else if(Name.StartsWith(TEXT("OverrideName")) || Name==TEXT("CategoryName") || (Owner.Contains(TEXT("Hierarchy")) && (Name==TEXT("Name") || Name==TEXT("Category") || Name==TEXT("Section") || Name==TEXT("SectionName")))) Add(S);
         return;

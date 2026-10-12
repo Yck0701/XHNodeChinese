@@ -1,12 +1,12 @@
 {
-  "version": "2026.10.12.2",
+  "version": "2026.10.12.3",
   "input_files": 10,
   "input_rows": 44798,
   "empty_rows_excluded": 453,
   "duplicate_rows_removed": 92,
   "conflicts_resolved_by_input_priority": 9,
   "numbered_aliases_removed": 0,
-  "shared_terms": 32689,
+  "shared_terms": 32728,
   "shared_long_texts": 4217,
   "excluded_counts": {
     "unverified_source": 7128,
@@ -19,9 +19,10 @@
   },
   "policy": "Exact stock engine source/localization evidence. Personal inputs unchanged. Unverified entries retained only in private review.",
   "files": {
-    "User.csv": "1653a36070354a03e719f46867c9d1b5c7d0a2bfefff2be79131e9861a2345b3",
+    "User.csv": "7f006e49cbc47602a327afe686ec32ad848f27d2933a485a56bf80587c71c16e",
     "LongText.csv": "d9f2a3e03cf06bf2b6183ce93661b5f16fd19f2ea0e20fa8f22b4baf6ac8c2dd"
   },
   "reviewed_niagara_additions": 77,
-  "reviewed_vortex_tooltip_additions": 46
+  "reviewed_vortex_tooltip_additions": 46,
+  "reviewed_output_label_additions": 39
 }
