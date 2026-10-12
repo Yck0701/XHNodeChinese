@@ -12,6 +12,7 @@ import tkinter as tk
 from tkinter import filedialog, messagebox, ttk
 import webbrowser
 import manager_core as core
+import editor_process
 
 BASE=Path(sys.executable).parent if getattr(sys,'frozen',False) else Path(__file__).resolve().parent
 STATE=Path(os.environ.get('LOCALAPPDATA',str(Path.home())))/'XHPluginManager'
@@ -60,6 +61,7 @@ class App(tk.Tk):
         self.messages=queue.Queue(); self.busy=False; self.feed=None; self.feed_origin=''
         self.checking=False
         self.closing=False
+        self.update_prompts=set()
         self.info=None; self.checked_engine=''; self.selected=None
         settings={}
         try: settings=core.json_read(STATE/'settings.json')
@@ -109,7 +111,7 @@ class App(tk.Tk):
         ttk.Checkbutton(install,text='启动时自动检查更新',variable=self.auto_check).pack(anchor='w',pady=(2,0))
         self.package_label=tk.StringVar(value='尚未检查。不同引擎构建需要不同的动态组件。')
         ttk.Label(install,textvariable=self.package_label,wraplength=820).pack(anchor='w',pady=15)
-        ttk.Label(install,text='安装插件时保留个人词典与工程 Saved 数据；完整旧插件另行备份。\n安装前请关闭 UE。没有匹配版本时，到“编译其他引擎”创建测试包。',wraplength=820).pack(anchor='w',pady=5)
+        ttk.Label(install,text='安装插件时保留个人词典与工程 Saved 数据；完整旧插件另行备份。\n安装前如 UE 正在运行，会询问是否正常关闭；请先保存。',wraplength=820).pack(anchor='w',pady=5)
         links=ttk.Frame(install);links.pack(anchor='w',pady=8)
         ttk.Button(links,text='打开 GitHub 发布页',command=lambda:webbrowser.open(core.REPOSITORY+'/releases')).pack(side='left')
         ttk.Button(links,text='打开使用说明',command=lambda:self.open_path(BASE/'README.md')).pack(side='left',padx=8)
@@ -120,7 +122,7 @@ class App(tk.Tk):
         ttk.Label(shared,text='新版插件自带通用词条和长说明；个人译文始终优先。共享词库由本插件维护。',wraplength=920).pack(anchor='w',pady=8)
         row=ttk.Frame(shared);row.pack(anchor='w',pady=(0,12))
         ttk.Button(row,text='更新共享词库',style='Accent.TButton',command=self.update_defaults).pack(side='left')
-        ttk.Label(row,text='只更新基础翻译，保留个人词典；请先关闭 UE。',style='Hint.TLabel').pack(side='left',padx=12)
+        ttk.Label(row,text='保留个人词典；如 UE 正在运行，会询问是否正常关闭。',style='Hint.TLabel').pack(side='left',padx=12)
         ttk.Separator(shared).pack(fill='x',pady=(0,12))
         ttk.Label(shared,text='个人词典 · 备份与替换',style='Section.TLabel').pack(anchor='w')
         ttk.Label(shared,text='以下“替换”会覆盖所选个人文件；每次先备份，可随时恢复。',wraplength=900).pack(anchor='w',pady=8)
@@ -231,12 +233,12 @@ class App(tk.Tk):
         if not self.closing:self.after(100,self.pump)
 
     def startup_check(self):
-        """Refresh release metadata without interrupting first launch with a dialog."""
+        """Check in the background, then ask before downloading available updates."""
         if self.busy: return
         self.status.set('正在后台检查更新清单…')
         self.check(bool(self.engine.get()),automatic=True)
 
-    def check(self,with_engine=True,automatic=False):
+    def check(self,with_engine=True,automatic=False,notify=True):
         if self.checking:return
         source=self.feed_var.get();engine=self.engine.get();project=self.project.get()
         def task():
@@ -262,6 +264,7 @@ class App(tk.Tk):
             prefix='离线缓存，尚未确认最新版本' if self.feed.get('_cached') else '检查完成'
             self.status.set(prefix+' · '+('引擎路径需检查：'+engine_error if engine_error else '工具、插件与共享词库状态已更新。'))
             if self.feed.get('_cached'):self.log('在线检查失败：'+self.feed['_check_error'])
+            if notify:self.offer_updates(summary,automatic)
         if automatic:
             self.checking=True
             def work():
@@ -269,6 +272,36 @@ class App(tk.Tk):
                 except Exception as error:self.messages.put(('check_error',str(error)))
             threading.Thread(target=work,daemon=True).start()
         else:self.start(task,done)
+
+    def offer_updates(self,summary,automatic=False):
+        updates=core.available_updates(self.feed,self.project.get(),self.selected,summary)
+        if not updates or self.busy or self.closing:return
+        key=(self.feed_origin,self.project.get(),self.engine.get(),tuple((u['kind'],u['item']['version'],u['item']['sha256']) for u in updates))
+        if automatic and key in self.update_prompts:return
+        self.update_prompts.add(key)
+        detail='\n'.join(u['label']+'：'+u['current']+' → '+u['item']['version'] for u in updates)
+        if not messagebox.askyesno('发现新版本',detail+'\n\n是否下载以上更新？\n本步只下载，不关闭 UE，也不修改工程。',parent=self):return
+        def task():
+            results=[]
+            for update in updates:
+                self.log('下载并校验：'+update['label']+' '+update['item']['version'])
+                path=(core.prepare_manager_update(update['item'],STATE/'cache') if update['kind']=='manager'
+                      else core.fetch(update['item'],STATE/'cache'))
+                results.append((update['kind'],path))
+            return results
+        def done(results):
+            for kind,path in results:self.log('已下载：'+str(path))
+            self.status.set('更新已下载。插件请点击“安装 / 更新匹配版本”；词库请点击“更新共享词库”。')
+            manager=next((p for kind,p in results if kind=='manager'),None)
+            if manager:
+                if messagebox.askyesno('新版工具已下载','是否现在打开新版管理器？\n当前管理器会退出，UE 保持运行。\n插件和词库如有更新，可在新版管理器中继续安装。',parent=self):self.open_manager(manager)
+            else:messagebox.showinfo('下载完成','更新包已下载并校验。\n插件请点击“安装 / 更新匹配版本”；词库请点击“更新共享词库”。',parent=self)
+        self.start(task,done)
+
+    def open_manager(self,path):
+        try:
+            self.save_settings();os.startfile(str(path));self.closing=True;self.destroy()
+        except OSError as error:messagebox.showerror('启动失败','新版已下载：'+str(path)+'\n'+str(error),parent=self)
 
     def update_manager(self):
         if not self.feed or self.feed_origin!=self.feed_var.get():self.check(False);return
@@ -278,18 +311,42 @@ class App(tk.Tk):
         item=dict(item)
         def done(path):
             self.log('新版工具已校验并解压：'+str(path))
-            try:
-                self.save_settings();os.startfile(str(path));self.closing=True;self.destroy()
-            except OSError as error:messagebox.showerror('启动失败','新版已下载：'+str(path)+'\n'+str(error),parent=self)
+            self.open_manager(path)
         self.start(lambda:core.prepare_manager_update(item,STATE/'cache'),done)
+
+    def start_file_update(self,project,prepare,apply,done):
+        """Download first; ask to close UE before any project file replacement."""
+        if self.busy:
+            messagebox.showinfo('正在处理','请等待当前操作完成。',parent=self);return
+        try:core.project_path(project)
+        except ValueError as error:messagebox.showerror('选择工程',str(error),parent=self);return
+        context=(project,self.engine.get(),self.feed_var.get())
+        def ready(result):
+            prepared,editors=result
+            if context!=(self.project.get(),self.engine.get(),self.feed_var.get()):
+                self.status.set('选择已改变，更新已暂停；下载包已保留。');return
+            if editors:
+                labels='\n'.join((p['title'] or p['name'])+'  (PID '+str(p['pid'])+')' for p in editors)
+                prompt=('检测到以下虚幻进程正在运行：\n'+labels+
+                        '\n\n请先保存工作。是否请求正常关闭以上 UE，并在全部退出后继续更新？'
+                        '\n如 UE 弹出保存提示，请在 UE 中处理。取消退出或 90 秒内未退出，更新会暂停；不会强制结束。')
+                if not messagebox.askyesno('更新前关闭虚幻编辑器',prompt,parent=self,default=messagebox.NO):
+                    self.status.set('更新已暂停，UE 保持运行；下载包已保留。');return
+            def write():
+                if editors:editor_process.close_and_wait(editors,self.log)
+                # The core repeats its running-process check immediately before writes.
+                return apply(prepared)
+            self.start(write,done)
+        self.start(lambda:(prepare(),editor_process.list_editors()),ready)
 
     def update_defaults(self):
         project=self.project.get();source=self.feed_var.get()
-        if not messagebox.askyesno('更新共享词库','请先保存并关闭 UE。\n更新基础翻译，个人译文保持不变；旧共享词库会备份。继续？',parent=self):return
+        if not messagebox.askyesno('更新共享词库','更新基础翻译，个人译文保持不变；旧共享词库会备份。继续？',parent=self):return
         def task():
             feed=core.load_feed(source,STATE/'cache');item=feed['shared']
-            return core.update_shared_defaults(project,core.fetch(item,STATE/'cache'),item['version'])
-        self.start(task,lambda p:(self.log('共享词库已更新，备份：'+str(p)),self.check(True)))
+            return core.fetch(item,STATE/'cache'),item['version']
+        self.start_file_update(project,task,lambda data:core.update_shared_defaults(project,*data),
+                               lambda p:(self.log('共享词库已更新，备份：'+str(p)),self.check(True,notify=False)))
 
     def require_package(self):
         if not self.selected or self.checked_engine!=self.engine.get() or self.feed_origin!=self.feed_var.get():
@@ -299,13 +356,14 @@ class App(tk.Tk):
     def install(self):
         if not self.require_package():return
         project=self.project.get();item=dict(self.selected);engine=self.engine.get()
-        if not messagebox.askyesno('安装插件','请保存并关闭 UE。\n安装会保留个人词典，旧插件会备份。\n继续安装到当前工程？',parent=self):return
+        if not messagebox.askyesno('安装插件','安装会保留个人词典，旧插件会备份。\n继续安装到工程：'+project+'？',parent=self):return
         def task():
             info=core.engine_info(engine,self.log)
             if not core.matching({'plugins':[item]},info):raise ValueError('引擎在检查后发生变化，请重新检查。')
             self.log('下载并校验安装包…'); archive=core.fetch(item,STATE/'cache')
-            return core.install(project,archive,info,self.log)
-        self.start(task,lambda p:(self.log('安装完成，备份：'+str(p)),self.check(True)))
+            return archive,info
+        self.start_file_update(project,task,lambda data:core.install(project,*data,self.log),
+                               lambda p:(self.log('安装完成，备份：'+str(p)),self.check(True,notify=False)))
 
     def download_plugin(self):
         if not self.require_package():return
@@ -319,15 +377,16 @@ class App(tk.Tk):
         self.start(lambda:core.backup(project),lambda p:self.log('备份完成：'+str(p)))
 
     def confirm_replace(self):
-        return messagebox.askyesno('替换共享译文','将覆盖所选文件中的自定义译文。\n替换前自动备份当前词典和长文本，可随时恢复。\n请保存并关闭 UE。继续？',parent=self)
+        return messagebox.askyesno('替换共享译文','将覆盖所选文件中的自定义译文。\n替换前自动备份当前词典和长文本，可随时恢复。继续？',parent=self)
 
     def shared(self):
         if not self.confirm_replace():return
         source=self.feed_var.get();project=self.project.get();mode=self.selection.get()
         def task():
             feed=core.load_feed(source,STATE/'cache');archive=core.fetch(feed['shared'],STATE/'cache')
-            return self.replace_captured(project,mode,archive)
-        self.start(task,lambda p:self.log('共享译文已替换，原文件备份：'+str(p)))
+            return archive
+        self.start_file_update(project,task,lambda archive:self.replace_captured(project,mode,archive),
+                               lambda p:self.log('共享译文已替换，原文件备份：'+str(p)))
 
     @staticmethod
     def replace_captured(project,mode,archive):
@@ -342,12 +401,15 @@ class App(tk.Tk):
         archive=filedialog.askopenfilename(parent=self,filetypes=[('共享词典包','*.zip')])
         if archive and self.confirm_replace():
             project=self.project.get();mode=self.selection.get()
-            self.start(lambda:self.replace_captured(project,mode,archive),lambda p:self.log('已替换；备份：'+str(p)))
+            self.start_file_update(project,lambda:archive,lambda path:self.replace_captured(project,mode,path),
+                                   lambda p:self.log('已替换；备份：'+str(p)))
 
     def restore(self):
         archive=filedialog.askopenfilename(parent=self,title='选择 dictionary- 或 shared- 开头的备份',filetypes=[('词典备份','*.zip')])
-        if archive and messagebox.askyesno('恢复备份','当前文件会先另存备份，再恢复所选版本。\n请关闭 UE。继续？',parent=self):
-            project=self.project.get();self.start(lambda:core.restore(project,archive),lambda p:self.log('已恢复；恢复前的文件备份：'+str(p)))
+        if archive and messagebox.askyesno('恢复备份','当前文件会先另存备份，再恢复所选版本。继续？',parent=self):
+            project=self.project.get()
+            self.start_file_update(project,lambda:archive,lambda path:core.restore(project,path),
+                                   lambda p:self.log('已恢复；恢复前的文件备份：'+str(p)))
 
     def open_folders(self):
         try:project=core.project_path(self.project.get())

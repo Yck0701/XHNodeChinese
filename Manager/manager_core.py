@@ -23,7 +23,7 @@ import zipfile
 SOURCE_REPOSITORY = 'https://github.com/Yck0701/XHNodeChinese'
 REPOSITORY = 'https://github.com/Yck0701/XHNodeChinese-new'
 DEFAULT_FEED = REPOSITORY + '/releases/latest/download/manifest.json'
-VERSION = '1.0.4'
+VERSION = '1.0.5'
 PROTECTED = ('Plugins/XHNodeChinese/Dictionaries/User.csv', 'Saved/XHNodeChinese/LongText.csv')
 SHARED_FILES = tuple('Plugins/XHNodeChinese/Dictionaries/'+n for n in
                      ('Shared.csv','SharedLongText.csv','SharedVersion.json'))
@@ -238,6 +238,31 @@ def update_summary(feed, project='', selected=None):
             else:result['shared']='可更新 '+meta.get('version','未知')+' → '+feed['shared']['version']
         except (OSError,ValueError,KeyError,TypeError):pass
     return result
+
+
+def available_updates(feed, project='', selected=None, summary=None):
+    """Only offer verified updates relevant to this installation; never downgrade."""
+    if feed.get('_cached'):return []
+    summary=summary or update_summary(feed,project,selected)
+    updates=[]
+    manager=feed.get('manager')
+    if manager and newer_version(manager.get('version','')):
+        updates.append({'kind':'manager','label':'管理器','current':VERSION,'item':dict(manager)})
+    if not project:return updates
+    try:
+        root=project_path(project)
+        descriptor=json_read(root/'Plugins/XHNodeChinese/XHNodeChinese.uplugin')
+    except (OSError,ValueError):return updates
+    current=descriptor.get('VersionName','')
+    if selected and selected.get('verified') is True and current and newer_version(selected['version'],current):
+        updates.append({'kind':'plugin','label':'引擎插件','current':current,'item':dict(selected)})
+    if descriptor.get('XHSharedDictionaryVersion',0)>=1 and summary.get('shared_update'):
+        try:version=json_read(root/SHARED_FILES[2]).get('version','')
+        except (OSError,ValueError):version=''
+        item=feed['shared']
+        if not version or version_tuple(item['version'])>=version_tuple(version):
+            updates.append({'kind':'shared','label':'共享词库','current':version or '未安装','item':dict(item)})
+    return updates
 
 
 def matching(feed, info):
