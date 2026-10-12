@@ -13,6 +13,7 @@ from tkinter import filedialog, messagebox, ttk
 import webbrowser
 import manager_core as core
 import editor_process
+import interface
 
 BASE=Path(sys.executable).parent if getattr(sys,'frozen',False) else Path(__file__).resolve().parent
 STATE=Path(os.environ.get('LOCALAPPDATA',str(Path.home())))/'XHPluginManager'
@@ -33,31 +34,7 @@ class App(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title('星河插件管理器 · 安装、共享词典与编译')
-        self.geometry('1080x900'); self.minsize(980,820)
-        # Dependency-free dark tool-panel styling.
-        self.configure(background='#0b1220')
-        style=ttk.Style(self); style.theme_use('clam')
-        style.configure('.',font=('Microsoft YaHei UI',10))
-        style.configure('TFrame',background='#0b1220')
-        style.configure('TLabel',background='#0b1220',foreground='#e8f0ff')
-        style.configure('TRadiobutton',background='#0b1220',foreground='#d8e5fa')
-        style.configure('TCheckbutton',background='#0b1220',foreground='#d8e5fa')
-        style.configure('TNotebook',background='#0b1220',borderwidth=0)
-        style.configure('TNotebook.Tab',padding=(20,10),background='#16243d',foreground='#9fb0ca')
-        style.map('TNotebook.Tab',background=[('selected','#263b63'),('active','#1d3152')],foreground=[('selected','#5de1ff')])
-        style.configure('TButton',padding=(12,7),background='#16243d',foreground='#e8f0ff',bordercolor='#2b4166')
-        style.map('TButton',background=[('active','#263b63'),('disabled','#111a2b')],foreground=[('disabled','#60708a')])
-        style.configure('Accent.TButton',background='#27c7ed',foreground='#06111e',bordercolor='#55e3ff')
-        style.map('Accent.TButton',background=[('active','#62e7ff')])
-        style.configure('Title.TLabel',font=('Microsoft YaHei UI',21,'bold'),foreground='#eff8ff',background='#0b1220')
-        style.configure('Logo.TLabel',font=('Segoe UI Symbol',16,'bold'),foreground='#5de1ff',background='#0b1220')
-        style.configure('Hint.TLabel',foreground='#9fb0ca',background='#0b1220')
-        style.configure('Section.TLabel',font=('Microsoft YaHei UI',14,'bold'),foreground='#5de1ff',background='#0b1220')
-        style.configure('TEntry',fieldbackground='#101d33',foreground='#e8f0ff',insertcolor='#5de1ff')
-        style.configure('Card.TFrame',background='#132239')
-        style.configure('Card.TLabel',background='#132239',foreground='#e8f0ff',font=('Microsoft YaHei UI',10,'bold'))
-        style.configure('CardHint.TLabel',background='#132239',foreground='#70accd',font=('Microsoft YaHei UI',9))
-        style.configure('Horizontal.TProgressbar',background='#27c7ed',troughcolor='#132239',bordercolor='#132239')
+        interface.configure(self)
         self.messages=queue.Queue(); self.busy=False; self.feed=None; self.feed_origin=''
         self.checking=False
         self.closing=False
@@ -82,85 +59,7 @@ class App(tk.Tk):
         self.auto_check=tk.BooleanVar(value=bool(settings.get('auto_check',True)))
         self.selection=tk.StringVar(value='both')
         self.status=tk.StringVar(value='先选择工程和引擎。已有用户可直接备份词典。')
-        top=ttk.Frame(self,padding=20); top.pack(fill='x')
-        title_row=ttk.Frame(top); title_row.pack(fill='x')
-        ttk.Label(title_row,text='◈',style='Logo.TLabel').pack(side='left',padx=(0,8))
-        ttk.Label(title_row,text='星河插件管理器',style='Title.TLabel').pack(side='left')
-        ttk.Label(title_row,text='XH  /  v'+core.VERSION,style='Logo.TLabel').pack(side='right')
-        ttk.Label(top,text='选工程 → 检查版本 → 安装或更新。词典替换前自动备份。',style='Hint.TLabel').pack(anchor='w',pady=(5,12))
-        cards=ttk.Frame(top);cards.pack(fill='x',pady=(0,10))
-        self.card_vars={}
-        for index,(key,title,initial) in enumerate((('manager','01  更新工具','当前 v'+core.VERSION),('plugin','02  引擎插件','选择工程和引擎'),('shared','03  共享词库','启动后自动检查'))):
-            cards.columnconfigure(index,weight=1,uniform='status')
-            card=ttk.Frame(cards,style='Card.TFrame',padding=(14,10));card.grid(row=0,column=index,sticky='nsew',padx=(0,8 if index<2 else 0))
-            ttk.Label(card,text=title,style='CardHint.TLabel').pack(anchor='w')
-            self.card_vars[key]=tk.StringVar(value=initial)
-            ttk.Label(card,textvariable=self.card_vars[key],style='Card.TLabel',wraplength=290).pack(anchor='w',pady=(5,0))
-        self.path_row(top,'工程',self.project,lambda:self.choose_project())
-        self.path_row(top,'引擎',self.engine,lambda:self.choose_dir(self.engine))
-        book=ttk.Notebook(self); book.pack(fill='both',expand=True,padx=20)
-        install=ttk.Frame(book,padding=16); shared=ttk.Frame(book,padding=16); build=ttk.Frame(book,padding=16)
-        book.add(install,text='① 安装与更新'); book.add(shared,text='② 共享词典 / 备份'); book.add(build,text='③ 编译其他引擎')
-        self.path_row(install,'更新来源',self.feed_var,self.choose_feed,button_text='离线清单…')
-        ttk.Label(install,text='默认：GitHub Releases。也可选择随包附带的 release/manifest.json。',wraplength=820).pack(anchor='w',pady=6)
-        bar=ttk.Frame(install);bar.pack(fill='x',pady=8)
-        ttk.Button(bar,text='检查可用更新',style='Accent.TButton',command=lambda:self.check(True)).pack(side='left',padx=(0,8))
-        ttk.Button(bar,text='安装 / 更新匹配版本',command=self.install).pack(side='left',padx=4)
-        ttk.Button(bar,text='只下载安装包',command=self.download_plugin).pack(side='left',padx=4)
-        ttk.Button(bar,text='使用随包离线版本',command=self.use_bundled).pack(side='left',padx=4)
-        ttk.Checkbutton(install,text='启动时自动检查更新',variable=self.auto_check).pack(anchor='w',pady=(2,0))
-        self.package_label=tk.StringVar(value='尚未检查。不同引擎构建需要不同的动态组件。')
-        ttk.Label(install,textvariable=self.package_label,wraplength=820).pack(anchor='w',pady=15)
-        ttk.Label(install,text='安装插件时保留个人词典与工程 Saved 数据；完整旧插件另行备份。\n安装前如 UE 正在运行，会询问是否正常关闭；请先保存。',wraplength=820).pack(anchor='w',pady=5)
-        links=ttk.Frame(install);links.pack(anchor='w',pady=8)
-        ttk.Button(links,text='打开 GitHub 发布页',command=lambda:webbrowser.open(core.REPOSITORY+'/releases')).pack(side='left')
-        ttk.Button(links,text='打开使用说明',command=lambda:self.open_path(BASE/'README.md')).pack(side='left',padx=8)
-        self.manager_button=ttk.Button(links,text='下载并打开新版工具',command=self.update_manager,state='disabled')
-        self.manager_button.pack(side='left',padx=8)
-
-        ttk.Label(shared,text='共享基础词库 · 安装即用',style='Section.TLabel').pack(anchor='w')
-        ttk.Label(shared,text='新版插件自带通用词条和长说明；个人译文始终优先。共享词库由本插件维护。',wraplength=920).pack(anchor='w',pady=8)
-        row=ttk.Frame(shared);row.pack(anchor='w',pady=(0,12))
-        ttk.Button(row,text='更新共享词库',style='Accent.TButton',command=self.update_defaults).pack(side='left')
-        ttk.Label(row,text='保留个人词典；如 UE 正在运行，会询问是否正常关闭。',style='Hint.TLabel').pack(side='left',padx=12)
-        ttk.Separator(shared).pack(fill='x',pady=(0,12))
-        ttk.Label(shared,text='个人词典 · 备份与替换',style='Section.TLabel').pack(anchor='w')
-        ttk.Label(shared,text='以下“替换”会覆盖所选个人文件；每次先备份，可随时恢复。',wraplength=900).pack(anchor='w',pady=8)
-        pick=ttk.Frame(shared);pick.pack(anchor='w',pady=5)
-        for value,label in [('both','个人词典 + 长文本'),('term','仅个人词典'),('long','仅长文本')]:
-            ttk.Radiobutton(pick,text=label,variable=self.selection,value=value).pack(side='left',padx=(0,20))
-        bar=ttk.Frame(shared);bar.pack(anchor='w',pady=12)
-        ttk.Button(bar,text='一键备份当前文件',style='Accent.TButton',command=self.backup).pack(side='left',padx=(0,8))
-        ttk.Button(bar,text='从更新源替换',command=self.shared).pack(side='left',padx=4)
-        ttk.Button(bar,text='从离线共享包替换',command=self.shared_offline).pack(side='left',padx=4)
-        ttk.Button(bar,text='恢复备份…',command=self.restore).pack(side='left',padx=4)
-        ttk.Button(shared,text='打开词典和备份目录',command=self.open_folders).pack(anchor='w')
-        self.shared_label=tk.StringVar(value='先检查更新可查看共享词典版本。词典更新不要求重新编译插件。')
-        ttk.Label(shared,textvariable=self.shared_label,wraplength=820).pack(anchor='w',pady=16)
-        ttk.Label(shared,text='文件位置（相对于工程）：\n个人词典：Plugins/XHNodeChinese/Dictionaries/User.csv\n长文本：Saved/XHNodeChinese/LongText.csv\n备份：Saved/XHNodeChinese/UpdaterBackups',wraplength=820).pack(anchor='w')
-
-        ttk.Label(build,text='为目标引擎编译测试包',style='Section.TLabel').pack(anchor='w')
-        ttk.Label(build,text='维护者功能：先选择授权的本地源码包，再准备目标 SDK、C++ 工具链和 Python 3.9+。\n公开更新源只提供安装包；跨版本 C++ 接口差异可能需要适配源码。',wraplength=820).pack(anchor='w',pady=8)
-        self.path_row(build,'本地源码包',self.source_package,lambda:self.choose_file(self.source_package,[('插件源码包','*.zip')]))
-        self.path_row(build,'完整 SDK',self.sdk,lambda:self.choose_dir(self.sdk))
-        self.path_row(build,'vcvars64.bat',self.vcvars,lambda:self.choose_file(self.vcvars,[('VS 环境脚本','vcvars64.bat')]))
-        self.path_row(build,'python.exe',self.python,lambda:self.choose_file(self.python,[('Python','python.exe')]))
-        self.path_row(build,'输出目录',self.out,lambda:self.choose_dir(self.out))
-        row=ttk.Frame(build);row.pack(fill='x',pady=4)
-        ttk.Label(row,text='MSVC 版本',width=13).pack(side='left');ttk.Entry(row,textvariable=self.msvc,width=12).pack(side='left')
-        ttk.Label(row,text='填写目标引擎使用的工具链，例如 14.50').pack(side='left',padx=10)
-        row=ttk.Frame(build);row.pack(anchor='w',pady=8)
-        ttk.Button(row,text='检查编译环境',command=self.check_build).pack(side='left')
-        ttk.Button(row,text='编译并生成测试包',command=self.compile).pack(side='left',padx=8)
-        ttk.Button(row,text='下载 Visual Studio',command=lambda:webbrowser.open('https://visualstudio.microsoft.com/visual-cpp-build-tools/')).pack(side='left')
-        ttk.Button(row,text='下载 Python',command=lambda:webbrowser.open('https://www.python.org/downloads/windows/')).pack(side='left',padx=8)
-        bottom=ttk.Frame(self,padding=(20,10));bottom.pack(side='bottom',fill='x',before=book)
-        ttk.Label(bottom,textvariable=self.status,wraplength=940).pack(anchor='w')
-        self.progress=ttk.Progressbar(bottom,mode='indeterminate');self.progress.pack(fill='x',pady=6)
-        self.logbox=tk.Text(bottom,height=4,font=('Consolas',9),state='disabled',wrap='word',
-                            background='#08101e',foreground='#b9d4f0',insertbackground='#5de1ff',
-                            relief='flat',highlightthickness=1,highlightbackground='#263957')
-        self.logbox.pack(fill='x')
+        interface.build(self,core,BASE)
         self.protocol('WM_DELETE_WINDOW',self.close)
         if not self.closing:self.after(100,self.pump)
         if self.auto_check.get():
@@ -291,11 +190,11 @@ class App(tk.Tk):
             return results
         def done(results):
             for kind,path in results:self.log('已下载：'+str(path))
-            self.status.set('更新已下载。插件请点击“安装 / 更新匹配版本”；词库请点击“更新共享词库”。')
+            self.status.set('更新已下载。插件请点击“安装 / 更新插件”；词库请点击“更新共享词库”。')
             manager=next((p for kind,p in results if kind=='manager'),None)
             if manager:
                 if messagebox.askyesno('新版工具已下载','是否现在打开新版管理器？\n当前管理器会退出，UE 保持运行。\n插件和词库如有更新，可在新版管理器中继续安装。',parent=self):self.open_manager(manager)
-            else:messagebox.showinfo('下载完成','更新包已下载并校验。\n插件请点击“安装 / 更新匹配版本”；词库请点击“更新共享词库”。',parent=self)
+            else:messagebox.showinfo('下载完成','更新包已下载并校验。\n插件请点击“安装 / 更新插件”；词库请点击“更新共享词库”。',parent=self)
         self.start(task,done)
 
     def open_manager(self,path):
@@ -350,7 +249,7 @@ class App(tk.Tk):
 
     def require_package(self):
         if not self.selected or self.checked_engine!=self.engine.get() or self.feed_origin!=self.feed_var.get():
-            messagebox.showinfo('先检查更新','请先选择引擎并点击“检查可用更新”。',parent=self);return False
+            messagebox.showinfo('先检查更新','请先选择引擎并点击“检查更新”。',parent=self);return False
         return True
 
     def install(self):

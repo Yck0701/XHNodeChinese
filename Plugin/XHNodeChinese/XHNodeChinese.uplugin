@@ -1,7 +1,7 @@
 {
   "FileVersion": 3,
-  "Version": 22,
-  "VersionName": "0.2.11",
+  "Version": 23,
+  "VersionName": "0.2.12",
   "XHSharedDictionaryVersion": 1,
   "FriendlyName": "XH Node Chinese / 星河节点汉化",
   "Description": "Independent CSV localization tools for Niagara, Material and Blueprint, with a fingerprint-gated native display adapter.",

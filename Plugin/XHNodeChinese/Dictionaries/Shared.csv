@@ -1,4 +1,4 @@
-﻿Source,Translation,Namespace,Key,Category
+Source,Translation,Namespace,Key,Category
 ! not negate,! 非否,,,
 !!! The proxy object should have RF_StrongRefOnFrame flag. !!!,！！！代理对象应有RF_StrongRefOnFrame标签。！！！,,,
 !& nand,!& n和,,,
@@ -32583,3 +32583,80 @@ ZYX YawPitchRoll,ZYX 偏航俯仰翻滚,,,
 ~ not,~ 非,,,
 ~End UAutomatedPerfTestControllerBase Interface,~End UAutomatedPerfTestControllerBase接口,,,
 ─── Material Details ─────────────────────────────────────────────────────────,─── 材质详情 ─────────────────────────────────────────────────────────,,,
+ComponentsEnabled,启用组件,,,Niagara
+Components Enabled,启用组件,,,Niagara
+UniqueID,唯一ID,,,Niagara
+Visibility Tag,可见性标签,,,Niagara
+Physics Force,物理力,,,Niagara
+DragLocalOffsetEnabled,启用阻力局部偏移,,,Niagara
+Drag Local Offset Enabled,启用阻力局部偏移,,,Niagara
+LiftVelocity,升力速度,,,Niagara
+Lift Velocity,升力速度,,,Niagara
+Rotational Velocity Enabled,启用旋转速度,,,Niagara
+AdvectionVelocity,平流速度,,,Niagara
+DragIgnoreMass,阻力忽略质量,,,Niagara
+Drag Ignore Mass,阻力忽略质量,,,Niagara
+DragLocalOffset,阻力局部偏移,,,Niagara
+Drag Local Offset,阻力局部偏移,,,Niagara
+PhysicsDrag,物理阻力,,,Niagara
+Physics Drag,物理阻力,,,Niagara
+PhysicsRotationalDrag,物理旋转阻力,,,Niagara
+Physics Rotational Drag,物理旋转阻力,,,Niagara
+PhysicsRotationalForce,物理旋转力,,,Niagara
+Physics Rotational Force,物理旋转力,,,Niagara
+PhysicsPotentialEnergy,物理势能,,,Niagara
+Physics Potential Energy,物理势能,,,Niagara
+VectorNoiseInterval,向量噪声间隔,,,Niagara
+Vector Noise Interval,向量噪声间隔,,,Niagara
+WindSampleOffset,风场采样偏移,,,Niagara
+Wind Sample Offset,风场采样偏移,,,Niagara
+HasAppliedRotationalSolver,已应用旋转求解器,,,Niagara
+Has Applied Rotational Solver,已应用旋转求解器,,,Niagara
+PhysicsDeltaTime,物理时间步长,,,Niagara
+Physics Delta Time,物理时间步长,,,Niagara
+Advection Velocity Mult,平流速度倍数,,,Niagara
+Advection Velocity needs to be modified on collision.,发生碰撞时需要修改平流速度。,,,Niagara
+Aerodynamic Rotational Drag,空气动力旋转阻力,,,Niagara
+Air Drag,空气阻力,,,Niagara
+Align Torus with Axis,将圆环与轴对齐,,,Niagara
+Apply Drag irrespective of Mass,施加阻力时忽略质量,,,Niagara
+Build a Random Cylinder or a Direct Location Cylinder,生成随机分布的圆柱体，或按指定位置生成圆柱体。,,,Niagara
+Compute the air drag force and gravity and advect the velocities,计算空气阻力与重力，并对速度进行平流处理。,,,Niagara
+Constrain To Hemisphere,限制为半球,,,Niagara
+Direct UV/Radius cylinder mode,按指定 UV／半径生成圆柱体的模式,,,Niagara
+Drag Gradient,阻力梯度,,,Niagara
+Endcaps Z Positions,端盖 Z 轴位置,,,Niagara
+Inverse Drag Scaling,阻力反向缩放,,,Niagara
+Is Endcap,是否为端盖,,,Niagara
+Is Endcap Top,是否为顶部端盖,,,Niagara
+Lathe Curve,旋转成型曲线,,,Niagara
+Maximum drag shape value between 0 and 1.,阻力形状的最大值，范围为 0 到 1。,,,Niagara
+Minimum drag shape value between 0 and 1.,阻力形状的最小值，范围为 0 到 1。,,,Niagara
+Non Uniform Curve,非均匀曲线,,,Niagara
+Non Uniform Scale and Owner Scale,非均匀缩放与所属对象缩放,,,Niagara
+Non Uniform Scale and Owner Scale (Normals And Special Cases),非均匀缩放与所属对象缩放（法线及特殊情况）,,,Niagara
+Non Uniform Scale and Owner Scale (Position),非均匀缩放与所属对象缩放（位置）,,,Niagara
+Normalized Angle Around Torus Axis,绕圆环轴的归一化角度,,,Niagara
+Parametric Torus Knot with Tangent Basis,带切线基的参数化圆环结,,,Niagara
+"Parametric Torus Knot, plus partial derivitives",参数化圆环结及其偏导数,,,Niagara
+Parametric Torus with Tangent Basis,带切线基的参数化圆环,,,Niagara
+"Parametric Torus, plus partial derivatives",参数化圆环及其偏导数,,,Niagara
+Physics delta time is passed between collision modules and to the final solver,物理时间步长在碰撞模块之间传递，并传递给最终求解器。,,,Niagara
+Surface Only,仅表面,,,Niagara
+Surface Only Band Thickness,仅表面带状厚度,,,Niagara
+Surface Only Normals,仅表面法线,,,Niagara
+Surface Only Z,仅 Z 轴表面,,,Niagara
+Torus Axis,圆环轴,,,Niagara
+Torus Bitangent,圆环副切线,,,Niagara
+Torus Distribution Mode,圆环分布模式,,,Niagara
+Torus Knot Tube Radius,圆环结管径半径,,,Niagara
+Torus Knot Vector,圆环结向量,,,Niagara
+Torus Normal,圆环法线,,,Niagara
+Torus Origin,圆环原点,,,Niagara
+Torus Tangent,圆环切线,,,Niagara
+Torus Tangent Basis,圆环切线基,,,Niagara
+Torus Vector,圆环向量,,,Niagara
+Use Advection,使用平流,,,Niagara
+Use Endcaps in Surface Only Mode,仅表面模式下使用端盖,,,Niagara
+Use Non Uniform Scale,使用非均匀缩放,,,Niagara
+Write to Physics Force,写入物理力,,,Niagara

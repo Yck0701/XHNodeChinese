@@ -9,7 +9,7 @@ import unreal
 from . import core
 from .hotkey import ForegroundHotkey
 
-RUNTIME_VERSION = '0.2.11'
+RUNTIME_VERSION = '0.2.12'
 PLUGIN = Path(__file__).resolve().parents[3]
 SAVE = Path(unreal.Paths.convert_relative_path_to_full(unreal.Paths.project_saved_dir())) / 'XHNodeChinese'
 _catalogue = None

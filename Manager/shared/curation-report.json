@@ -1,12 +1,12 @@
 {
-  "version": "2026.10.12",
+  "version": "2026.10.12.1",
   "input_files": 10,
   "input_rows": 44798,
   "empty_rows_excluded": 453,
   "duplicate_rows_removed": 92,
   "conflicts_resolved_by_input_priority": 9,
   "numbered_aliases_removed": 0,
-  "shared_terms": 32578,
+  "shared_terms": 32655,
   "shared_long_texts": 4205,
   "excluded_counts": {
     "unverified_source": 7128,
@@ -19,7 +19,8 @@
   },
   "policy": "Exact stock engine source/localization evidence. Personal inputs unchanged. Unverified entries retained only in private review.",
   "files": {
-    "User.csv": "bb7e6a4372e04a2adce1a12a38dd5de5a3ddacd89d2f7cb73e02b53d49bbc5c6",
+    "User.csv": "952e735f24591306b696f7d9775a031e8ddf47aa6be5119ff07e01a0f396ec9a",
     "LongText.csv": "91d3f759f483fe8ad89f110a341cd5b52dda5dfe7f8f6427f1475f5595c8c8bd"
-  }
+  },
+  "reviewed_niagara_additions": 77
 }

@@ -23,7 +23,7 @@ import zipfile
 SOURCE_REPOSITORY = 'https://github.com/Yck0701/XHNodeChinese'
 REPOSITORY = 'https://github.com/Yck0701/XHNodeChinese-new'
 DEFAULT_FEED = REPOSITORY + '/releases/latest/download/manifest.json'
-VERSION = '1.0.5'
+VERSION = '1.0.6'
 PROTECTED = ('Plugins/XHNodeChinese/Dictionaries/User.csv', 'Saved/XHNodeChinese/LongText.csv')
 SHARED_FILES = tuple('Plugins/XHNodeChinese/Dictionaries/'+n for n in
                      ('Shared.csv','SharedLongText.csv','SharedVersion.json'))
