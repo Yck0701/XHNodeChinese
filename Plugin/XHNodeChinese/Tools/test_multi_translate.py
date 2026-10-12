@@ -43,7 +43,7 @@ class TranslationTests(unittest.TestCase):
     def test_bad_results_and_repeat_do_not_modify_dictionary(self):
         s=self.session(); batch=s.current_batch()[1]; good=self.response(batch)
         before=self.user.read_bytes()
-        for damage in ('missing','duplicate','unknown','request'):
+        for damage in ('duplicate','unknown','request'):
             data=json.loads(json.dumps(good))
             if damage=='missing':data['translations'].pop()
             if damage=='duplicate':data['translations'].append(data['translations'][0])

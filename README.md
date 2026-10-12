@@ -15,3 +15,7 @@
 不要提交个人词典、原始长文本采集、API 密钥、Codex 连接配置或工作工程。这里的 User.csv 为空，共享译文单独维护在 Manager/shared。
 
 安装与发布步骤见 Manager/README.md 和 Manager/PUBLISHING.md。
+
+## 当前版本
+
+管理器 1.0.2、插件 0.2.10；内置共享词库 2026.10.12。公开下载见 https://github.com/Yck0701/XHNodeChinese-new/releases/latest 。共享词库与个人译文分离，启动后台检查更新。

@@ -8,6 +8,22 @@ from xh_node_chinese.long_text import LongTextSession
 LONG='This module uses {Value} to determine the initial particle lifetime and updates every particle with the selected force on every frame.'
 
 class CodexTests(unittest.TestCase):
+    def test_percentage_prose_and_real_placeholders(self):
+        for source, translated in (
+            ('Vivid Light darkens colors below 50% gray and lightens colors above 50% gray.',
+             '亮光模式使低于50%灰的颜色变暗，高于50%灰的颜色变亮。'),
+            ('Reset to 100% and center. 50% probability. 100% of A.',
+             '重置为100%并居中。50%的概率。100%的A。'),
+        ):
+            self.assertEqual(core.placeholders(source), core.placeholders(translated))
+            req={'request_id':'percent','items':[{'id':'1','kind':'long','source':source}]}
+            resp={'request_id':'percent','translations':[{'id':'1','translation':translated}],'skipped':[]}
+            self.write('LongText.csv',{source:''})
+            self.assertEqual(ct.apply_response(self.plugin,self.save,req,resp)['long_texts'],1)
+        formats='v2%d %s % g %0.2f %1$d %lld {Value} {Value}'
+        self.assertEqual(sum(core.placeholders(formats).values()),8)
+        self.assertNotEqual(core.placeholders(formats),core.placeholders(formats.replace('% g','')))
+
     def setUp(self):
         self.tmp=tempfile.TemporaryDirectory();self.addCleanup(self.tmp.cleanup)
         self.plugin=Path(self.tmp.name)/'Plugin';self.save=Path(self.tmp.name)/'Saved'

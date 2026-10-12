@@ -1,0 +1,405 @@
+{
+  "opened": true,
+  "open_time": 896784.031,
+  "translated_widgets": [
+    [
+      "Actor",
+      "Actor 对象"
+    ],
+    [
+      "Emitter",
+      "发射器"
+    ],
+    [
+      "Actor",
+      "Actor 对象"
+    ],
+    [
+      "Emitter",
+      "发射器"
+    ],
+    [
+      "Emitter",
+      "发射器"
+    ],
+    [
+      "Emitter",
+      "发射器"
+    ],
+    [
+      "Emitter State",
+      "发射器状态"
+    ],
+    [
+      "Life Cycle Mode",
+      "生命周期控制模式"
+    ],
+    [
+      "Self",
+      "自身"
+    ],
+    [
+      "Inactive Response",
+      "停用响应"
+    ],
+    [
+      "Loop Behavior",
+      "循环行为"
+    ],
+    [
+      "Infinite",
+      "无限"
+    ],
+    [
+      "Once",
+      "一次"
+    ],
+    [
+      "Multiple",
+      "多次"
+    ],
+    [
+      "Loop Duration",
+      "循环时长"
+    ],
+    [
+      "Loop Delay",
+      "循环延迟"
+    ],
+    [
+      "Self",
+      "自身"
+    ],
+    [
+      "Spawn Rate",
+      "生成速率"
+    ],
+    [
+      "Spawn Probability",
+      "生成概率"
+    ],
+    [
+      "Initialize Particle",
+      "初始化粒子"
+    ],
+    [
+      "Point Attributes",
+      "点属性"
+    ],
+    [
+      "Lifetime Mode",
+      "生命周期模式"
+    ],
+    [
+      "Random",
+      "随机"
+    ],
+    [
+      "Color Mode",
+      "颜色模式"
+    ],
+    [
+      "Direct Set",
+      "直接设置"
+    ],
+    [
+      "Color",
+      "颜色"
+    ]
+  ],
+  "observed": [
+    " XHNodeChineseHost",
+    "-0.10",
+    "0 数组 个元素",
+    "0 项",
+    "0.0",
+    "0.00",
+    "0.02",
+    "0.25",
+    "0.48",
+    "0.83",
+    "1.0",
+    "1.00",
+    "1.20",
+    "1.4",
+    "1.57",
+    "1.75",
+    "1.92",
+    "10",
+    "10.10",
+    "10°",
+    "138个Actor（138个已加载）",
+    "2.0",
+    "2.28",
+    "2.63",
+    "2.98",
+    "3.35",
+    "3.70",
+    "4.08",
+    "4.45",
+    "4.80",
+    "5.00",
+    "5.17",
+    "5.52",
+    "5.88",
+    "6.25",
+    "6.60",
+    "6.97",
+    "60 fps",
+    "7.32",
+    "7.68",
+    "7.72",
+    "78%",
+    "86%",
+    "90.0",
+    "Actor",
+    "All",
+    "CPUSim",
+    "Cmd",
+    "Color",
+    "Color Mode",
+    "Complete (Let Particles Finish then Kill Emitter)",
+    "Direct Set",
+    "Dynamic",
+    "Emitter",
+    "Emitter State",
+    "ExecutionState",
+    "ExecutionStateSource",
+    "Fixed",
+    "Fountain",
+    "GPUCompute Sim",
+    "Game",
+    "Importance",
+    "Inactive Response",
+    "Infinite",
+    "Initialize Particle",
+    "Interpolation",
+    "Life Cycle",
+    "Life Cycle Mode",
+    "Lifetime Max",
+    "Lifetime Min",
+    "Lifetime Mode",
+    "Loop Behavior",
+    "Loop Delay",
+    "Loop Duration",
+    "Mesh",
+    "Multiple",
+    "NiagaraSequence_0",
+    "Niagara日志",
+    "No Interpolation",
+    "Normal",
+    "Once",
+    "Point",
+    "Point Attributes",
+    "Programmable",
+    "Random",
+    "Recalculate Duration Each Loop",
+    "Ribbon",
+    "Run Update Script",
+    "Scalability",
+    "Scalability Mode",
+    "Self",
+    "Spawn Probability",
+    "Spawn Rate",
+    "SpawnRate",
+    "Sprite",
+    "System",
+    "XHNodeChineseHost",
+    "Zen服务器",
+    "主面板",
+    "保存",
+    "保存所有",
+    "光照",
+    "内容侧滑菜单",
+    "内容浏览器",
+    "参数",
+    "发射器",
+    "发射器依赖性",
+    "发射器属性",
+    "发射器摘要",
+    "发射器摘要中没有参数。\n\n可以点击右上方的“编辑”按钮来呼出摘要视图编辑器。它让你能够通过拖放添加类别、模块或单个模块输入以及渲染器属性。",
+    "发射器更新",
+    "发射器生成",
+    "取消正交裁剪平面",
+    "只读",
+    "可延展性",
+    "处于最新",
+    "大纲",
+    "局部空间",
+    "工具",
+    "帮助",
+    "平台",
+    "应用",
+    "应用暂存",
+    "强制整帧",
+    "性能",
+    "恢复为最新",
+    "所有",
+    "所有已保存",
+    "插值生成模式",
+    "收藏夹",
+    "文件",
+    "无变更",
+    "无激活模式",
+    "无运行中预览……",
+    "时间轴",
+    "是否遗传",
+    "曲线",
+    "未命名",
+    "本地模块",
+    "构建",
+    "框选并裁剪至选定对象",
+    "模拟",
+    "模拟目标",
+    "正在准备100个着色器（108）",
+    "正在准备100个着色器（112）",
+    "正在模拟",
+    "正在编译……",
+    "正在运行Python启动脚本……",
+    "注意：编辑此发射器将影响0依赖0个资产！（在所有版本之间）",
+    "浏览",
+    "添加",
+    "激活概览",
+    "激活模块",
+    "烘焙器",
+    "版本化",
+    "版本控制",
+    "用户参数",
+    "确定性",
+    "窗口",
+    "粒子生成",
+    "系统",
+    "系统总览",
+    "细节",
+    "编译",
+    "编辑",
+    "编辑摘要",
+    "编辑输入层级",
+    "缩放1:1",
+    "缩略图",
+    "脚本统计数据",
+    "自动关键帧",
+    "节点汉化",
+    "视图模式选项",
+    "计算边界模式",
+    "调试",
+    "资产",
+    "资产选项",
+    "输出日志",
+    "边界",
+    "这个资产编辑器没有停靠的选项卡。",
+    "选择",
+    "选择一个对象来查看细节。",
+    "选择模式",
+    "透视",
+    "集合",
+    "需要固定ID",
+    "预览",
+    "预览场景设置"
+  ],
+  "observed_menu": true,
+  "menu_registered": true,
+  "after_language_roundtrip": [
+    [
+      "Actor",
+      "Actor 对象"
+    ],
+    [
+      "Emitter",
+      "发射器"
+    ],
+    [
+      "Emitter",
+      "发射器"
+    ],
+    [
+      "Emitter",
+      "发射器"
+    ],
+    [
+      "Emitter",
+      "发射器"
+    ],
+    [
+      "Emitter State",
+      "发射器状态"
+    ],
+    [
+      "Life Cycle Mode",
+      "生命周期控制模式"
+    ],
+    [
+      "Self",
+      "自身"
+    ],
+    [
+      "Inactive Response",
+      "停用响应"
+    ],
+    [
+      "Loop Behavior",
+      "循环行为"
+    ],
+    [
+      "Infinite",
+      "无限"
+    ],
+    [
+      "Once",
+      "一次"
+    ],
+    [
+      "Multiple",
+      "多次"
+    ],
+    [
+      "Loop Duration",
+      "循环时长"
+    ],
+    [
+      "Loop Delay",
+      "循环延迟"
+    ],
+    [
+      "Self",
+      "自身"
+    ],
+    [
+      "Spawn Rate",
+      "生成速率"
+    ],
+    [
+      "Spawn Probability",
+      "生成概率"
+    ],
+    [
+      "Initialize Particle",
+      "初始化粒子"
+    ],
+    [
+      "Point Attributes",
+      "点属性"
+    ],
+    [
+      "Lifetime Mode",
+      "生命周期模式"
+    ],
+    [
+      "Random",
+      "随机"
+    ],
+    [
+      "Color Mode",
+      "颜色模式"
+    ],
+    [
+      "Direct Set",
+      "直接设置"
+    ],
+    [
+      "Color",
+      "颜色"
+    ]
+  ],
+  "passed": true
+}

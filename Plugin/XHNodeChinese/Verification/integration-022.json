@@ -1,0 +1,31 @@
+{
+  "version": "0.2.2",
+  "bridge_manifest": {
+    "engine_sha256": {
+      "Binaries/Win64/UnrealEditor-Core.dll": "500f60a1d243d0e786c59ecf27b2cb757adfc75a817ca323d94f328e5fe67885",
+      "Binaries/Win64/UnrealEditor-CoreUObject.dll": "fb3ab6f6a38187e2617c04261973f6dfe9a1200711c90e49e416c15739049ff9",
+      "Binaries/Win64/UnrealEditor-Slate.dll": "272218456c4ec364c8c77db7f7da5e1597c3825cc1d8b36ed8956b395fb0177b",
+      "Binaries/Win64/UnrealEditor-SlateCore.dll": "ba55ada6a6ddc6a9240637f5fe853352edafbd1ca69750f14e6075a55fad04ed",
+      "Binaries/Win64/UnrealEditor-ApplicationCore.dll": "7709d1cd4a46f97e4d05b1aaf19ca00c0a2e7bfbce39fe50decaf3749fc141ff",
+      "Binaries/Win64/UnrealEditor-InputCore.dll": "4769101bb8e345845904c3ee92ec6757925e415959688381e6f7a3aea0b10840",
+      "Binaries/Win64/UnrealEditor-Engine.dll": "68ddbcb176d89ecb8f01807362b841292a61bd9a81f39c5eeef5cc9b0f1e0ffa",
+      "Binaries/Win64/UnrealEditor-GraphEditor.dll": "ef952f54e4238a10a75303385f9599116da5db463753f6f4cfb25888d6c25102",
+      "Plugins/FX/Niagara/Binaries/Win64/UnrealEditor-NiagaraEditor.dll": "97beee9c5347c13570f94d6a5ee0717946795a89f618813fb14ae03f9f719bc0",
+      "Plugins/FX/Niagara/Binaries/Win64/UnrealEditor-NiagaraEditorWidgets.dll": "c72d8c863a527d17aaad607dda354475258a1814f2fa2cd4ae4612546187a1b2",
+      "Plugins/FX/Niagara/Binaries/Win64/UnrealEditor-Niagara.dll": "351fd73c936c04ea373428f95996683d5079ceb9a0771b334a06394629e37c21",
+      "Plugins/FX/Niagara/Binaries/Win64/UnrealEditor-NiagaraCore.dll": "7e5aff3df9ec4e0245f0dc11814ac10ce4e161d6f049f6d0dc81ee5ffd73ab38"
+    },
+    "bridge_file": "XHSlateBridge022.dll",
+    "bridge_sha256": "60a64e1d11cec4c30cc9bfa678ffba11d49b8594b40379aaa7551123ffdf2712"
+  },
+  "display_selftest": 0,
+  "search_selftest": 0,
+  "graph_selftest": 0,
+  "diagnostics": {
+    "items": 0,
+    "names": [],
+    "translated": 0
+  },
+  "hot_reload": true,
+  "passed": true
+}

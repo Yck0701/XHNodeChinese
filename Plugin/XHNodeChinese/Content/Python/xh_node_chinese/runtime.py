@@ -37,6 +37,9 @@ _last_live_report = None
 _codex = None
 _external = None
 _last_import_stamp = None
+_indexer = None
+_indexed = None
+_indexed_terms = {}
 
 
 def status_display(kind):
@@ -116,8 +119,12 @@ def catalogue(force=False):
     return _catalogue
 
 
+def supplemental_terms():
+    return dict(_indexed_terms, **(_long_text.terms if _long_text else {}))
+
+
 def dictionary_stamp():
-    return tuple((PLUGIN / 'Dictionaries' / name).stat().st_mtime_ns if (PLUGIN / 'Dictionaries' / name).exists() else 0 for name in ('Base.csv','Graph.csv','UI.csv','Descriptions.csv','User.csv'))
+    return tuple((PLUGIN / 'Dictionaries' / name).stat().st_mtime_ns if (PLUGIN / 'Dictionaries' / name).exists() else 0 for name in ('Base.csv','Graph.csv','UI.csv','Descriptions.csv','Shared.csv','SharedLongText.csv','User.csv'))
 
 
 def refresh_language():
@@ -147,7 +154,7 @@ def rebuild(force=False):
     if state()['enabled']:
         refresh_language()
     if _bridge is not None:
-        _bridge.rebuild(PLUGIN, state()['enabled'], state()['bilingual'], _long_text.terms if _long_text else {})
+        _bridge.rebuild(PLUGIN, state()['enabled'], state()['bilingual'], supplemental_terms())
         _bridge.collect(state()['capture_untranslated'])
         _bridge.tick()
     from .auto_translate import Translator
@@ -218,7 +225,7 @@ def toggle_capture():
 
 
 def live_sync(capture=True,automatic=None):
-    global _live, _pending, _auto_total, _last_live_report, _last_import_stamp
+    global _live, _pending, _auto_total, _last_live_report, _last_import_stamp, _indexed
     from .live import LiveSession
     if _live is None:
         _live = LiveSession(PLUGIN, SAVE)
@@ -236,6 +243,10 @@ def live_sync(capture=True,automatic=None):
         pending_report=_pending.sync([],exact)
         report['imported']+=pending_report['imported']
         report['automatic']+=pending_report['automatic']
+    if (SAVE/'Indexed.csv').exists():
+        if _indexed is None:_indexed=LiveSession(PLUGIN,SAVE,'Indexed.csv')
+        index_report=_indexed.sync([],exact,separate_long=True)
+        report['imported']+=index_report['imported']
     _auto_total += report['automatic']
     _export_status.update(total=report['total'],pending=report['pending'],imported=_live.imported+(_pending.imported if _pending else 0))
     if report['new'] or report['imported'] or report['removed']:
@@ -260,7 +271,7 @@ def write_diagnostics(live_report=None, detailed=False):
     current = _bridge.current() if _bridge is not None and detailed else []
     pairs = _bridge.bindings() if _bridge is not None and detailed else []
     personal = _bridge.personal if _bridge is not None else {}
-    data = {'version':'0.2.8', 'time':time.strftime('%Y-%m-%d %H:%M:%S'),
+    data = {'version':'0.2.9', 'time':time.strftime('%Y-%m-%d %H:%M:%S'),
             'codex_poll_interval_ms':250,
             'capture_untranslated':state()['capture_untranslated'],
             'native_scan_ms':_bridge.dll.XH_ScanMs() if _bridge else None,
@@ -323,8 +334,8 @@ def sync_long_text(current=(),include_known=False,apply_bridge=True):
     sources=set(current)
     if (SAVE/'Live.csv').exists():
         sources.update(r['Source'] for r in core.load_dictionary(SAVE/'Live.csv',True) if not r['Translation'])
-    if _long_text.sync(sources,dictionary(PLUGIN),include_known=include_known) and _bridge is not None and apply_bridge:
-        _bridge.rebuild(PLUGIN,state()['enabled'],state()['bilingual'],_long_text.terms)
+    if _long_text.sync(sources,dictionary(PLUGIN,_indexed_terms),include_known=include_known) and _bridge is not None and apply_bridge:
+        _bridge.rebuild(PLUGIN,state()['enabled'],state()['bilingual'],supplemental_terms())
         _bridge.tick()
 
 
@@ -391,11 +402,12 @@ def translate_selected(include_export=False,show_dialog=True):
         config=multi_translate.api_config(SAVE) if provider=='api' else None
         live_sync()
         from .bridge import dictionary
-        known=_bridge.known_terms if _bridge else dictionary(PLUGIN,_long_text.terms if _long_text else {})
+        known=_bridge.known_terms if _bridge else dictionary(PLUGIN,supplemental_terms())
         if not session.prepare(known,provider,include_export):
             if show_dialog:unreal.EditorDialog.show_message('翻译','当前没有新的待译词条或长文本。',unreal.AppMsgType.OK)
             return False
         if provider=='api':return session.start_api(config)
+        register_menus()
         text,path=session.web_prompt()
         try:clipboard.copy(text)
         except RuntimeError:
@@ -405,7 +417,7 @@ def translate_selected(include_export=False,show_dialog=True):
             return True
         url=multi_translate.PROVIDERS[provider][1]
         if url:unreal.SystemLibrary.launch_url(url)
-        if show_dialog:unreal.EditorDialog.show_message('翻译任务已复制','在网页对话框粘贴并发送。回答完成后复制完整 JSON，再选择“节点汉化 → 翻译方式 → 粘贴并导入网页译文”。\n每次复制一批，导入后再点击翻译按钮复制下一批。网页免费额度与登录要求以服务商为准。',unreal.AppMsgType.OK)
+        if show_dialog:unreal.EditorDialog.show_message('翻译任务已复制','在网页对话框粘贴并发送。回答完成后复制回答（JSON 或表格），再选择“节点汉化 → 粘贴译文”。\n每次复制一批，导入后再点击翻译按钮复制下一批。网页免费额度与登录要求以服务商为准。',unreal.AppMsgType.OK)
         return True
     except Exception as error:
         if show_dialog:unreal.EditorDialog.show_message('翻译未开始',str(error),unreal.AppMsgType.OK)
@@ -417,13 +429,55 @@ def import_web_translation():
     from . import clipboard
     try:
         count=external_session().accept_text(clipboard.paste())
-        unreal.EditorDialog.show_message('已接收译文',f'本批 {count} 条校验通过，正在导入。点击翻译按钮可复制下一批。',unreal.AppMsgType.OK)
+        unreal.EditorDialog.show_message('已接收译文',f'已接收 {count} 条。缺失或校验失败的词条保留待译。\n点击“开始／继续翻译”即可补齐剩余项；详情见“任务进度”。',unreal.AppMsgType.OK)
     except Exception as error:unreal.EditorDialog.show_message('译文未导入',str(error),unreal.AppMsgType.OK)
 
 
 def open_translation_files():
-    session=external_session()
-    if session.state.get('folder'):os.startfile(session.state['folder'])
+    session=codex_session() if state()['translation_provider']=='codex' else external_session()
+    folder=Path(session.state['folder']) if session.state.get('folder') else SAVE/'TranslationRequests'
+    folder.mkdir(parents=True,exist_ok=True)
+    os.startfile(str(folder))
+
+
+def show_translation_progress():
+    session=codex_session() if state()['translation_provider']=='codex' else external_session()
+    info=session.state
+    phase={'waiting':'等待译文','sending':'提交中','cancelled':'已暂停，可继续','error':'需要处理','done':'已完成','idle':'尚未开始','empty':'没有待译词条'}.get(info['phase'],info['phase'])
+    current=external_session().current_batch() if session is external_session() else None
+    message=f"{phase} · 已处理 {info.get('completed',0)}/{info.get('total',0)} 条"
+    if current: message+=f"\n当前第 {current[0]} 批，剩余 {len(current[1]['items'])} 条"
+    if info.get('error'):message+='\n'+str(info['error'])
+    folder=Path(info['folder']) if info.get('folder') else None
+    if folder and (folder/'ImportReport.json').exists():
+        report=json.loads((folder/'ImportReport.json').read_text(encoding='utf-8'))
+        message+='\n最近导入：'+str(report.get('error') or f"接收 {report.get('accepted',0)} 条，剩余 {report.get('remaining',0)} 条")
+        for row in report.get('rejected',[])[:3]:message+='\n'+row['source'][:40]+'：'+row['reason']
+    message+='\n\n关闭编辑器也会保存进度。点击“开始／继续翻译”接着翻，不必找旧回答。\n任务文件夹保留每次复制的回答、请求和导入报告。'
+    unreal.EditorDialog.show_message('翻译任务进度',message,unreal.AppMsgType.OK)
+
+
+def scan_unopened():
+    global _indexer
+    from .asset_index import Indexer
+    if _indexer and _indexer.phase=='paused':
+        _indexer.resume();return
+    if _indexer and _indexer.phase in ('waiting','scanning','deep'):
+        unreal.EditorDialog.show_message('模块索引',_indexer.label(),unreal.AppMsgType.OK);return
+    _indexer=Indexer(PLUGIN,SAVE,catalogue())
+    unreal.log('[XHNodeChinese] 已开始索引未打开模块；完成后点击翻译按钮处理剩余英文。')
+
+
+def pause_module_index():
+    if _indexer:_indexer.pause()
+
+
+def show_index_status():
+    path=SAVE/'ModuleIndexStatus.json'
+    data=json.loads(path.read_text(encoding='utf-8')) if path.exists() else {}
+    message=_indexer.label() if _indexer else '尚未扫描；选择“扫描未打开模块”开始。'
+    if data:message+='\n已匹配本地译文：'+str(data.get('matched',0))+'\n待翻译：'+str(data.get('pending',0))+'\n内部模块进度：'+str(data.get('deep_position',0))+'/'+str(data.get('deep_total',0))+'\n新增内部文本：'+str(data.get('deep_sources',0))+'\n读取失败：'+str(len(data.get('failed_assets',{})))
+    unreal.EditorDialog.show_message('模块覆盖情况',message,unreal.AppMsgType.OK)
 
 
 def configure_translation_api(preset='deepseek'):
@@ -435,23 +489,43 @@ def configure_translation_api(preset='deepseek'):
 
 
 def stop_translation():
-    external_session().cancel();codex_session().cancel();write_diagnostics()
+    external_session().cancel();codex_session().cancel();write_diagnostics();register_menus()
 
 
 def translate_with_codex(include_export=False,show_dialog=True):
     try:
         session=codex_session()
         if session.state['phase'] in ('sending','waiting'):
+            from . import codex_translate
+            config=codex_translate.connection(SAVE)
+            if not config.get('thread_id'):
+                copy_codex_request(); return False
             if show_dialog:unreal.EditorDialog.show_message('Codex 翻译',session.display()['tooltip'],unreal.AppMsgType.OK)
             return False
         started=time.perf_counter()
         live_sync()
         from .bridge import dictionary
-        known=_bridge.known_terms if _bridge else dictionary(PLUGIN,_long_text.terms if _long_text else {})
+        known=_bridge.known_terms if _bridge else dictionary(PLUGIN,supplemental_terms())
         submitted=session.start(known,include_export)
         if submitted:
+            from . import codex_translate, clipboard
+            config = codex_translate.connection(SAVE)
+            if not config.get('thread_id'):
+                folder = Path(session.state['folder'])
+                core.atomic_write(folder/'TRANSLATE.md',codex_translate.instructions(folder/'request.json',folder/'response.json').encode('utf-8'))
+                text = codex_translate.handoff_text(folder)
+                core.atomic_write(folder/'发送给Codex.txt', text.encode('utf-8'))
+                try: clipboard.copy(text)
+                except RuntimeError:
+                    import subprocess
+                    subprocess.Popen(['notepad.exe',str(folder/'发送给Codex.txt')])
+                opened = codex_translate.open_app(config)
+                if show_dialog: unreal.EditorDialog.show_message('请求已准备',
+                    '请求路径已复制。在 Codex 对话中粘贴并发送即可，译文将自动导入。\n'+
+                    ('已尝试打开本机 Codex。' if opened else '未找到本机 Codex；请手动打开，或在设置中填写程序路径。'), unreal.AppMsgType.OK)
             session.state['button_prepare_ms']=round((time.perf_counter()-started)*1000,2)
             session.persist()
+            register_menus()
         write_diagnostics()
         if not submitted and show_dialog:
             unreal.EditorDialog.show_message('Codex 翻译',session.display()['tooltip'] if session.state['phase'] in ('sending','waiting') else '当前没有新的待译词条或长文本。',unreal.AppMsgType.OK)
@@ -468,12 +542,70 @@ def translate_export_with_codex():
     return translate_with_codex(include_export=True)
 
 
+def copy_codex_request():
+    from . import codex_translate,clipboard
+    session=codex_session()
+    if not session.state.get('folder'):return translate_with_codex()
+    folder=Path(session.state['folder'])
+    core.atomic_write(folder/'TRANSLATE.md',codex_translate.instructions(folder/'request.json',folder/'response.json').encode('utf-8'))
+    text=codex_translate.handoff_text(folder)
+    core.atomic_write(folder/'发送给Codex.txt',text.encode('utf-8'))
+    try:clipboard.copy(text)
+    except RuntimeError:
+        import subprocess
+        subprocess.Popen(['notepad.exe',str(folder/'发送给Codex.txt')])
+    codex_translate.open_app(codex_translate.connection(SAVE))
+    unreal.EditorDialog.show_message('请求路径已复制','在 Codex 对话中粘贴并发送即可。当前请求保留，已导入结果不会丢失。',unreal.AppMsgType.OK)
+
+
+def translation_history():
+    roots={SAVE/'TranslationRequests'}
+    from . import codex_translate
+    try:roots.add(Path(codex_translate.connection(SAVE)['exchange_dir']))
+    except (ValueError,OSError,RuntimeError,KeyError):pass
+    paths=set()
+    for root in roots:
+        if root.is_dir():paths.update(root.glob('*/status.json'));paths.update(root.glob('Codex/*/status.json'))
+    result=[]
+    for path in sorted(paths,key=lambda p:p.stat().st_mtime,reverse=True)[:12]:
+        try:
+            info=json.loads(path.read_text(encoding='utf-8'))
+            if info.get('folder') and (path.parent/'request.json').is_file():result.append((path,info))
+        except (ValueError,OSError):pass
+    return result
+
+
+def restore_translation_task(status_path):
+    choices={str(p.resolve()):(p,info) for p,info in translation_history()}
+    selected=choices.get(str(Path(status_path).resolve()))
+    if not selected:raise ValueError('任务已不在历史列表，请重新打开菜单')
+    path,info=selected
+    for session in (codex_session(),external_session()):
+        if session.state.get('folder')!=info.get('folder') and session.state['phase'] in ('sending','waiting'):
+            unreal.EditorDialog.show_message('请先暂停当前任务','从翻译工具中选择“暂停接收译文”，再恢复历史任务。',unreal.AppMsgType.OK);return
+    provider=info.get('provider','codex')
+    session=codex_session() if provider=='codex' else external_session()
+    if session.worker and session.worker.is_alive():
+        unreal.EditorDialog.show_message('稍后重试','当前请求正在结束，请稍后恢复任务。',unreal.AppMsgType.OK);return
+    session.state=info
+    if info['phase'] not in ('done','empty','idle'):session.state.update(phase='cancelled',error=None)
+    session._file_stamps.clear();session.persist()
+    state()['translation_provider']=provider;save_state()
+    show_translation_progress()
+
+
 def configure_codex():
+    from . import codex_translate
     path=SAVE/'CodexConnection.json'
     if not path.exists():
-        core.write_json(path,{'thread_id':'','cli_path':'','workspace':'','exchange_dir':''})
+        config=codex_translate.connection(SAVE)
+        core.write_json(path, {'cli_path': config['cli_path'], 'thread_id': ''})
     import subprocess
     subprocess.Popen(['notepad.exe',str(path)])
+    unreal.EditorDialog.show_message('Codex 设置（可选）',
+        '通常无需填写：插件会查找本机 Codex、复制请求路径并打开应用。\n'
+        '找不到程序时仅填 cli_path（安装目录或 codex.exe）。thread_id 可留空。\n'
+        '高级：填写指定聊天 ID 后，点击翻译会直接发送到该聊天。原有连接配置继续有效。',unreal.AppMsgType.OK)
 
 
 def cancel_codex():
@@ -542,54 +674,43 @@ MENU_NAMES = ('LevelEditor.MainMenu', 'AssetEditor.Niagara.MainMenu',
 
 
 def register_menus():
-    menus = unreal.ToolMenus.get()
-    for menu_name in MENU_NAMES:
-        main = menus.extend_menu(menu_name)
-        menu = main.add_sub_menu('XHNodeChinese', 'Tools', 'XHNodeChinese', '节点汉化', 'Niagara、材质、蓝图节点词典')
-        for name, label, method, tooltip in [
-            ('Language', '启用 / 停用汉化    Ctrl+Alt+L', 'toggle_enabled', '控制本插件汉化，停用时恢复启用前语言'),
-            ('Enable', '启用节点汉化', 'enable', '应用独立词典，并保留官方中文'),
-            ('Disable', '停用节点汉化', 'disable', '恢复启用前的编辑器语言'),
-            ('Bilingual', '切换：中文 / 中英双语', 'toggle_bilingual', '双语仅影响本插件覆盖的词条'),
-            ('Edit', '编辑自定义词典', 'edit_dictionary', '保存 UTF-8 CSV 后约三秒自动应用'),
-            ('LongText', '编辑长文本翻译', 'edit_long_text', '长说明单独保存；在右列填写完整中文，保存后自动应用，不写入个人词典'),
-            ('Optimize', '整理个人词典（去除冗余）', 'optimize_dictionary', '保留最后生效译文和作用域，修改前自动备份'),
-            ('Translate', '自动翻译当前词条并写入个人词典', 'translate_current', '复用 UE 官方中文和本地词库整条译文；未知英文保留待译'),
-            ('CodexExport', '交给 Codex：全部导出词条和长文本', 'translate_export_with_codex', '包括历史 Pending.csv；可能包含大量引擎词条，耗时更长'),
-            ('CodexConfig', '配置 Codex 翻译连接', 'configure_codex', '设置已有聊天 ID、Codex CLI 和请求文件目录；不需要另填 API 密钥'),
-            ('CodexCancel', '停止接收本次 Codex 译文', 'cancel_codex', '保留请求和已有译文，停止自动导入；不会终止聊天中的任务'),
-            ('Rebuild', '重新扫描并应用', 'rescan', '引擎更新后重新索引文本'),
-            ('Export', '导出当前会话待译词条', 'export_untranslated', '两列去重导出；过滤已译词条和资源路径，填写中文保存后自动导入'),
-            ('ExportAll', '导出全部语言资源待译词条', 'export_all', '全部资源去重导出；可能包含大量未打开界面的词条'),
-            ('Live', '实时导出并打开待翻译词条', 'open_live', '持续追加当前界面英文；填写右列保存后自动导入个人词典'),
-            ('LiveToggle', '暂停 / 继续实时写出', 'toggle_live', '暂停时也关闭底层采集；已采集记录保留'),
-            ('Diagnose', '检查个人词典实际命中', 'diagnose', '查看已读取数量与实际控件原文、显示译文'),
-            ('Status', '状态与使用说明', 'show_status', '查看覆盖数量、文件位置与限制'),
-        ]:
-            entry = unreal.ToolMenuEntry(name='XHNodeChinese.' + name, type=unreal.MultiBlockType.MENU_ENTRY)
-            entry.set_label(label)
-            entry.set_tool_tip(tooltip)
-            entry.set_string_command(unreal.ToolMenuStringCommandType.PYTHON, '', f'import xh_node_chinese.runtime as xh; xh.{method}()')
-            menu.add_menu_entry('Dictionary', entry)
     from .multi_translate import PROVIDERS
+    menus=unreal.ToolMenus.get()
+    # Rebuild our owned submenu so old versions cannot leave duplicate entries.
+    def add(menu,section,name,label,call,tip=''):
+        entry=unreal.ToolMenuEntry(name='XHNodeChinese.'+name,type=unreal.MultiBlockType.MENU_ENTRY)
+        entry.set_label(label);entry.set_tool_tip(tip or label)
+        entry.set_string_command(unreal.ToolMenuStringCommandType.PYTHON,'','import xh_node_chinese.runtime as xh; xh.'+call)
+        menu.add_menu_entry(section,entry)
     for menu_name in MENU_NAMES:
-        parent=menus.extend_menu(menu_name+'.XHNodeChinese')
-        providers=parent.add_sub_menu('XHNodeChinese','Dictionary','TranslationProviders','翻译方式','选择网页工具、API 或 Codex')
-        entries=[('Provider_'+p,'选择：'+label,f"choose_translation('{p}')",'选择后点击工具栏翻译按钮开始') for p,(label,url) in PROVIDERS.items()]
-        entries += [('Start','翻译当前采集词条和长文本','translate_selected()','按当前选择的方式开始或继续'),
-                    ('ImportWeb','粘贴并导入网页译文','import_web_translation()','先复制翻译工具返回的完整 JSON；校验通过后才导入'),
-                    ('Files','打开本次翻译任务文件夹','open_translation_files()','保留提示词、请求和已接收译文'),
-                    ('ApiDeepSeek','配置翻译 API（DeepSeek 模板）',"configure_translation_api('deepseek')",'打开本机配置；已有配置不覆盖'),
-                    ('ApiDoubao','配置翻译 API（豆包／火山方舟模板）',"configure_translation_api('doubao')",'首次配置预填服务地址，模型填写自己开通的模型 ID'),
-                    ('ApiCustom','配置翻译 API（通用兼容接口）',"configure_translation_api('custom')",'支持 Chat Completions 格式，密钥仅存本机'),
-                    ('TranslateAll','按所选方式翻译全部历史导出','translate_selected(include_export=True)','可能有大量词条，API 可能产生费用'),
-                    ('Stop','停止当前翻译接收','stop_translation()','保留已导入结果；API 停止后续批次，正在处理的单次请求可能已计费')]
-        for name,label,call,tip in entries:
-            entry=unreal.ToolMenuEntry(name='XHNodeChinese.'+name,type=unreal.MultiBlockType.MENU_ENTRY)
-            entry.set_label(label);entry.set_tool_tip(tip)
-            entry.set_string_command(unreal.ToolMenuStringCommandType.PYTHON,'','import xh_node_chinese.runtime as xh; xh.'+call)
-            providers.add_menu_entry('Translation',entry)
-    from . import status_ui_028 as status_ui
+        menus.remove_menu(menu_name+'.XHNodeChinese')
+        main=menus.extend_menu(menu_name)
+        menu=main.add_sub_menu('XHNodeChinese','Tools','XHNodeChinese','节点汉化','汉化与翻译')
+        add(menu,'Quick','ImportWeb','粘贴译文','import_web_translation()','复制网页回答后点这里；支持 JSON、表格、两列 CSV，可分次导入')
+        add(menu,'Quick','Progress','任务进度／中断后继续','show_translation_progress()')
+        providers=menu.add_sub_menu('XHNodeChinese','Settings','TranslationProviders','翻译工具','选择豆包、DeepSeek、Codex 或 API')
+        for provider,(label,url) in PROVIDERS.items():add(providers,'Provider','Provider_'+provider,label,f"choose_translation('{provider}')")
+        for name,label,call in [('Files','打开当前任务文件夹','open_translation_files()'),('Stop','暂停接收译文','stop_translation()'),
+            ('CodexCopy','复制 Codex 请求路径','copy_codex_request()'),('CodexConfig','Codex 设置（可选）','configure_codex()'),('ApiDeepSeek','API 设置：DeepSeek',"configure_translation_api('deepseek')"),
+            ('ApiDoubao','API 设置：豆包',"configure_translation_api('doubao')"),('ApiCustom','API 设置：其他',"configure_translation_api('custom')")]:
+            add(providers,'Settings',name,label,call)
+        history=providers.add_sub_menu('XHNodeChinese','Tasks','History','找回历史翻译任务','任务日期、进度与工具')
+        for index,(path,info) in enumerate(translation_history()):
+            stamp=time.strftime('%m-%d %H:%M',time.localtime(info.get('started_at',path.stat().st_mtime)))
+            label=f"{stamp} · {info.get('provider','codex')} · {info.get('completed',0)}/{info.get('total',0)}"
+            add(history,'History','History'+str(index),label,'restore_translation_task('+repr(str(path))+')')
+        dictionaries=menu.add_sub_menu('XHNodeChinese','Settings','Dictionaries','词典与覆盖','编辑词典、补齐未打开模块')
+        for name,label,call in [('Edit','编辑个人词典','edit_dictionary()'),('Long','编辑长文本翻译','edit_long_text()'),
+            ('Scan','扫描未打开模块','scan_unopened()'),('Coverage','查看模块覆盖情况','show_index_status()'),
+            ('PauseScan','暂停模块扫描','pause_module_index()'),
+            ('Optimize','整理重复词条','optimize_dictionary()')]:add(dictionaries,'Dictionary',name,label,call)
+        advanced=menu.add_sub_menu('XHNodeChinese','Settings','Advanced','高级选项','导出、双语和诊断')
+        for name,label,call in [('Bilingual','中文／中英双语','toggle_bilingual()'),('Auto','开关本地译文复用','toggle_auto()'),
+            ('Translate','立即复用本地译文','translate_current()'),('Live','打开实时待译词条','open_live()'),
+            ('Export','导出当前待译词条','export_untranslated()'),('ExportAll','导出全部语言资源','export_all()'),
+            ('TranslateAll','翻译全部历史导出','translate_selected(include_export=True)'),('Rebuild','重建语言资源索引','rescan()'),
+            ('Diagnose','查看命中诊断','diagnose()'),('Status','使用说明与文件位置','show_status()')]:add(advanced,'Advanced',name,label,call)
+    from . import status_ui_029 as status_ui
     status_ui.register()
     menus.refresh_all_widgets()
 
@@ -604,10 +725,21 @@ def export_all():
 
 def tick(delta):
     global _last_check, _last_codex_check, _dictionary_stamp, _last_error, _last_slate, _live_error
-    global _codex_resources_pending, _codex_last_batch
+    global _codex_resources_pending, _codex_last_batch, _indexed_terms
     if _hotkey.pressed():
         toggle_enabled()
     now = time.monotonic()
+    if _indexer and _indexer.phase in ('waiting','scanning','deep'):
+        try:
+            if _indexer.step():
+                _indexed_terms={r['Source']:r['Translation'] for r in core.load_dictionary(SAVE/'IndexedTranslations.csv')}
+                sync_long_text(apply_bridge=False)
+                rebuild()
+                write_diagnostics()
+                unreal.log('[XHNodeChinese] '+_indexer.label())
+        except Exception as error:
+            _indexer.phase='error'; _indexer.error=str(error); _indexer.persist()
+            unreal.log_warning('[XHNodeChinese] 模块索引失败：'+str(error))
     # Response detection is cheap and independent of the slower capture cycle.
     # Heavy dictionary work only runs when a new, validated batch was imported.
     if now-_last_codex_check>=0.25:
@@ -624,7 +756,7 @@ def tick(delta):
                 if _bridge is not None:
                     # Publish complete translations now; compiling every locres
                     # after every small batch delays even the visible Slate text.
-                    _bridge.rebuild(PLUGIN,state()['enabled'],state()['bilingual'],_long_text.terms if _long_text else {})
+                    _bridge.rebuild(PLUGIN,state()['enabled'],state()['bilingual'],supplemental_terms())
                     _bridge.tick()
                     _dictionary_stamp=dictionary_stamp()
                     _codex_resources_pending=True
@@ -669,11 +801,12 @@ def tick(delta):
 
 
 def startup():
-    global _tick_handle, _bridge, _bridge_error, _preloaded
+    global _tick_handle, _bridge, _bridge_error, _preloaded, _indexed_terms
     if _tick_handle is not None:
         return
     SAVE.mkdir(parents=True, exist_ok=True)
     register_menus()
+    _indexed_terms={r['Source']:r['Translation'] for r in core.load_dictionary(SAVE/'IndexedTranslations.csv')}
     try:
         from .bridge import Bridge
         _bridge = Bridge(PLUGIN, unreal.Paths.convert_relative_path_to_full(unreal.Paths.engine_dir()))
@@ -694,9 +827,12 @@ def startup():
         _bridge.start()
     save_state()
     _tick_handle = unreal.register_slate_post_tick_callback(tick)
+    from .asset_index import Indexer
+    global _indexer
+    _indexer=Indexer(PLUGIN,SAVE,catalogue(),cached_only=True)
     import atexit
     atexit.register(shutdown)
-    unreal.log(f'[XHNodeChinese] Ready 0.2.8: {_preloaded} preloaded; progressive Codex translation.')
+    unreal.log(f'[XHNodeChinese] Ready 0.2.9: {_preloaded} preloaded; progressive Codex translation.')
 
 
 def shutdown():
@@ -707,5 +843,5 @@ def shutdown():
     if _bridge is not None:
         _bridge.shutdown()
     if _external is not None:_external.shutdown()
-    from . import status_ui_028 as status_ui
+    from . import status_ui_029 as status_ui
     status_ui.unregister()

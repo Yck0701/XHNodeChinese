@@ -23,3 +23,192 @@ Two Sided Foliage,双面植被,,,
 SingleLayerWater,单层水体,,,
 Thin Translucent,薄层半透明,,,
 From Material Expression,来自材质表达式,,,
+Collision Mode,碰撞模式,,,
+CPU Collision Type,CPU 碰撞类型,,,
+GPU Collision Type,GPU 碰撞类型,,,
+Collision Enabled,启用碰撞,,,
+Radius Calculation Type,半径计算类型,,,
+Method For Calculating Particle Radius,粒子半径计算方法,,,
+Particle Radius Scale,粒子半径缩放,,,
+Particle Radius,粒子半径,,,
+Bounce,反弹,,,
+Restitution,恢复系数,,,
+Restitution Coefficient Blending,恢复系数混合方式,,,
+Restitution Coefficient Blend Mode,恢复系数混合模式,,,
+Ignore,忽略,,,
+Randomize Collision Normal,随机化碰撞法线,,,
+Randomize Collision Normal Vector,随机化碰撞法线向量,,,
+Control Roll on Collision,碰撞时控制滚动,,,
+Simple Friction,简化摩擦,,,
+CPU Friction Blending,CPU 摩擦混合方式,,,
+Friction During A Bounce,反弹时的摩擦,,,
+Analytical Collision Planes,解析碰撞平面,,,
+Analytical Collision planes,解析碰撞平面,,,
+Analytical Planes,解析平面,,,
+Analytical Plane Debug Mode,解析平面调试模式,,,
+First Particle (First Execution Index),首个粒子（首个执行索引）,,,
+All Particles (All Execution Indexes),所有粒子（所有执行索引）,,,
+Ray Trace Properties,射线检测属性,,,
+Ray Trace Query Properties,射线检测查询属性,,,
+CPU Collision Trace Channel,CPU 碰撞检测通道,,,
+WorldDynamic,世界动态物体,,,
+CPU Trace Vector Length Multiplier,CPU 检测向量长度倍数,,,
+Max CPU Trace Length,CPU 最大检测长度,,,
+Rest,静止,,,
+Enable Rest State,启用静止状态,,,
+Manually Enter Rest,手动进入静止状态,,,
+Max Number Of Collisions,最大碰撞次数,,,
+Maximum Penetration Correction Distance,最大穿透修正距离,,,
+Percentage Of Penetration Before Rest,进入静止状态的穿透比例阈值,,,
+Rest State Time Range,静止状态统计时长,,,
+Valid Collision Plane Normal for Rest,允许静止的碰撞平面法线,,,
+Age Colliding Particles,加速碰撞粒子老化,,,
+Advanced Aging Rate,额外老化速率,,,
+Kill on Collision,碰撞时销毁,,,
+Kill By Collision Number,按碰撞次数销毁,,,
+Enable Max Collision Count,启用最大碰撞次数,,,
+Control Rest State Via Surface Normal,通过表面法线控制静止状态,,,
+Minimum Collision Normal/ Rest Normal Alignment Percentage,碰撞法线与静止法线的最小对齐比例,,,
+Static Friction,静摩擦,,,
+Static Friction Engagement Speed,静摩擦生效速度,,,
+Correct Interpenetration,修正相互穿透,,,
+Radius Scale For Rotation,旋转计算用半径缩放,,,
+Analytical Collision Plane Space,解析碰撞平面坐标空间,,,
+Analytical Collision Normal 1,解析碰撞法线 1,,,
+Analytical Collision Normal 2,解析碰撞法线 2,,,
+Analytical Collision Plane Position 1,解析碰撞平面位置 1,,,
+Analytical Collision Plane Position 2,解析碰撞平面位置 2,,,
+Perform 2 Analytical Collision Queries,执行 2 次解析碰撞查询,,,
+Max Distance to Collision Plane,到碰撞平面的最大距离,,,
+GPU Trace Vector Length Multiplier,GPU 检测向量长度倍数,,,
+Max GPU Trace Length,GPU 最大检测长度,,,
+Maximum Time Offscreen,最大离屏时长,,,
+Kill Occluded Particles,销毁被遮挡的粒子,,,
+Kill Particles Lodged Within Meshes,销毁卡在网格体内部的粒子,,,
+Allow Offscreen Depth Buffer Collision Particles to Live After A Bounce,允许深度缓冲碰撞粒子在反弹后离屏存活,,,
+Mesh Dimensions,网格体尺寸,,,
+Draw Particle Radius,绘制粒子半径,,,
+Debug Plane 1 Color,调试平面 1 颜色,,,
+Debug Plane 2 Color,调试平面 2 颜色,,,
+Debug Plane 1 Extents,调试平面 1 范围,,,
+Debug Plane 2 Extents,调试平面 2 范围,,,
+Z Depth Buffer Query Type,Z 深度缓冲查询类型,,,
+Z Depth Query Type,Z 深度查询类型,,,
+GPU Depth Buffer,GPU 深度缓冲,,,
+GPU Distance Fields,GPU 距离场,,,
+GPU Ray Traces (Experimental),GPU 射线检测（实验性）,,,
+Ray Traced,射线检测,,,
+No Debug,不调试,,,
+Maximum Axis,最大轴,,,
+Minimum Axis,最小轴,,,
+This value scales the calculated particle collision radius.,此值用于缩放计算得到的粒子碰撞半径。,,,
+This enum describes how the collision object's physical material's restitution coefficient and the particle's restitution coefficients are combined.,此枚举指定碰撞物体物理材质的恢复系数与粒子恢复系数的混合方式。,,,
+This enum allows the user to define how the collision object's friction coefficient and the particles friction coefficient are combined.,此枚举用于指定碰撞物体的摩擦系数与粒子摩擦系数的混合方式。,,,
+"This controls the particle's ""bounce"" coefficient. 1 will retain all of the particle's energy along the impact normal vector and 0 will remove it.",控制粒子的反弹系数。设为 1 时保留粒子沿碰撞法线方向的全部能量，设为 0 时消除该方向的能量。,,,
+"If true, fewer parameters will be used to control the friction coefficient. 
+
+Complex friction is useful in situations where realistic particle behaviours are desired. Complex friction includes a static friction variable which alters the amount of friction that a particle experiences as it's speed decreases. 
+
+The simple friction algorithm should be sufficient in most situations.","启用后，使用较少的参数控制摩擦系数。
+
+需要真实粒子运动时，可使用复杂摩擦。复杂摩擦包含静摩擦参数，可随粒子速度降低而改变所受摩擦。
+
+大多数情况下，简化摩擦算法已足够。",,,
+"Particles will rotate approriately after impacting the ground. When this is enabled, rotational velocity will be ignored after the first collision.",粒子接触地面后会相应滚动。启用后，首次碰撞之后会忽略原有旋转速度。,,,
+The friction coefficient that's used when the particle moves slower than the static friction engagement speed.,粒子速度低于静摩擦生效速度时使用的摩擦系数。,,,
+The friction coefficient defines how quicky a particle will slow down as it slides across a surface.,摩擦系数决定粒子沿表面滑动时减速的快慢。,,,
+This coefficient defines the amount of friction exerted on an object during an instantaneous impact.,此系数决定物体发生瞬时碰撞时所受的摩擦大小。,,,
+"When enabled, particles will freeze after their collision count hits the number specified.",启用后，粒子的碰撞次数达到指定值时将停止运动。,,,
+"Particle's freeze in place when this is true.
+
+CPU ray traces will cease to fire when a particle is set to rest manually.","为真时，粒子会停在原地。
+
+手动将粒子设为静止状态后，将停止对该粒子执行 CPU 射线检测。",,,
+"CPU collision trace results are a frame delayed. This optimization requires a number of approaches to be utilized to compensate for the delay. 
+
+This number multiplies the particle's current velocity and force vectors to extend the particle's supposed trajectory in order to compensate for the collision result's frame delay.","CPU 碰撞检测结果会延迟一帧，因此需要采用补偿措施。
+
+此值用于放大粒子当前的速度向量和力向量，以延长预测运动轨迹，补偿碰撞结果的一帧延迟。",,,
+"GPU collision trace results are a frame delayed. This optimization requires a number of approaches to be utilized to compensate for the delay. 
+
+This number multiplies the particle's current velocity and force vectors to extend the particle's supposed trajectory in order to compensate for the collision result's frame delay.","GPU 碰撞检测结果会延迟一帧，因此需要采用补偿措施。
+
+此值用于放大粒子当前的速度向量和力向量，以延长预测运动轨迹，补偿碰撞结果的一帧延迟。",,,
+Long CPU traces can be expensive. This feature allows us to cap the length of our CPU traces to avoid long hitches.,过长的 CPU 射线检测开销较大。此功能限制 CPU 检测长度，以避免长时间卡顿。,,,
+"The static friction coefficient will be used when the particle's speed is below this value. 
+
+(Note that only the portion of the velocity that's parallel to the collision plane is taken into account.)","当粒子速度低于此值时，使用静摩擦系数。
+
+注意：仅考虑平行于碰撞平面的速度分量。",,,
+Each particle's collision is calculated as if it were a sphere. This number sets that sphere's radius.,每个粒子都按球体计算碰撞，此值指定球体的半径。,,,
+"This is the amount of time that a particle's interpentrations will be tracked over when determining if should enter a rest state.
+
+Lower numbers may result in erratic collision results.
+
+Higher numbers will make the particles less capable of entering and exiting rest quickly.","用于判断粒子是否应进入静止状态时，统计粒子穿透情况的时间范围。
+
+时间过短可能导致碰撞结果不稳定；时间过长会使粒子进入和退出静止状态的反应变慢。",,,
+This will pause particles that penetrate surfaces more often than the specificied rate and particles that have penetrated a surface more deeply that allowed.,当粒子穿透表面的频率超过指定阈值，或穿透深度超过允许值时，使其进入静止状态。,,,
+This number specifies the maximum number of units that a particle can be pulled out of another surface before being instanteously forced into a rest state.,此值指定将粒子从另一个表面内部拉出时允许的最大距离；超过此值会立即强制粒子进入静止状态。,,,
+Advance the age of particles that are currently touching a collision surface by deltatime * Advanced Aging Rate,对于当前接触碰撞表面的粒子，按 deltatime * 额外老化速率增加年龄。,,,
+"Advance colliding particles lifetimes by deltatime * ""Advanced Aging Rate"" in addition to the particles normal life cycle decay.",除了正常的生命周期消耗外，再按 deltatime * 额外老化速率增加发生碰撞的粒子的年龄。,,,
+"Adjust the particle's rate of rotation, while rolling, by scaling the radius for this portion of the equation.
+
+This is useful for meshes particles that aren't spherical in nature.","通过缩放滚动计算中使用的半径，调整粒子滚动时的旋转速率。
+
+适用于非球形的网格体粒子。",,,
+Enable or disable the module's affect on the effect.,启用或禁用此模块对特效的影响。,,,
+This number specifies how long a gpu particle using depth buffer collision can remain off screen before being killed.,使用深度缓冲碰撞的 GPU 粒子离开屏幕后，允许存活的最长时间。,,,
+"When true, a rest state can only be achieved when the colliding surface's normal aligns with a user defined vector.",为真时，仅当碰撞表面的法线与用户指定的向量对齐时，才允许进入静止状态。,,,
+Disturbs the impact normal. This can be used to add variation to your collisions.,扰动碰撞法线，可为碰撞效果增加变化。,,,
+Choose which trace channel to use.,选择要使用的检测通道。,,,
+Particles will die if they collide this many times.,粒子发生指定次数的碰撞后会被销毁。,,,
+"Allow a second analytical plane to be defined and collided against, for more complex collision behavior.",允许定义第二个解析平面并与之发生碰撞，以实现更复杂的碰撞行为。,,,
+"A value of 0 will prevent the surface normal from being randomized within a cone. A value of 1 will spread the normal's possibility space into a normal aligned hemisphere. 
+
+Increasing this value decreases simulation stability. One can adjust the rest state variables to compensate.","设为 0 时，不在圆锥范围内随机扰动表面法线；设为 1 时，法线的可选方向扩展至沿原法线朝向的整个半球。
+
+增大此值会降低模拟稳定性，可调整静止状态参数进行补偿。",,,
+"Each particle's collision radius will be calculated for you, per frame, using the methods laid out below. 
+
+Sprite - This option will leverage ""Particles.SpriteSize"" to calculate the particle's collision radius using the method chosen by the user in the subsequent drop down. 
+
+Mesh - This option uses a user defined mesh dimensions vector and the ""Particles.Scale"" variable to calculate the particles collision radius. 
+
+Custom - Custom allows the user to directly enter your own radius value.","每帧都会按下面选定的方法计算每个粒子的碰撞半径。
+
+精灵：利用 Particles.SpriteSize，并按后续下拉框中指定的方法计算碰撞半径。
+
+网格体：利用用户指定的网格体尺寸向量和 Particles.Scale 计算碰撞半径。
+
+自定义：直接输入所需的半径值。",,,
+"This enum changes the way that each particle's collision radius is calculated. The options are:
+
+Bounds - Finds the length from the particle's center to it's outer most corner and uses it as the particle's collision radius. Both mesh's and sprites are supported.
+
+Maximum Axis - Finds the particle's longest length across each axis and divides it by 2 before using it as the collision radius.
+
+Minimum Axis - Finds the particle's smallest axis and divides it by 2 before using it as the collision radius.","此枚举指定粒子碰撞半径的计算方法：
+
+包围边界：采用粒子中心到最远角点的距离，支持网格体和精灵。
+
+最大轴：采用粒子各轴尺寸中的最大值除以 2。
+
+最小轴：采用粒子各轴尺寸中的最小值除以 2。",,,
+"Particles will enter a rest state if they are found to penetrate surfaces more often than this float allows over the ""Rest State Time Range"". 
+
+Specifically, we generate a rolling average to see how often particles penetrate scene geometry over the rest state time range. This number acts as a threshold. 
+
+Lower values will tend cause particles to enter a rest state more easily and larger values will make them rest less frequently.
+
+This feature can be used to stabilize difficult scenarios in which particles may endlessly bounce back and forth.","在静止状态统计时长内，若粒子穿透表面的频率超过此浮点阈值，则进入静止状态。
+
+具体而言，会对该时段内粒子穿透场景几何体的频率计算滚动平均值，并与此阈值比较。
+
+较小的值使粒子更容易进入静止状态，较大的值使其更少进入静止状态。
+
+可用此功能稳定粒子持续来回弹跳等难以收敛的情况。",,,
+Response,响应,,,
+Number Of Collisions,碰撞次数,,,
+RestCounter,静止计数,,,
+RotationalVelocityEnabled,启用旋转速度,,,

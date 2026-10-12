@@ -144,6 +144,8 @@ class Session(ct.Session):
 
     def prepare(self, known, provider, include_export=False):
         if provider not in PROVIDERS or provider == 'codex': raise ValueError('不支持的翻译方式')
+        if self.state['phase'] == 'cancelled' and self.state.get('provider') == provider and self.state.get('folder'):
+            self.state.update(phase='waiting', error=None); self.persist()
         if self.state['phase'] in ('sending', 'waiting', 'error') and self.state.get('folder'):
             if self.state.get('provider') != provider: raise ValueError('请先完成或停止当前翻译，再切换翻译方式')
             return bool(self.current_batch())
@@ -188,14 +190,32 @@ class Session(ct.Session):
         current = self.current_batch()
         if not current: raise ValueError('没有等待导入的网页翻译任务')
         number, batch = current
-        data = validate_batch(batch, parse_response(text))
-        target = Path(self.state['folder']) / f'response-{number:04d}.json'
-        if target.name in self.state.get('accepted_files', {}): raise ValueError('本批已导入，请复制下一批任务')
+        folder = Path(self.state['folder'])
+        from .web_import import normalize
+        # Never lose an answer on a failed paste; each attempt gets its own file.
+        attempt = str(time.time_ns())
+        core.atomic_write(folder / ('answer-' + attempt + '.txt'), text.encode('utf-8'))
+        try:
+            data, report = normalize(batch, text)
+        except ValueError as error:
+            core.write_json(folder/'ImportReport.json', {'error': str(error), 'answer': 'answer-'+attempt+'.txt'})
+            raise
+        core.write_json(folder/'ImportReport.json', report)
+        # Partial answers for the same prompt need independent response files.
+        sequence = max([int(p.stem.split('-')[1]) for p in folder.glob('response-*.json')
+                        if re.fullmatch(r'response-\d+', p.stem)] or [0]) + 1
+        target = folder / f'response-{sequence:04d}.json'
+        queued_ids = set()
+        for path in folder.glob('response-*.json'):
+            pending = json.loads(path.read_text(encoding='utf-8'))
+            queued_ids.update(i['id'] for i in pending.get('translations', []) + pending.get('skipped', []))
+        if queued_ids & {i['id'] for i in data['translations'] + data['skipped']}:
+            raise ValueError('这些译文已经接收，请等导入完成后复制下一批任务')
         core.write_json(target, data)
         self.state.update(phase='waiting', error=None); self.persist()
         self._file_stamps.pop(target.name, None)
         # UE's regular poll imports and refreshes the visible dictionaries.
-        return len(batch['items'])
+        return report['accepted']
 
     def start_api(self, config, transport=api_translate):
         if self.worker and self.worker.is_alive():
@@ -248,7 +268,7 @@ class Session(ct.Session):
         if phase == 'waiting':
             label = f'{name}：{completed}/{total}'
             tip = ('正在后台分批翻译，收到即导入。' if self.state.get('provider') == 'api' else
-                   '点击复制当前批次任务；在网页发送后，复制完整 JSON 回答，再选择“粘贴并导入网页译文”。')
+                   '点击继续未完成批次；支持 JSON、表格或两列 CSV。复制回答后点击主菜单“粘贴译文”。退出编辑器后进度仍保留。')
         elif phase == 'done':
             count = self.state.get('result',{}).get('terms',0) + self.state.get('result',{}).get('long_texts',0)
             label, tip = f'{name}：已译 {count} 条', '本次已完成；点击翻译新采集的内容。'

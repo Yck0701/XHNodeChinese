@@ -99,3 +99,17 @@ manifest={'engine_sha256':{name:hashlib.sha256((engine/name).read_bytes()).hexdi
     'bridge_sha256':hashlib.sha256((dest/bridge_file).read_bytes()).hexdigest()}
 (dest/'bridge-manifest.json').write_text(json.dumps(manifest,indent=2),encoding='utf-8')
 print('Build succeeded. Run isolated target-engine verification before deployment.')
+
+# The read-only module scanner is a separate DLL, allowing Python updates to
+# deploy it without unloading Slate bindings in a running editor.
+index_rsp=out/'module-index.rsp'
+index_lines=[line.replace(str(plugin/'Source/SlateBridge/Bridge.cpp'),str(plugin/'Source/SlateBridge/ModuleIndex.cpp'))
+    .replace(str(out/'Bridge.obj'),str(out/'ModuleIndex.obj'))
+    .replace(str(out/'XHSlateBridge.dll'),str(out/'XHModuleIndex030_2.dll')) for line in lines]
+index_rsp.write_text('\n'.join(index_lines),encoding='utf-8')
+index_cmd=out/'build-module-index.cmd'
+index_cmd.write_text(cmd.read_text(encoding='utf-8').replace(str(rsp),str(index_rsp)),encoding='utf-8')
+subprocess.run(['cmd.exe','/d','/c',str(index_cmd)],cwd=out,check=True)
+index_dest=dest/'XHModuleIndex030_2.dll';shutil.copy2(out/index_dest.name,index_dest)
+index_manifest=dict(manifest,bridge_file=index_dest.name,bridge_sha256=hashlib.sha256(index_dest.read_bytes()).hexdigest())
+(dest/'module-index-manifest.json').write_text(json.dumps(index_manifest,indent=2),encoding='utf-8')

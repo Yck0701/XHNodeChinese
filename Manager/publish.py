@@ -68,11 +68,12 @@ def add_verified(manifest_file,package,report,verification,label):
     with zipfile.ZipFile(package) as z:
         core.zip_members(z)
         bridge=json.loads(z.read('XHNodeChinese/Binaries/Win64/bridge-manifest.json'))
+        descriptor=json.loads(z.read('XHNodeChinese/XHNodeChinese.uplugin'))
         if bridge['engine_sha256']!=report['engine']['sha256']:raise ValueError('引擎记录不匹配。')
     dest=manifest_file.parent/Path(package).name.replace('-UNVERIFIED','')
     public_plugin(package,dest)
     manifest=core.json_read(manifest_file)
-    entry={'label':label,'version':'0.2.8','url':dest.name,'sha256':core.digest(dest),'engine':report['engine'],'verified':True}
+    entry={'label':label,'version':descriptor['VersionName'],'url':dest.name,'sha256':core.digest(dest),'engine':report['engine'],'verified':True}
     manifest['plugins']=[entry]+[p for p in manifest['plugins'] if p['engine']['sha256']!=entry['engine']['sha256']]
     core.write_json(manifest_file,manifest)
 

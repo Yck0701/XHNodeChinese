@@ -1,0 +1,12 @@
+{
+  "version": "0.2.7",
+  "XH_SelfTest": 0,
+  "XH_SearchSelfTest": 0,
+  "XH_GraphSelfTest": 0,
+  "XH_CaptureSelfTest": 0,
+  "XH_ParameterSelfTest": 0,
+  "XH_SynonymSelfTest": 0,
+  "hot_reload": true,
+  "capture_off_search_supported": true,
+  "passed": true
+}

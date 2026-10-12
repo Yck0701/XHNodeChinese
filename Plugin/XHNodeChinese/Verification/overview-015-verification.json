@@ -1,0 +1,133 @@
+{
+  "version": "0.1.5",
+  "bridge_sha256": "ecf2ae48a966cf4efd22dacf378f9431378621a46ea668bf33b55b30e4adf183",
+  "native_selftest": 0,
+  "preloaded_terms": 372,
+  "language_roundtrip": true,
+  "scan_average_ms": 2.1554999984800816,
+  "status_entries": [
+    {
+      "menu": "LevelEditor.LevelEditorToolBar.User",
+      "label": "汉化：中文",
+      "icon": "Icons.SuccessWithColor"
+    },
+    {
+      "menu": "LevelEditor.LevelEditorToolBar.User",
+      "label": "导出：已暂停 · 25 待译",
+      "icon": "Icons.Download"
+    },
+    {
+      "menu": "AssetEditor.Niagara.ToolBar",
+      "label": "汉化：中文",
+      "icon": "Icons.SuccessWithColor"
+    },
+    {
+      "menu": "AssetEditor.Niagara.ToolBar",
+      "label": "导出：已暂停 · 25 待译",
+      "icon": "Icons.Download"
+    },
+    {
+      "menu": "AssetEditor.NiagaraScriptEditor.ToolBar",
+      "label": "汉化：中文",
+      "icon": "Icons.SuccessWithColor"
+    },
+    {
+      "menu": "AssetEditor.NiagaraScriptEditor.ToolBar",
+      "label": "导出：已暂停 · 25 待译",
+      "icon": "Icons.Download"
+    },
+    {
+      "menu": "AssetEditor.MaterialEditor.ToolBar",
+      "label": "汉化：中文",
+      "icon": "Icons.SuccessWithColor"
+    },
+    {
+      "menu": "AssetEditor.MaterialEditor.ToolBar",
+      "label": "导出：已暂停 · 25 待译",
+      "icon": "Icons.Download"
+    },
+    {
+      "menu": "AssetEditor.BlueprintEditor.ToolBar",
+      "label": "汉化：中文",
+      "icon": "Icons.SuccessWithColor"
+    },
+    {
+      "menu": "AssetEditor.BlueprintEditor.ToolBar",
+      "label": "导出：已暂停 · 25 待译",
+      "icon": "Icons.Download"
+    }
+  ],
+  "overview_widgets": [
+    {
+      "source": "Emitter",
+      "display": "发射器",
+      "area": "NiagaraOverview"
+    },
+    {
+      "source": "Shape Location",
+      "display": "形状位置",
+      "area": "NiagaraOverview"
+    },
+    {
+      "source": "Initialize Particle",
+      "display": "初始化粒子",
+      "area": "NiagaraOverview"
+    },
+    {
+      "source": "Emitter",
+      "display": "发射器",
+      "area": "NiagaraOverview"
+    },
+    {
+      "source": "Spawn Rate",
+      "display": "生成速率",
+      "area": "NiagaraOverview"
+    },
+    {
+      "source": "Emitter State",
+      "display": "发射器状态",
+      "area": "NiagaraOverview"
+    },
+    {
+      "source": "Add Velocity",
+      "display": "添加速度",
+      "area": "NiagaraOverview"
+    },
+    {
+      "source": "Particle State",
+      "display": "粒子状态",
+      "area": "NiagaraOverview"
+    },
+    {
+      "source": "Gravity Force",
+      "display": "重力",
+      "area": "NiagaraOverview"
+    },
+    {
+      "source": "Drag",
+      "display": "阻力",
+      "area": "NiagaraOverview"
+    },
+    {
+      "source": "Scale Color",
+      "display": "缩放颜色",
+      "area": "NiagaraOverview"
+    },
+    {
+      "source": "Solve Forces and Velocity",
+      "display": "求解力与速度",
+      "area": "NiagaraOverview"
+    },
+    {
+      "source": "Infinite",
+      "display": "无限",
+      "area": "NiagaraOverview"
+    },
+    {
+      "source": "Self",
+      "display": "自身",
+      "area": "NiagaraOverview"
+    }
+  ],
+  "passed": true
+}

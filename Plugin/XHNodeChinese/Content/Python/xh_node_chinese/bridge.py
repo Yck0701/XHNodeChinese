@@ -8,7 +8,7 @@ from . import core
 
 def dictionary(plugin, long_terms=None):
     result = {}
-    for name in ('Base.csv', 'UI.csv', 'Descriptions.csv', 'User.csv'):
+    for name in ('Base.csv', 'UI.csv', 'Descriptions.csv', 'Shared.csv', 'SharedLongText.csv', 'User.csv'):
         if name == 'User.csv':
             result.update(long_terms or {})
         for row in core.load_dictionary(Path(plugin)/'Dictionaries'/name):
@@ -16,7 +16,7 @@ def dictionary(plugin, long_terms=None):
             # Do not turn e.g. the material term "Normal" into a global override.
             if name == 'Base.csv' and row.get('Category') not in ('', 'Niagara'):
                 continue
-            if name == 'User.csv' and row.get('Category'):
+            if name in ('Shared.csv','SharedLongText.csv','User.csv') and row.get('Category') not in ('','Niagara'):
                 continue
             if not row.get('Namespace') and not row.get('Key'):
                 result[row['Source']] = row['Translation']
@@ -26,7 +26,7 @@ def dictionary(plugin, long_terms=None):
 def graph_dictionary(plugin, long_terms=None):
     # Only graph menu widgets/actions receive these ambiguous scoped terms.
     result = {}
-    for name in ('Base.csv', 'Graph.csv'):
+    for name in ('Base.csv', 'Graph.csv', 'Shared.csv', 'SharedLongText.csv'):
         for row in core.load_dictionary(Path(plugin)/'Dictionaries'/name):
             if not row.get('Namespace') and not row.get('Key') and row.get('Category') in ('','Material','Blueprint'):
                 result[row['Source']] = row['Translation']
@@ -40,7 +40,7 @@ def graph_dictionary(plugin, long_terms=None):
 def export_dictionary(plugin, long_terms=None):
     # Known graph labels must not keep returning to the translation queue.
     # This map is for export deduplication, never for global Slate replacement.
-    result = {r['Source']:r['Translation'] for r in core.load_dictionary(Path(plugin)/'Dictionaries/Graph.csv')}
+    result = graph_dictionary(plugin, long_terms)
     result.update(dictionary(plugin, long_terms))
     return result
 

@@ -1,0 +1,10 @@
+{
+  "version": "0.1.6",
+  "toggle_restores_original_chinese": true,
+  "toolbar_toggle_verified": true,
+  "niagara_overview_verified": true,
+  "auto_write_and_manual_priority": true,
+  "export_roundtrip": true,
+  "reload_preserves_disabled_state": true,
+  "passed": true
+}

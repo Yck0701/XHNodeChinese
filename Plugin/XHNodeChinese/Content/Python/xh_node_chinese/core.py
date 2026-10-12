@@ -80,7 +80,17 @@ def build_catalogue(engine):
 
 def placeholders(value):
     braces = re.findall(r'(?<!\{)\{[A-Za-z_0-9]+\}(?!\})', value)
-    printf = re.findall(r'(?<!%)%(?:\d+\$)?[-+ #0]*(?:\d+|\*)?(?:\.(?:\d+|\*))?(?:ll|[hlL])?[diuoxXfFeEgGaAcsp]', value)
+    printf = []
+    pattern = r'(?<!%)%(?:\d+\$)?[-+ #0]*(?:\d+|\*)?(?:\.(?:\d+|\*))?(?:ll|[hlL])?[diuoxXfFeEgGaAcsp]'
+    for match in re.finditer(pattern, value):
+        # A numeric percentage followed by prose ("50% gray", "100% of")
+        # is not a printf placeholder with a space flag. Keep real formats,
+        # including numeric prefixes ("v2%d") and explicit space flags.
+        offset = match.start()
+        if (offset and value[offset - 1].isdigit()
+                and re.match(r'\s+[A-Za-z]{2,}\b', value[offset + 1:])):
+            continue
+        printf.append(match.group())
     return Counter(braces + printf)
 
 
@@ -157,7 +167,7 @@ def select_translations(catalogue, dictionaries):
 
 def compile_dictionary(plugin, catalogue, bilingual=False):
     plugin = Path(plugin)
-    entries, unmatched = select_translations(catalogue, [plugin / 'Dictionaries/Base.csv', plugin / 'Dictionaries/User.csv'])
+    entries, unmatched = select_translations(catalogue, [plugin / 'Dictionaries'/name for name in ('Base.csv','Shared.csv','SharedLongText.csv','User.csv')])
     if bilingual:
         sources = {(e['namespace'], e['key']): e['source'] for e in catalogue}
         entries = [(n, k, h, text + ' (' + sources[(n, k)] + ')') for n, k, h, text in entries]
@@ -180,7 +190,7 @@ def export_pending(plugin, catalogue, destination, observed=(), current_only=Fal
     from .auto_translate import normalized
     from .long_text import eligible
     from .term_keys import canonical,Resolver
-    entries, _ = select_translations(catalogue, [Path(plugin) / 'Dictionaries/Base.csv', Path(plugin) / 'Dictionaries/User.csv'])
+    entries, _ = select_translations(catalogue, [Path(plugin) / 'Dictionaries'/name for name in ('Base.csv','Shared.csv','SharedLongText.csv','User.csv')])
     translated = {(n, k) for n, k, _, _ in entries}
     stream = io.StringIO(newline='')
     writer = csv.writer(stream, quoting=csv.QUOTE_ALL)

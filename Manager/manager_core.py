@@ -21,14 +21,28 @@ import zipfile
 SOURCE_REPOSITORY = 'https://github.com/Yck0701/XHNodeChinese'
 REPOSITORY = 'https://github.com/Yck0701/XHNodeChinese-new'
 DEFAULT_FEED = REPOSITORY + '/releases/latest/download/manifest.json'
-VERSION = '1.0.1'
+VERSION = '1.0.2'
 PROTECTED = ('Plugins/XHNodeChinese/Dictionaries/User.csv', 'Saved/XHNodeChinese/LongText.csv')
+SHARED_FILES = tuple('Plugins/XHNodeChinese/Dictionaries/'+n for n in
+                     ('Shared.csv','SharedLongText.csv','SharedVersion.json'))
 ENGINE_FILES = tuple('Binaries/Win64/UnrealEditor-' + m + '.dll' for m in
     ('Core','CoreUObject','Slate','SlateCore','ApplicationCore','InputCore','Engine','GraphEditor')) + tuple(
     'Plugins/FX/Niagara/Binaries/Win64/UnrealEditor-' + m + '.dll' for m in
     ('NiagaraEditor','NiagaraEditorWidgets','Niagara','NiagaraCore'))
 MAX_DOWNLOAD = 256 * 1024 * 1024
 MAX_EXPANDED = 512 * 1024 * 1024
+
+
+def version_tuple(value):
+    """Return a comparable tuple for dotted release versions."""
+    parts = re.findall(r'\d+', str(value or ''))
+    values = tuple(int(part) for part in parts)
+    return values + (0,)*max(0,4-len(values))
+
+
+def newer_version(candidate, current=VERSION):
+    """Whether candidate is newer than current using numeric dotted versions."""
+    return version_tuple(candidate) > version_tuple(current)
 
 
 def digest(path):
@@ -75,6 +89,22 @@ def engine_info(path, log=lambda _: None):
         fingerprints[name] = digest(file)
     return {'version': '.'.join(str(v[k]) for k in ('MajorVersion','MinorVersion','PatchVersion')),
             'changelist': v.get('Changelist',0), 'sha256': fingerprints}
+
+
+def cached_engine_info(path, cache, log=lambda _: None):
+    """Fast startup comparison only; install always hashes the engine again."""
+    root=engine_path(path)
+    signature=[(str(root/n), (root/n).stat().st_size, (root/n).stat().st_mtime_ns)
+               for n in ('Build/Build.version',)+ENGINE_FILES]
+    key=hashlib.sha256(str(root).casefold().encode()).hexdigest()
+    file=Path(cache)/('engine-'+key+'.json')
+    try:
+        cached=json_read(file)
+        if cached['signature']==[list(v) for v in signature]:return cached['info']
+    except (OSError,ValueError,KeyError,TypeError):pass
+    info=engine_info(root,log)
+    write_json(file,dict(signature=signature,info=info))
+    return info
 
 
 def project_path(path):
@@ -124,15 +154,28 @@ def download(location, destination, expected=None, limit=MAX_DOWNLOAD):
     return destination
 
 
-def load_feed(location, cache):
+def load_feed(location, cache, allow_cached=False):
     location=feed_location(location)
-    try: file=download(location,Path(cache)/'manifest.json',limit=2*1024*1024)
-    except HTTPError as exc:
-        if exc.code==404: raise ValueError('尚未找到发布清单 manifest.json。请先使用随包离线版本，或由发布者上传 GitHub Release。') from exc
+    file=Path(cache)/('feed-'+hashlib.sha256(str(location).encode()).hexdigest()+'.json')
+    try:
+        with tempfile.TemporaryDirectory(prefix='xh-feed-') as tmp:
+            downloaded=download(location,Path(tmp)/'manifest.json',limit=2*1024*1024)
+            feed=parse_feed(json_read(downloaded),location)
+            atomic(file,downloaded.read_bytes())
+        return feed
+    except (OSError,ValueError) as exc:
+        if allow_cached and file.is_file():
+            feed=parse_feed(json_read(file),location)
+            feed['_cached']=True;feed['_check_error']=str(exc)
+            return feed
+        if isinstance(exc,HTTPError) and exc.code==404:
+            raise ValueError('尚未找到发布清单，请使用随包离线版本。') from exc
         raise
-    feed=json_read(file)
+
+
+def parse_feed(feed, location):
     if feed.get('schema')!=1 or not isinstance(feed.get('plugins'),list): raise ValueError('更新清单格式不支持。')
-    for item in feed['plugins']+[feed.get('shared',{})]+([feed['source']] if feed.get('source') else []):
+    for item in feed['plugins']+[feed.get('shared',{})]+[feed[k] for k in ('source','manager') if feed.get(k)]:
         if not re.fullmatch('[0-9a-f]{64}',item.get('sha256','')): raise ValueError('更新清单缺少有效的 SHA-256。')
         if not item.get('url'): raise ValueError('更新清单缺少下载地址。')
         if str(location).startswith('https://'):
@@ -150,6 +193,49 @@ def load_feed(location, cache):
 
 def fetch(item, cache):
     return download(item['_location'],Path(cache)/(item['sha256']+'.zip'),item['sha256'])
+
+
+def prepare_manager_update(item, cache):
+    """Stage a verified new portable version; never overwrite a running EXE."""
+    if not re.fullmatch(r'\d+(?:\.\d+){1,3}',str(item.get('version',''))):raise ValueError('管理器版本号无效。')
+    archive=fetch(item,cache)
+    with zipfile.ZipFile(archive) as z:
+        members=zip_members(z)
+        if 'XHPluginManager/XHPluginManager.exe' not in members:raise ValueError('管理器包缺少程序。')
+        if any(PurePosixPath(n).parts[0]!='XHPluginManager' for n in members):raise ValueError('管理器包包含无关目录。')
+        dest=Path(cache)/'versions'/(item['version']+'-'+uuid.uuid4().hex[:8])
+        no_links(dest);dest.mkdir(parents=True)
+        for name,info in members.items():
+            p=dest.joinpath(*PurePosixPath(name).parts);p.parent.mkdir(parents=True,exist_ok=True)
+            with z.open(info) as source,p.open('xb') as output:shutil.copyfileobj(source,output)
+    return dest/'XHPluginManager/XHPluginManager.exe'
+
+
+def update_summary(feed, project='', selected=None):
+    manager=feed.get('manager',{}).get('version',feed.get('manager_version',''))
+    result={'manager':('可更新至 '+manager) if newer_version(manager) else '当前 v'+VERSION,
+            'plugin':'请选择引擎并检查兼容性','shared':'可安装 '+str(feed['shared'].get('version','')),
+            'manager_update':newer_version(manager),'shared_update':True}
+    root=None
+    if project:
+        try:root=project_path(project)
+        except ValueError:pass
+    if selected:
+        current=''
+        if root:
+            try:current=json_read(root/'Plugins/XHNodeChinese/XHNodeChinese.uplugin').get('VersionName','')
+            except (OSError,ValueError):pass
+        result['plugin']=('可更新 '+current+' → '+selected['version']) if current and newer_version(selected['version'],current) else (
+            '已安装 v'+current if current else '可安装 v'+selected['version'])
+    if root:
+        try:
+            meta=json_read(root/SHARED_FILES[2])
+            valid=all(digest(root/SHARED_FILES[i])==meta['files'][name] for i,name in enumerate(('User.csv','LongText.csv')))
+            if valid and meta.get('version')==feed['shared'].get('version') and meta.get('sha256')==feed['shared'].get('sha256'):
+                result['shared']='已是最新 · '+meta['version'];result['shared_update']=False
+            else:result['shared']='可更新 '+meta.get('version','未知')+' → '+feed['shared']['version']
+        except (OSError,ValueError,KeyError,TypeError):pass
+    return result
 
 
 def matching(feed, info):
@@ -293,18 +379,57 @@ def replace_shared(project, archive):
     return replace_files(project,shared_contents(archive))
 
 
+@exclusive_update
+def replace_defaults(project, contents):
+    """Replace only bundled shared files, keeping both personal CSVs byte-identical."""
+    project=project_path(project);ensure_closed()
+    if set(contents)!=set(SHARED_FILES):raise ValueError('共享基础词典路径无效。')
+    descriptor=json_read(project/'Plugins/XHNodeChinese/XHNodeChinese.uplugin')
+    if descriptor.get('XHSharedDictionaryVersion',0)<1:raise ValueError('请先更新插件，再安装共享基础词典。旧版仍可使用词典替换功能。')
+    for name in SHARED_FILES:no_links(project/name)
+    previous={name:(project/name).read_bytes() if (project/name).exists() else None for name in SHARED_FILES}
+    saved=project/'Saved/XHNodeChinese/UpdaterBackups'/('shared-'+datetime.now().strftime('%Y%m%d-%H%M%S')+'-'+uuid.uuid4().hex[:6]+'.zip')
+    no_links(saved);saved.parent.mkdir(parents=True,exist_ok=True)
+    with zipfile.ZipFile(saved,'x',zipfile.ZIP_DEFLATED) as z:
+        hashes={}
+        for name,data in previous.items():
+            hashes[name]=hashlib.sha256(data).hexdigest() if data is not None else None
+            if data is not None:z.writestr(name,data)
+        z.writestr('backup.json',json.dumps({'schema':2,'files':hashes}))
+    try:
+        for name,data in contents.items():
+            if data is None:(project/name).unlink(missing_ok=True)
+            else:atomic(project/name,data)
+    except Exception:
+        for name,data in previous.items():
+            if data is None:(project/name).unlink(missing_ok=True)
+            else:atomic(project/name,data)
+        raise
+    return saved
+
+
+def update_shared_defaults(project, archive, version):
+    content=shared_contents(archive)
+    files={name:content[p] for name,p in zip(('User.csv','LongText.csv'),PROTECTED)}
+    meta={'version':version,'sha256':digest(archive),
+          'files':{name:hashlib.sha256(data).hexdigest() for name,data in files.items()}}
+    payload=dict(zip(SHARED_FILES,(files['User.csv'],files['LongText.csv'],json.dumps(meta,ensure_ascii=False).encode('utf-8'))))
+    return replace_defaults(project,payload)
+
+
 def restore(project, archive):
     with zipfile.ZipFile(archive) as z:
         members=zip_members(z)
         meta=json.loads(z.read('backup.json'))
-        if meta.get('schema')!=1 or set(meta.get('files',{}))!=set(PROTECTED): raise ValueError('不是有效的词典备份。')
-        if set(members)-set(PROTECTED)-{'backup.json'}: raise ValueError('备份中含未知文件。')
+        allowed=SHARED_FILES if meta.get('schema')==2 else PROTECTED
+        if meta.get('schema') not in (1,2) or set(meta.get('files',{}))!=set(allowed): raise ValueError('不是有效的词典备份。')
+        if set(members)-set(allowed)-{'backup.json'}: raise ValueError('备份中含未知文件。')
         contents={}
         for name,h in meta['files'].items():
             data=None if h is None else z.read(name)
             if data is not None and hashlib.sha256(data).hexdigest()!=h: raise ValueError('备份校验失败。')
             contents[name]=data
-    return replace_files(project,contents)
+    return replace_defaults(project,contents) if meta['schema']==2 else replace_files(project,contents)
 
 
 def verify_bridge(plugin, info):
@@ -327,6 +452,14 @@ def install(project, archive, info):
         # Plugin update never replaces the user's dictionary implicitly.
         personal=target/'Dictionaries/User.csv'
         if personal.is_file(): atomic(stage/'Dictionaries/User.csv',personal.read_bytes())
+        # Installing an older/offline plugin must not downgrade a newer shared pack.
+        try:
+            old_shared=json_read(target/'Dictionaries/SharedVersion.json')
+            new_shared=json_read(stage/'Dictionaries/SharedVersion.json')
+            if newer_version(old_shared['version'],new_shared['version']):
+                for name in ('Shared.csv','SharedLongText.csv','SharedVersion.json'):
+                    atomic(stage/'Dictionaries'/name,(target/'Dictionaries'/name).read_bytes())
+        except (OSError,ValueError,KeyError):pass
         old=Path(temp)/'old'
         if target.exists():
             archive_dir=saved.parent/('plugin-'+saved.stem)
@@ -403,7 +536,9 @@ def compile_package(source, engine, sdk, vcvars, python, output, log=print, comp
     run_logged([python,stage/'Tools/build.py','--engine',engine],stage,log)
     target_documentation(stage,info)
     fingerprint=hashlib.sha256(json.dumps(info['sha256'],sort_keys=True).encode()).hexdigest()[:12]
-    dest=output/('XHNodeChinese-0.2.8-UE'+info['version']+'-'+fingerprint+'-UNVERIFIED.zip')
+    plugin_version=json_read(stage/'XHNodeChinese.uplugin')['VersionName']
+    if not re.fullmatch(r'\d+(?:\.\d+){1,3}',plugin_version):raise ValueError('插件版本号无效。')
+    dest=output/('XHNodeChinese-'+plugin_version+'-UE'+info['version']+'-'+fingerprint+'-UNVERIFIED.zip')
     zip_plugin(stage,dest)
     report={'schema':1,'engine':info,'package':dest.name,'sha256':digest(dest),
             'verified':False,'note':'编译成功不代表兼容，必须在该目标引擎的独立工程验证后才能发布。'}

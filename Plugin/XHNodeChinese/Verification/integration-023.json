@@ -1,0 +1,13 @@
+{
+  "version": "0.2.3",
+  "XH_SelfTest": 0,
+  "XH_SearchSelfTest": 0,
+  "XH_GraphSelfTest": 0,
+  "XH_CaptureSelfTest": 0,
+  "paused_no_file_writes": true,
+  "paused_localization_active": true,
+  "paused_manual_import": true,
+  "hot_reload": true,
+  "toolbar_label": "采集：关",
+  "passed": true
+}

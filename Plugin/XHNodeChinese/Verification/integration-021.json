@@ -1,0 +1,22 @@
+{
+  "version": "0.2.1",
+  "first_detection_ms": 14.8,
+  "first_visible_ms": 65.06,
+  "partial_visible_before_completion": true,
+  "final_visible_ms": 352.21,
+  "hot_reload_resume": true,
+  "complete_receipt": {
+    "terms": 2,
+    "long_texts": 1,
+    "preserved": 0,
+    "skipped": [],
+    "request_id": "8f33c98f-d2b8-4fcb-991f-d5d479dfbaf7",
+    "complete": true,
+    "completed": 3,
+    "total": 3,
+    "batches": 2
+  },
+  "prepare_ms": 4.19,
+  "deferred_resources_flushed": true,
+  "passed": true
+}

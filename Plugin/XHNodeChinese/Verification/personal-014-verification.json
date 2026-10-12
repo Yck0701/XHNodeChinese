@@ -1,0 +1,33 @@
+{
+  "version": "0.1.4",
+  "bridge_sha256": "3cde24d6f56937a1f8eda1e7ec02e519f905eaae52a169917af848afb4d28e97",
+  "native_selftest": 0,
+  "personal_rows": 1506,
+  "personal_unique": 1485,
+  "captured_runtime_count": 85,
+  "old_exact_matches": 36,
+  "new_matches": 38,
+  "live_import": {
+    "new": 0,
+    "imported": 1,
+    "total": 23,
+    "pending": 22
+  },
+  "custom_override_widgets": [
+    {
+      "source": "Initialize Particle",
+      "display": "个人词典验证：初始化粒子"
+    }
+  ],
+  "capture_while_disabled": 145,
+  "language_roundtrip": true,
+  "scan_average_ms": 2.864549995865673,
+  "menus": {
+    "LevelEditor.MainMenu": true,
+    "AssetEditor.Niagara.MainMenu": true,
+    "AssetEditor.NiagaraScriptEditor.MainMenu": true,
+    "AssetEditor.MaterialEditor.MainMenu": true,
+    "AssetEditor.BlueprintEditor.MainMenu": true
+  },
+  "passed": true
+}

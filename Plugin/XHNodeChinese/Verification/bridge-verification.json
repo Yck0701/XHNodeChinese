@@ -1,0 +1,17 @@
+{
+  "bridge_loaded": true,
+  "bridge_error": null,
+  "native_binding_selftest": 0,
+  "menus": {
+    "LevelEditor.MainMenu": true,
+    "AssetEditor.Niagara.MainMenu": true,
+    "AssetEditor.NiagaraScriptEditor.MainMenu": true,
+    "AssetEditor.MaterialEditor.MainMenu": true,
+    "AssetEditor.BlueprintEditor.MainMenu": true
+  },
+  "english": "en",
+  "chinese": "zh-Hans-CN",
+  "dynamic_dictionary_terms": 285,
+  "tick_bound_widgets": 1,
+  "passed": true
+}

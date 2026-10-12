@@ -1,0 +1,34 @@
+{
+  "version": "0.1.8",
+  "native_selftest": 0,
+  "dynamic_toolbar_and_menu": true,
+  "manual_run": {
+    "before": 16,
+    "after": 15,
+    "written": 1,
+    "resolved": 1
+  },
+  "family_one_personal_entry": true,
+  "second_run_no_duplicates": {
+    "before": 15,
+    "after": 15,
+    "written": 0,
+    "resolved": 0
+  },
+  "numbered_override_preserved": true,
+  "bridge_manifest": {
+    "engine_sha256": {
+      "Binaries/Win64/UnrealEditor-Core.dll": "500f60a1d243d0e786c59ecf27b2cb757adfc75a817ca323d94f328e5fe67885",
+      "Binaries/Win64/UnrealEditor-CoreUObject.dll": "fb3ab6f6a38187e2617c04261973f6dfe9a1200711c90e49e416c15739049ff9",
+      "Binaries/Win64/UnrealEditor-Slate.dll": "272218456c4ec364c8c77db7f7da5e1597c3825cc1d8b36ed8956b395fb0177b",
+      "Binaries/Win64/UnrealEditor-SlateCore.dll": "ba55ada6a6ddc6a9240637f5fe853352edafbd1ca69750f14e6075a55fad04ed",
+      "Binaries/Win64/UnrealEditor-ApplicationCore.dll": "7709d1cd4a46f97e4d05b1aaf19ca00c0a2e7bfbce39fe50decaf3749fc141ff",
+      "Binaries/Win64/UnrealEditor-InputCore.dll": "4769101bb8e345845904c3ee92ec6757925e415959688381e6f7a3aea0b10840"
+    },
+    "bridge_file": "XHSlateBridge018.dll",
+    "bridge_sha256": "b8d9454e642560c64dcf569746f89b1dd2976c8e62ae114e0b62dc9b4ec16c28"
+  },
+  "actual_toolbar_text_verified": true,
+  "reload_no_duplicate_entries": true,
+  "passed": true
+}

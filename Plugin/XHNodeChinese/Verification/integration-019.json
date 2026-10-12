@@ -1,0 +1,15 @@
+{
+  "version": "0.1.9",
+  "native_selftest": true,
+  "dynamic_controls": true,
+  "response_auto_applied": true,
+  "long_dictionary_separate": true,
+  "result": {
+    "terms": 1,
+    "long_texts": 1,
+    "skipped": [],
+    "preserved": 0
+  },
+  "hot_reload_persists_request": true,
+  "passed": true
+}

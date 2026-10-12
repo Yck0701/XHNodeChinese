@@ -1,0 +1,97 @@
+{
+  "language": "zh-Hans-CN",
+  "menu_exists": true,
+  "plugin_path": "H:\\GPT\\XH\\output\\XHNodeChinese",
+  "live_entries_checked": 4961,
+  "live_entry_failures": [],
+  "samples": [
+    {
+      "category": "Niagara",
+      "namespace": "UObjectDisplayNames",
+      "key": "NiagaraDataChannelHandler:SubscribeToDataChannelUpdates_WithContext:AccessContext",
+      "source": "Access Context",
+      "expected": "访问上下文",
+      "actual": "访问上下文",
+      "passed": true
+    },
+    {
+      "category": "Niagara",
+      "namespace": "UObjectDisplayNames",
+      "key": "NiagaraDataChannelLibrary:GetDataChannelElementCount_WithContext:AccessContext",
+      "source": "Access Context",
+      "expected": "访问上下文",
+      "actual": "访问上下文",
+      "passed": true
+    },
+    {
+      "category": "Niagara",
+      "namespace": "UObjectDisplayNames",
+      "key": "NiagaraDataChannelLibrary:GetMembersInNDCAccessContextInstance:AccessContext",
+      "source": "Access Context",
+      "expected": "访问上下文",
+      "actual": "访问上下文",
+      "passed": true
+    },
+    {
+      "category": "Material",
+      "namespace": "Engine.BufferVisualizationMaterials",
+      "key": "BaseColorMat",
+      "source": "Base Color",
+      "expected": "基础颜色",
+      "actual": "基础颜色",
+      "passed": true
+    },
+    {
+      "category": "Material",
+      "namespace": "MaterialShared",
+      "key": "BaseColor",
+      "source": "Base Color",
+      "expected": "基础颜色",
+      "actual": "基础颜色",
+      "passed": true
+    },
+    {
+      "category": "Material",
+      "namespace": "UObjectDisplayNames",
+      "key": "UsdConversionBlueprintContext:ConvertLandscapeProxyActorMaterial:Actor",
+      "source": "Actor",
+      "expected": "Actor 对象",
+      "actual": "Actor 对象",
+      "passed": true
+    },
+    {
+      "category": "Blueprint",
+      "namespace": "K2Node",
+      "key": "Branch",
+      "source": "Branch",
+      "expected": "分支",
+      "actual": "分支",
+      "passed": true
+    },
+    {
+      "category": "Blueprint",
+      "namespace": "MovieGraphNode",
+      "key": "NodeName_Branch",
+      "source": "Branch",
+      "expected": "分支",
+      "actual": "分支",
+      "passed": true
+    },
+    {
+      "category": "Blueprint",
+      "namespace": "MoviePipelineEdGraphNodeBase",
+      "key": "PinTypeTooltip_Branch",
+      "source": "Branch",
+      "expected": "分支",
+      "actual": "分支",
+      "passed": true
+    }
+  ],
+  "csv_hot_reload": true,
+  "bilingual": true,
+  "disabled_language_restored": true,
+  "disabled_override_removed": true,
+  "invalid_csv_rejected": true,
+  "pending_exported": true,
+  "success": true
+}
