@@ -73,7 +73,7 @@ python publish.py shared --manifest release/manifest.json --shared shared --vers
 源码运行需要 Python + tkinter。便携 EXE 用户不需要 Python。安装 PyInstaller 后运行：
 
 ```text
-python -m PyInstaller --noconfirm --clean --onedir --windowed --name XHPluginManager app.py
+python -m PyInstaller --noconfirm --clean --onedir --windowed --name XHPluginManager --icon assets/translate.ico --add-data "assets;assets" app.py
 ```
 
 把 `README.md`、`PUBLISHING.md` 和 `release` 文件夹复制到 EXE 同级，再压缩整个 `dist/XHPluginManager` 文件夹。不能只分发 EXE，`_internal` 文件夹也是运行必需的。

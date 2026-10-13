@@ -122,6 +122,22 @@ def preferred(result):
     return None,None
 
 
+def install_choice(local,remote=None,download_only=False):
+    """Use the newest usable archive, or keep an equally/newer installed plugin."""
+    packages=sorted((item for item in local if item['kind']=='package'),
+                    key=lambda item:(c.version_tuple(item['version']),item.get('verified',False)),reverse=True)
+    item=packages[0] if packages else None
+    origin='local' if item else None
+    if remote and (not item or c.newer_version(remote['version'],item['version']) or
+                   (c.version_tuple(remote['version'])==c.version_tuple(item['version']) and not item.get('verified'))):
+        origin,item='cloud',remote
+    installed=max((item for item in local if item['kind']=='installed'),
+                  key=lambda item:c.version_tuple(item['version']),default=None)
+    if not download_only and installed and (not item or not c.newer_version(item['version'],installed['version'])):
+        return 'installed',installed
+    return origin,item
+
+
 def reuse(item,output):
     """Revalidate immediately before returning or copying an existing local archive."""
     source=Path(item['path'])

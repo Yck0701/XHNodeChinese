@@ -230,8 +230,9 @@ class Session:
         self.worker=threading.Thread(target=work,daemon=True);self.worker.start()
         return True
 
-    def poll(self):
+    def poll(self, max_batches=None):
         changed=False
+        applied_batches=0
         while not self.events.empty():
             request_id,phase,error=self.events.get_nowait()
             if self.state['phase']=='sending' and request_id==self.state.get('request_id'):
@@ -297,12 +298,14 @@ class Session:
                              total=len(request['items']),batches=len(accepted))
                 core.write_json(folder/'applied.json',receipt)
                 self._file_stamps[path.name]=stamp;changed=True
+                applied_batches+=1
             except Exception as error:
                 self.state.update(phase='error',error=str(error));self.persist()
                 # Editing conflicts may resolve without changing the response file.
                 if isinstance(error,(ValueError,TypeError,KeyError)):
                     self._file_stamps[path.name]=stamp
             if self.state['phase']=='done':break
+            if max_batches is not None and applied_batches>=max_batches:break
         return changed
 
     def cancel(self):

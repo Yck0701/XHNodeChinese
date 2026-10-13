@@ -16,6 +16,8 @@ import editor_process
 import interface
 import community
 import build_preflight
+import branding
+import engine_discovery
 
 BASE=Path(sys.executable).parent if getattr(sys,'frozen',False) else Path(__file__).resolve().parent
 STATE=Path(os.environ.get('LOCALAPPDATA',str(Path.home())))/'XHPluginManager'
@@ -34,13 +36,18 @@ def find_vcvars():
 
 class App(tk.Tk):
     def __init__(self):
+        branding.set_process_identity()
         super().__init__()
+        branding.set_window_icon(self)
         self.title(core.PRODUCT_NAME+' · 安装、共享词典与编译')
         interface.configure(self)
         self.messages=queue.Queue(); self.busy=False; self.feed=None; self.feed_origin=''
         self.checking=False
         self.closing=False
         self.update_prompts=set()
+        self.compatibility_prompts=set()
+        self.discovery_timer=None;self.setting_engine=False
+        self.last_project_engine=''
         self.info=None; self.checked_engine=''; self.selected=None
         settings={}
         try: settings=core.json_read(STATE/'settings.json')
@@ -60,16 +67,22 @@ class App(tk.Tk):
         self.msvc=tk.StringVar(value=settings.get('msvc','14.50'))
         self.out=tk.StringVar(value=settings.get('output',str(Path.home()/'Documents/XHBuilds')))
         self.auto_check=tk.BooleanVar(value=bool(settings.get('auto_check',True)))
+        self.auto_engine=tk.BooleanVar(value=bool(settings.get('auto_engine',True)))
+        self.engine_status=tk.StringVar(value='选择工程后可自动识别引擎，也可手动指定。')
         self.selection=tk.StringVar(value='both')
         self.status=tk.StringVar(value='先选择工程和引擎。已有用户可直接备份词典。')
         self.cloud_status=tk.StringVar(value='编译前检查云端；官方与定制投稿分区保存，审核通过后共享。')
         self.last_compiled=None
         self.build_cancel=None
         interface.build(self,core,BASE)
+        self.project.trace_add('write',self.project_changed)
+        self.engine.trace_add('write',self.engine_changed)
         self.protocol('WM_DELETE_WINDOW',self.close)
         if not self.closing:self.after(100,self.pump)
         if self.auto_check.get():
             self.after(450,self.startup_check)
+        elif self.auto_engine.get() and self.project.get():
+            self.after(450,lambda:self.detect_project_engine(run_check=False))
 
     def path_row(self,parent,label,var,browse,label_width=13,**kw):
         row=ttk.Frame(parent);row.pack(fill='x',pady=3)
@@ -86,6 +99,84 @@ class App(tk.Tk):
         if p:var.set(p)
 
     def choose_project(self): self.choose_file(self.project,[('UE 工程','*.uproject')])
+
+    def engine_changed(self,*_):
+        if not self.setting_engine:
+            self.auto_engine.set(False)
+            self.engine_status.set('手动指定引擎；点“从工程识别”可恢复自动识别。')
+
+    def project_changed(self,*_):
+        if self.discovery_timer:self.after_cancel(self.discovery_timer)
+        if not self.auto_engine.get():return
+        self.last_project_engine=self.engine.get() or self.last_project_engine
+        self.selected=None;self.info=None
+        self.setting_engine=True
+        try:self.engine.set('')
+        finally:self.setting_engine=False
+        self.engine_status.set('正在识别工程引擎…')
+        self.discovery_timer=self.after(650,self.detect_project_engine)
+
+    def set_discovered_engine(self,item):
+        self.setting_engine=True
+        try:self.engine.set(item['path'])
+        finally:self.setting_engine=False
+        self.engine_status.set('已识别 UE '+item['version']+' · '+' / '.join(item['reasons']))
+        self.log(self.engine_status.get()+'：'+item['path'])
+
+    def select_engine_candidate(self,candidates):
+        dialog=tk.Toplevel(self);dialog.title('选择工程使用的 UE');dialog.transient(self)
+        dialog.geometry('840x330');dialog.minsize(680,300)
+        ttk.Label(dialog,text='无法唯一确定引擎，请选择平时打开这个工程的 UE。',padding=14).pack(anchor='w')
+        box=tk.Listbox(dialog,font=('Microsoft YaHei UI',10),height=8,exportselection=False)
+        box.pack(fill='both',expand=True,padx=14)
+        for item in candidates:box.insert('end','UE '+item['version']+'  |  '+item['path']+'  |  '+' / '.join(item['reasons']))
+        selected=[]
+        def accept():
+            if box.curselection():selected.append(candidates[box.curselection()[0]]);dialog.destroy()
+        row=ttk.Frame(dialog,padding=14);row.pack(fill='x')
+        ttk.Button(row,text='使用所选引擎',command=accept).pack(side='right')
+        ttk.Button(row,text='取消',command=dialog.destroy).pack(side='right',padx=8)
+        dialog.grab_set();self.wait_window(dialog)
+        return selected[0] if selected else None
+
+    def detect_project_engine(self,manual=False,run_check=True):
+        self.discovery_timer=None
+        if self.closing:return False
+        if manual:self.auto_engine.set(True)
+        if not self.auto_engine.get():return bool(self.engine.get())
+        if self.busy:
+            self.discovery_timer=self.after(650,lambda:self.detect_project_engine(manual,run_check));return False
+        project=self.project.get()
+        old_engine=self.engine.get()
+        self.setting_engine=True
+        try:self.engine.set('')
+        finally:self.setting_engine=False
+        try:
+            result=engine_discovery.discover(project)
+            item=result['selected']
+            if item is None and result['candidates']:item=self.select_engine_candidate(result['candidates'])
+            if project!=self.project.get():return False
+            if item is None:
+                self.engine_status.set('未确定引擎，请手动选择该工程使用的 UE 文件夹。');return False
+            self.set_discovered_engine(item)
+            # Preserve an intentionally different build target / SDK.
+            previous=old_engine or self.last_project_engine
+            follows=not self.build_engine.get()
+            try:follows=follows or (bool(previous) and core.engine_path(self.build_engine.get())==core.engine_path(previous))
+            except ValueError:pass
+            if follows:self.build_engine.set(item['path'])
+            self.last_project_engine=item['path']
+            self.save_settings()
+            if run_check and self.auto_check.get():self.check(True,automatic=True,compatibility=True)
+            return True
+        except (OSError,ValueError,TypeError) as error:
+            self.engine_status.set('未能识别：'+str(error))
+            if manual:messagebox.showinfo('请选择工程或手动指定引擎',str(error),parent=self)
+            return False
+
+    def toggle_auto_engine(self):
+        if self.auto_engine.get():self.detect_project_engine()
+        self.save_settings()
     def choose_feed(self): self.choose_file(self.feed_var,[('更新清单','manifest.json')])
     def use_bundled(self):
         path=BASE/'release/manifest.json'
@@ -99,7 +190,7 @@ class App(tk.Tk):
 
     def save_settings(self):
         core.write_json(STATE/'settings.json',dict(project=self.project.get(),engine=self.engine.get(),feed=self.feed_var.get(),
-            sdk=self.sdk.get(),build_engine=self.build_engine.get(),vcvars=self.vcvars.get(),python=self.python.get(),msvc=self.msvc.get(),output=self.out.get(),source_package=self.source_package.get(),auto_check=self.auto_check.get()))
+            sdk=self.sdk.get(),build_engine=self.build_engine.get(),vcvars=self.vcvars.get(),python=self.python.get(),msvc=self.msvc.get(),output=self.out.get(),source_package=self.source_package.get(),auto_check=self.auto_check.get(),auto_engine=self.auto_engine.get()))
 
     def start(self,fn,done=lambda result:None,quiet=False):
         if self.busy:
@@ -142,36 +233,58 @@ class App(tk.Tk):
     def startup_check(self):
         """Check in the background, then ask before downloading available updates."""
         if self.busy: return
+        if self.project.get() and self.auto_engine.get():self.detect_project_engine(run_check=False)
         self.status.set('正在后台检查更新清单…')
-        self.check(bool(self.engine.get()),automatic=True)
+        self.check(bool(self.engine.get()),automatic=True,compatibility=True)
 
-    def check(self,with_engine=True,automatic=False,notify=True):
-        if self.checking:return
+    def check(self,with_engine=True,automatic=False,notify=True,compatibility=False):
+        if self.checking:
+            if automatic:self.after(650,lambda:self.check(with_engine,automatic,notify,compatibility) if self.auto_check.get() and not self.closing else None)
+            return
         source=self.feed_var.get();engine=self.engine.get();project=self.project.get()
+        output=self.out.get();source_package=self.source_package.get()
         def task():
-            self.log('读取更新清单：'+source)
-            feed=core.load_feed(source,STATE/'cache',allow_cached=True)
-            info=None;engine_error=''
+            info=None;engine_error='';local=[];feed=None;feed_error=''
             if with_engine and engine:
-                try:info=core.cached_engine_info(engine,STATE/'cache',self.log)
+                try:
+                    info=core.cached_engine_info(engine,STATE/'cache',self.log)
+                    minimum=community.source_version(source_package) if source_package and Path(source_package).is_file() else '0'
+                    local=build_preflight.local_candidates(info,minimum,output,STATE/'cache',BASE/'release',project,log=self.log)
                 except Exception as error:engine_error=str(error)
-            return feed,info,engine_error
+            self.log('读取更新清单：'+source)
+            try:feed=core.load_feed(source,STATE/'cache',allow_cached=True)
+            except Exception as error:feed_error=str(error)
+            return feed,info,engine_error,local,feed_error
         def done(result):
-            if source!=self.feed_var.get() or engine!=self.engine.get() or project!=self.project.get():
+            if (source,engine,project,output,source_package)!=(self.feed_var.get(),self.engine.get(),self.project.get(),self.out.get(),self.source_package.get()):
                 self.status.set('选择已改变，请重新检查更新。');return
-            self.feed,self.info,engine_error=result;self.feed_origin=source;self.checked_engine=engine
-            matched=core.matching(self.feed,self.info) if self.info else []
+            self.feed,self.info,engine_error,local,feed_error=result;self.feed_origin=source;self.checked_engine=engine
+            matched=core.matching(self.feed,self.info) if self.info and self.feed else []
             self.selected=matched[0] if matched else None
             self.package_label.set(('找到匹配包：'+self.selected['label']) if self.selected else '没有匹配包，或尚未选择引擎。可以使用编译页生成测试包。')
-            s=self.feed['shared'];self.shared_label.set('共享版本：'+s['version']+' · '+str(s.get('terms','?'))+' 条词典 / '+str(s.get('long_texts','?'))+' 段长文本')
+            if self.feed:
+                s=self.feed['shared'];self.shared_label.set('共享版本：'+s['version']+' · '+str(s.get('terms','?'))+' 条词典 / '+str(s.get('long_texts','?'))+' 段长文本')
+                summary=core.update_summary(self.feed,project,self.selected)
+            else:
+                summary=dict(manager='当前 v'+core.VERSION,plugin='尚未确认兼容版本',shared='云端检查未完成',manager_update=False)
+            installed=next((item for item in local if item['kind']=='installed'),None)
+            if installed:
+                summary['plugin']='已适配 v'+installed['version']
+                self.package_label.set('当前 UE '+self.info['version']+' 已安装匹配插件 v'+installed['version']+'，无需重新编译。')
+            elif local:
+                summary['plugin']='本地可用 v'+local[0]['version']
+                self.package_label.set('本地已有匹配包 v'+local[0]['version']+'，无需重复编译。')
             self.log(self.package_label.get())
-            summary=core.update_summary(self.feed,project,self.selected)
             for key,var in self.card_vars.items():var.set(summary[key])
             self.manager_button.configure(state='normal' if summary['manager_update'] else 'disabled')
-            prefix='离线缓存，尚未确认最新版本' if self.feed.get('_cached') else '检查完成'
+            offline=bool(feed_error or (self.feed and self.feed.get('_cached')))
+            prefix='云端检查未完成，本地检测仍有效' if offline else '检查完成'
             self.status.set(prefix+' · '+('引擎路径需检查：'+engine_error if engine_error else '工具、插件与共享词库状态已更新。'))
-            if self.feed.get('_cached'):self.log('在线检查失败：'+self.feed['_check_error'])
-            if notify:self.offer_updates(summary,automatic)
+            if offline:self.log('在线检查失败：'+(feed_error or self.feed['_check_error']))
+            if compatibility and self.info and not engine_error and notify:
+                self.offer_engine_compatibility(local,offline,automatic)
+            if notify and self.feed and not self.busy:
+                self.offer_updates(summary,automatic,exclude=('plugin',) if compatibility and not installed else ())
         if automatic:
             self.checking=True
             def work():
@@ -180,8 +293,9 @@ class App(tk.Tk):
             threading.Thread(target=work,daemon=True).start()
         else:self.start(task,done)
 
-    def offer_updates(self,summary,automatic=False):
+    def offer_updates(self,summary,automatic=False,exclude=()):
         updates=core.available_updates(self.feed,self.project.get(),self.selected,summary)
+        updates=[item for item in updates if item['kind'] not in exclude]
         if not updates or self.busy or self.closing:return
         key=(self.feed_origin,self.project.get(),self.engine.get(),tuple((u['kind'],u['item']['version'],u['item']['sha256']) for u in updates))
         if automatic and key in self.update_prompts:return
@@ -204,6 +318,37 @@ class App(tk.Tk):
                 if messagebox.askyesno('新版工具已下载','是否现在打开新版管理器？\n当前管理器会退出，UE 保持运行。\n插件和词库如有更新，可在新版管理器中继续安装。',parent=self):self.open_manager(manager)
             else:messagebox.showinfo('下载完成','更新包已下载并校验。\n插件请点击“安装 / 更新插件”；词库请点击“更新共享词库”。',parent=self)
         self.start(task,done)
+
+    def offer_engine_compatibility(self,local,offline,automatic=False):
+        """A startup check never starts a compiler or installs files by itself."""
+        if self.busy or self.closing or (automatic and not self.auto_check.get()):return
+        if any(item['kind']=='installed' for item in local):
+            self.cloud_status.set('当前工程插件已匹配 UE '+self.info['version']+'，无需重新编译。');return
+        key=(self.project.get(),self.engine.get(),self.feed_var.get(),self.source_package.get(),
+             tuple(sorted(self.info['sha256'].items())))
+        if automatic and key in self.compatibility_prompts:return
+        if not local and not self.selected and offline:
+            self.cloud_status.set('本地未找到匹配包；云端尚未确认，请重试检查更新。')
+            self.package_label.set(self.cloud_status.get());return
+        self.compatibility_prompts.add(key)
+        if local:
+            item=local[0];output=self.out.get()
+            if messagebox.askyesno('本地已有适配包','当前 UE '+self.info['version']+' 已有插件 v'+item['version']+
+                                  '\n无需重新编译。是否打开现有安装包目录？',parent=self):
+                self.start(lambda:build_preflight.reuse(item,output),lambda p:self.open_path(Path(p).parent))
+            return
+        if self.selected:
+            item=dict(self.selected)
+            if messagebox.askyesno('云端已有适配包','当前 UE '+self.info['version']+' 已有兼容插件 v'+item['version']+
+                                  '\n无需编译。是否下载？下载后可点“安装 / 更新插件”。',parent=self):
+                self.start(lambda:core.fetch(item,STATE/'cache'),lambda p:self.status.set('适配包已下载，请点击“安装 / 更新插件”。'))
+            return
+        self.cloud_status.set('当前 UE '+self.info['version']+' 暂无匹配包，需要编译适配。')
+        self.package_label.set(self.cloud_status.get())
+        if not messagebox.askyesno('是否编译当前 UE 的插件？',self.cloud_status.get()+'\n引擎：'+self.engine.get()+
+                                  '\n\n是否进入编译确认？只编译本插件，不编译整个引擎。',parent=self):return
+        self.build_engine.set(self.engine.get());self.navigate(2)
+        self.check_versions(then_compile=True)
 
     def open_manager(self,path):
         try:
@@ -255,29 +400,81 @@ class App(tk.Tk):
         self.start_file_update(project,task,lambda data:core.update_shared_defaults(project,*data),
                                lambda p:(self.log('共享词库已更新，备份：'+str(p)),self.check(True,notify=False)))
 
-    def require_package(self):
-        if not self.selected or self.checked_engine!=self.engine.get() or self.feed_origin!=self.feed_var.get():
-            messagebox.showinfo('先检查更新','请先选择引擎并点击“检查更新”。',parent=self);return False
-        return True
-
-    def install(self):
-        if not self.require_package():return
-        project=self.project.get();item=dict(self.selected);engine=self.engine.get()
-        if not messagebox.askyesno('安装插件','安装会保留个人词典，旧插件会备份。\n继续安装到工程：'+project+'？',parent=self):return
+    def resolve_install_package(self,callback,download_only=False):
+        """Resolve from actual engine and project files, not the cloud-only UI selection."""
+        if self.busy:
+            messagebox.showinfo('正在处理','请等待当前操作完成。',parent=self);return
+        if not self.engine.get().strip():
+            messagebox.showinfo('选择引擎','尚未确定工程使用的 UE，请点“从工程识别”或手动选择引擎目录。',parent=self);return
+        engine=self.engine.get();project=self.project.get();source=self.feed_var.get();output=self.out.get()
+        try:
+            core.engine_path(engine)
+            if not download_only:core.project_path(project)
+        except ValueError as error:
+            messagebox.showinfo('路径需检查',str(error),parent=self);return
+        # A previously read feed is still scoped to its source. Engine compatibility
+        # and the installed plugin are revalidated even when the UI says "adapted".
+        feed=self.feed if self.feed_origin==source else None
         def task():
             info=core.engine_info(engine,self.log)
-            if not core.matching({'plugins':[item]},info):raise ValueError('引擎在检查后发生变化，请重新检查。')
-            self.log('下载并校验安装包…'); archive=core.fetch(item,STATE/'cache')
-            return archive,info
-        self.start_file_update(project,task,lambda data:core.install(project,*data,self.log),
-                               lambda p:(self.log('安装完成，备份：'+str(p)),self.check(True,notify=False)))
+            local=build_preflight.local_candidates(info,'0',output,STATE/'cache',BASE/'release',project,extra_feed=feed,log=self.log)
+            current_feed=feed;error=''
+            if current_feed is None and (not local or (download_only and not any(p['kind']=='package' for p in local))):
+                try:current_feed=core.load_feed(source,STATE/'cache',allow_cached=True)
+                except (OSError,ValueError,KeyError,TypeError) as exc:error=str(exc)
+            matches=core.matching(current_feed,info) if current_feed else []
+            remote=max(matches,key=lambda item:core.version_tuple(item['version']),default=None)
+            origin,item=build_preflight.install_choice(local,remote,download_only)
+            return origin,item,info,local,error or ('离线缓存，尚未确认最新版本' if current_feed and current_feed.get('_cached') else '')
+        def ready(result):
+            if (engine,project,source,output)!=(self.engine.get(),self.project.get(),self.feed_var.get(),self.out.get()):
+                self.status.set('选择已改变，本次安装／下载已取消，请重新操作。');return
+            origin,item,info,local,error=result
+            if item:
+                callback(origin,item,info);return
+            if download_only and any(p['kind']=='installed' for p in local):
+                messagebox.showinfo('插件已经适配','当前工程已安装匹配插件，但没有可下载或复制的安装包。\n可直接使用当前插件；需要 ZIP 时请到编译页生成。',parent=self);return
+            detail=('本地没有匹配包，云端检查未完成，请重试“检查更新”。\n'+error if error else
+                    '当前更新清单及本地目录中没有匹配包。\n请到“引擎编译”页检测或编译当前引擎的插件。')
+            self.status.set('UE '+info['version']+' 已识别，但暂无可安装包。')
+            messagebox.showinfo('未找到适配包','已识别 UE '+info['version']+'。\n'+detail,parent=self)
+        self.start(task,ready)
+
+    def install(self):
+        def ready(origin,item,info):
+            project=self.project.get();engine=self.engine.get()
+            if origin=='installed':
+                text='当前工程已安装匹配 UE '+info['version']+' 的插件 v'+item['version']+'，无需重复安装或编译。'
+                self.status.set(text);self.package_label.set(text)
+                messagebox.showinfo('当前插件已适配',text,parent=self);return
+            item=dict(item)
+            detail='安装会保留个人词典，旧插件会备份。\n'
+            if origin=='local':
+                detail+='使用本地安装包：'+item['path']+'\n'
+                if not item.get('verified'):detail+='该包为本地编译包，尚未经过发布验证。\n'
+            if not messagebox.askyesno('安装插件',detail+'继续安装到工程：'+project+'？',parent=self):return
+            def task():
+                current=core.engine_info(engine,self.log)
+                if current!=info:raise ValueError('引擎在检查后发生变化，请重新检查。')
+                if origin=='local':
+                    archive=core.fetch(dict(item,_location=item['path']),STATE/'cache')
+                    if build_preflight.package_info(archive,current,item['version'])!=item['version']:
+                        raise ValueError('本地安装包不再匹配，请重新检查。')
+                else:
+                    if not core.matching({'plugins':[item]},current):raise ValueError('引擎与安装包不匹配。')
+                    self.log('下载并校验安装包…');archive=core.fetch(item,STATE/'cache')
+                return archive,current
+            self.start_file_update(project,task,lambda data:core.install(project,*data,self.log),
+                                   lambda p:(self.log('安装完成，备份：'+str(p)),self.check(True,notify=False)))
+        self.resolve_install_package(ready)
 
     def download_plugin(self):
-        if not self.require_package():return
-        path=filedialog.asksaveasfilename(parent=self,defaultextension='.zip',initialfile=Path(self.selected['url']).name)
-        if path:
-            item=dict(self.selected)
-            self.start(lambda:core.download(item['_location'],path,item['sha256']),lambda p:self.log('已下载：'+str(p)))
+        def ready(origin,item,info):
+            item=dict(item);location=item['path'] if origin=='local' else item['_location']
+            filename=item.get('filename') or Path(item.get('url',location)).name
+            path=filedialog.asksaveasfilename(parent=self,defaultextension='.zip',initialfile=filename)
+            if path:self.start(lambda:core.download(location,path,item['sha256']),lambda p:self.log('安装包已保存：'+str(p)))
+        self.resolve_install_package(ready,download_only=True)
 
     def backup(self):
         project=self.project.get()
@@ -351,7 +548,7 @@ class App(tk.Tk):
         def task():
             return build_preflight.probe(args['engine'],source,args['output'],STATE/'cache',BASE/'release',project,feed,self.log)
         def ready(result):
-            if args['engine']!=self.build_engine.get() or source!=self.source_package.get() or args['output']!=self.out.get():
+            if (args['engine'],source,args['output'],project,feed)!=(self.build_engine.get(),self.source_package.get(),self.out.get(),self.project.get(),self.feed_var.get()):
                 self.cloud_status.set('编译设置已改变，请重新检测版本。');return
             self.log('编译目标：'+args['engine']+' / UE '+result['engine']['version'])
             if result['cloud_error']:self.log('云端检查失败，本地检测仍有效：'+result['cloud_error'])
@@ -395,7 +592,9 @@ class App(tk.Tk):
         self.check_versions()
 
     def compile_local(self,source,args,cloud_result):
-        target=core.engine_path(args['engine']);sdk=core.engine_path(args['sdk'])
+        try:target=core.engine_path(args['engine']);sdk=core.engine_path(args['sdk'])
+        except ValueError as error:
+            messagebox.showinfo('请补全编译环境',str(error)+'\n在编译页检查“编译目标”和“完整 SDK”。',parent=self);return
         detail='编译目标：'+str(target)+'\n依赖 SDK：'+str(sdk)+'\n输出目录：'+args['output']+'\n\n'
         if target!=sdk:detail+='目标与 SDK 路径不同。生成的插件适用于上面的编译目标；如果要编译 SDK 对应引擎，请先使用“以 SDK 为编译目标”。\n\n'
         if not messagebox.askyesno('确认编译目标',detail+'本次使用独立目录。连续 5 分钟无输出或单阶段超过 20 分钟会停止，并保留日志；也可随时取消。继续？',parent=self):return

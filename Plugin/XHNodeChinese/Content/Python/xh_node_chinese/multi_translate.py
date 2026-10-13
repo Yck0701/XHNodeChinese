@@ -245,8 +245,8 @@ class Session(ct.Session):
                     self.api_errors.put(message[:600])
         self.worker = threading.Thread(target=work, daemon=True); self.worker.start(); return True
 
-    def poll(self):
-        changed = super().poll()
+    def poll(self, max_batches=None):
+        changed = super().poll(max_batches=max_batches)
         while not self.api_errors.empty():
             message = self.api_errors.get_nowait()
             if self.state['phase'] not in ('done','cancelled'):

@@ -1,7 +1,7 @@
 {
   "FileVersion": 3,
-  "Version": 26,
-  "VersionName": "0.2.15",
+  "Version": 27,
+  "VersionName": "0.2.16",
   "XHSharedDictionaryVersion": 1,
   "FriendlyName": "虚幻翻译插件",
   "Description": "用于 Niagara、材质与蓝图的界面翻译、中英文搜索和共享词库。",

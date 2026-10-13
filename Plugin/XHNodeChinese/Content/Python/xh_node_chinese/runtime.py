@@ -9,9 +9,9 @@ import unreal
 from . import core
 from .hotkey import ForegroundHotkey
 
-RUNTIME_VERSION = '0.2.15'
+RUNTIME_VERSION = '0.2.16'
 DOCS_URL = 'https://365.kdocs.cn/l/cpi4ASG5Izsi?source=wiki'
-PLUGIN = Path(__file__).resolve().parents[3]
+PLUGIN = Path(__file__).absolute().parents[3]
 SAVE = Path(unreal.Paths.convert_relative_path_to_full(unreal.Paths.project_saved_dir())) / 'XHNodeChinese'
 _catalogue = None
 _state = None
@@ -213,7 +213,7 @@ def edit_dictionary():
 
 def import_stamp():
     return tuple((p.stat().st_mtime_ns,p.stat().st_size) if p.exists() else None
-                 for p in (SAVE/'Live.csv',SAVE/'Pending.csv',SAVE/'LongText.csv'))
+                 for p in (SAVE/'Live.csv',SAVE/'Pending.csv',SAVE/'LongText.csv',SAVE/'Indexed.csv'))
 
 
 def toggle_capture():
@@ -754,7 +754,7 @@ def tick(delta):
         try:
             changes=[]
             for session in (codex_session(),external_session()):
-                try:changes.append(session.poll())
+                try:changes.append(session.poll(max_batches=1))
                 except Exception as error:
                     session.state.update(phase='error',error=str(error));session.persist();changes.append(False)
             codex_changed,external_changed=changes
@@ -797,7 +797,9 @@ def tick(delta):
             unreal.log_error('[XHNodeChinese] Dictionary not applied; previous resource retained.\n' + message)
             _last_error = message
     try:
-        if state()['capture_untranslated'] and state()['live_export'] or import_stamp()!=_last_import_stamp:
+        if ((state()['capture_untranslated'] and state()['live_export'] and
+             (_bridge is None or _bridge.dll.XH_CurrentCount()>0 or
+              (_last_live_report or {}).get('automatic',0)>=100)) or import_stamp()!=_last_import_stamp):
             live_sync(capture=state()['live_export'],automatic=None if state()['capture_untranslated'] else False)
         _live_error = None
     except Exception as error:
@@ -811,6 +813,8 @@ def startup():
     global _tick_handle, _bridge, _bridge_error, _preloaded, _indexed_terms
     if _tick_handle is not None:
         return
+    core.no_links(SAVE)
+    core.no_links(PLUGIN)
     SAVE.mkdir(parents=True, exist_ok=True)
     register_menus()
     _indexed_terms={r['Source']:r['Translation'] for r in core.load_dictionary(SAVE/'IndexedTranslations.csv')}

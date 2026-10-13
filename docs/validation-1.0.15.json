@@ -1,0 +1,14 @@
+{
+  "manager_version": "1.0.15",
+  "plugin_version": "0.2.16",
+  "manager_tests": 84,
+  "manager_tests_passed": true,
+  "gui_install_button_verified": true,
+  "plugin_isolated_runs": 6,
+  "plugin_install_restore_runs": 6,
+  "verified_scopes": [
+    "official UE 5.8.3",
+    "custom UE 5.8.3"
+  ],
+  "limitations": "Verification covers tested projects and configurations, not all third-party combinations."
+}

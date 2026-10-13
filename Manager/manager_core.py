@@ -23,7 +23,7 @@ import zipfile
 SOURCE_REPOSITORY = 'https://github.com/Yck0701/XHNodeChinese'
 REPOSITORY = 'https://github.com/Yck0701/XHNodeChinese-new'
 DEFAULT_FEED = REPOSITORY + '/releases/latest/download/manifest.json'
-VERSION = '1.0.11'
+VERSION = '1.0.15'
 PRODUCT_NAME = '虚幻翻译插件'
 DOCS_URL = 'https://365.kdocs.cn/l/cpi4ASG5Izsi?source=wiki'
 PROTECTED = ('Plugins/XHNodeChinese/Dictionaries/User.csv', 'Saved/XHNodeChinese/LongText.csv')
@@ -112,7 +112,12 @@ def cached_engine_info(path, cache, log=lambda _: None):
 
 
 def project_path(path):
-    p = Path(path).expanduser().resolve()
+    raw = Path(os.path.abspath(Path(path).expanduser()))
+    # Inspect the user-selected path before resolve() erases link information.
+    for part in (raw, *raw.parents):
+        if part.is_symlink() or (hasattr(part, 'is_junction') and part.is_junction()):
+            raise ValueError('工程路径不能是符号链接或目录联接，请选择真实工程目录。')
+    p = raw.resolve()
     if p.suffix.lower() == '.uproject' and p.is_file(): return p.parent
     if p.is_dir() and any(p.glob('*.uproject')): return p
     raise ValueError('请选择工程的 .uproject 文件或其所在文件夹。')

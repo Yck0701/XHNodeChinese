@@ -145,7 +145,9 @@ class Bridge:
         self.dll.XH_AckCapture(count)
 
     def tick(self):
-        self.dll.XH_Tick()
+        # New bridges spread refreshes over frames; older adapters remain loadable.
+        if hasattr(self.dll,'XH_Slice'):self.dll.XH_Slice()
+        else:self.dll.XH_Tick()
 
     @property
     def count(self):

@@ -5,7 +5,7 @@ import os
 import re
 import tempfile
 import time
-from collections import Counter
+from collections import Counter, OrderedDict
 from pathlib import Path
 from . import locres
 
@@ -19,16 +19,42 @@ PATTERNS = [
 ]
 
 
+def no_links(path):
+    """Do not let a redirected plugin/Saved directory write into another project."""
+    path = Path(os.path.abspath(path))
+    for item in (path, *path.parents):
+        try:
+            # UE embeds Python versions predating Path.is_junction().
+            reparse = bool(getattr(item.lstat(), 'st_file_attributes', 0) & 0x400)
+        except FileNotFoundError:
+            reparse = False
+        if item.is_symlink() or reparse:
+            raise ValueError('拒绝写入符号链接或目录联接：' + str(item))
+
+
+def file_stamp(path):
+    try:
+        s = Path(path).stat()
+        return s.st_size, s.st_mtime_ns, s.st_ctime_ns, s.st_ino
+    except FileNotFoundError:
+        return None
+
+
 def atomic_write(path, data):
     path = Path(path)
+    no_links(path)
     path.parent.mkdir(parents=True, exist_ok=True)
-    with tempfile.NamedTemporaryFile(dir=path.parent, delete=False) as stream:
-        temporary = Path(stream.name)
-        stream.write(data)
+    temporary = None
     try:
+        with tempfile.NamedTemporaryFile(dir=path.parent, delete=False) as stream:
+            temporary = Path(stream.name)
+            stream.write(data)
+            stream.flush()
+            os.fsync(stream.fileno())
+        no_links(path)
         os.replace(temporary, path)
     finally:
-        if temporary.exists():
+        if temporary is not None and temporary.exists():
             temporary.unlink()
 
 
@@ -94,7 +120,30 @@ def placeholders(value):
     return Counter(braces + printf)
 
 
+_dictionary_cache = OrderedDict()
+
+
 def load_dictionary(path, include_empty=False):
+    """Cache parsed rows only while the file identity and timestamps match."""
+    path = Path(path)
+    key = (str(path.absolute()), bool(include_empty))
+    before = file_stamp(path)
+    cached = _dictionary_cache.get(key)
+    if cached is not None and cached[0] == before:
+        _dictionary_cache.move_to_end(key)
+        return [dict(zip(FIELDS, row)) for row in cached[1]]
+    rows = _read_dictionary(path, include_empty)
+    if before != file_stamp(path):
+        raise RuntimeError(path.name + ' 正在保存，稍后重试')
+    # Immutable cached values cannot be poisoned by callers editing returned rows.
+    _dictionary_cache[key] = (before, tuple(tuple(row[f] for f in FIELDS) for row in rows))
+    _dictionary_cache.move_to_end(key)
+    while len(_dictionary_cache) > 12:
+        _dictionary_cache.popitem(last=False)
+    return rows
+
+
+def _read_dictionary(path, include_empty=False):
     """Accept comments, Key/Value, headerless pairs, and legacy named columns."""
     from itertools import chain
     path = Path(path)

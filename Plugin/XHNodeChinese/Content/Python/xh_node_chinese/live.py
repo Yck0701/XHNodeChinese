@@ -66,12 +66,22 @@ class LiveSession:
         self.pending=0
         self.total=0
         self.imported=0
+        self._sync_key=None
+        self._known_snapshot=None
 
     def sync(self,observed,known,translator=None, separate_long=False):
         from . import personal
         from .auto_translate import normalized
         from .long_text import eligible
         from .term_keys import canonical,Resolver
+        observed=tuple(observed)
+        sync_key=(core.file_stamp(self.path),core.file_stamp(self.plugin/'Dictionaries/User.csv'),
+                  observed,id(translator),separate_long)
+        if sync_key==self._sync_key and known==self._known_snapshot:
+            return dict(self._last_report,new=0,imported=0,automatic=0,removed=0)
+        # Failed/interrupted synchronizations are always retried.
+        self._sync_key=None
+        input_known=known
         self.save.mkdir(parents=True,exist_ok=True)
         if not self.path.exists():
             core.atomic_write(self.path,('# 待译词条：填写右列中文并保存，约三秒导入个人词典。\r\n'
@@ -141,5 +151,11 @@ class LiveSession:
         self.total=len(values)
         self.pending=sum(not value for value in values.values())
         self.imported+=imported
-        return {'new':len(additions),'imported':imported,'automatic':len(automatic),'removed':removed,'total':self.total,'pending':self.pending,
+        report={'new':len(additions),'imported':imported,'automatic':len(automatic),'removed':removed,'total':self.total,'pending':self.pending,
                 'grouped':sum(canonical(s)!=s for s in raw_candidates),'retained_filled':len(filled)}
+        if len(automatic)<100:
+            self._sync_key=(core.file_stamp(self.path),core.file_stamp(self.plugin/'Dictionaries/User.csv'),
+                            observed,id(translator),separate_long)
+            self._known_snapshot=dict(input_known)
+            self._last_report=report
+        return report

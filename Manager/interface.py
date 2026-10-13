@@ -2,6 +2,7 @@
 import tkinter as tk
 from tkinter import ttk
 import webbrowser
+import branding
 
 BG='#080e19'
 PANEL='#101c2e'
@@ -56,13 +57,7 @@ def configure(app):
 
 
 def logo(parent):
-    c=tk.Canvas(parent,width=62,height=62,bg=BG,highlightthickness=0)
-    c.create_polygon(31,3,56,17,56,45,31,59,6,45,6,17,outline='#246380',fill='#0d263a',width=1)
-    c.create_oval(15,15,47,47,outline=CYAN,width=2)
-    c.create_line(6,46,53,16,fill=CYAN,width=2)
-    c.create_polygon(31,18,35,28,45,31,35,34,31,44,27,34,17,31,27,28,fill='#e2fcff',outline='')
-    c.create_oval(47,12,53,18,fill=CYAN,outline='')
-    return c
+    return branding.logo(parent, BG)
 
 
 def heading(parent,number,title,description):
@@ -110,6 +105,10 @@ def build(app,core,base):
     context=ttk.Frame(main);context.pack(fill='x',pady=(0,10))
     app.path_row(context,'目标工程',app.project,app.choose_project,label_width=9)
     app.path_row(context,'虚幻引擎',app.engine,lambda:app.choose_dir(app.engine),label_width=9)
+    row=ttk.Frame(context);row.pack(fill='x',pady=(2,0))
+    ttk.Checkbutton(row,text='根据工程自动识别 UE',variable=app.auto_engine,command=app.toggle_auto_engine).pack(side='left')
+    ttk.Button(row,text='从工程识别',style='Ghost.TButton',command=lambda:app.detect_project_engine(manual=True)).pack(side='right')
+    ttk.Label(context,textvariable=app.engine_status,style='Muted.TLabel',wraplength=760).pack(anchor='w')
     ttk.Separator(main).pack(fill='x',pady=(6,14))
     footer=ttk.Frame(main);footer.pack(side='bottom',fill='x',pady=(10,0))
     statusrow=ttk.Frame(footer);statusrow.pack(fill='x')
@@ -148,20 +147,21 @@ def build(app,core,base):
     def navigate(index):
         book.select(index)
         for i,b in enumerate(buttons):b.configure(style='Active.Nav.TButton' if i==index else 'Nav.TButton')
+    app.navigate=navigate
     for i,(page,name) in enumerate(((install,'安装与更新'),(shared,'词库与备份'),(buildpage,'引擎编译'))):
         book.add(pages[i][0],text=name)
         b=ttk.Button(nav,text=f'0{i+1}   {name}',style='Nav.TButton',command=lambda i=i:navigate(i))
         b.pack(fill='x',pady=4);buttons.append(b)
     navigate(0)
 
-    heading(install,'01  /  DEPLOY','安装与更新','选择工程和引擎，检查兼容版本，然后安装。')
+    heading(install,'01  /  DEPLOY','安装与更新','选择工程，自动识别引擎；已有适配包可直接使用。')
     actions=ttk.Frame(install);actions.pack(fill='x',pady=(0,10))
-    ttk.Button(actions,text='检查更新',command=lambda:app.check(True)).pack(side='left',padx=(0,8))
+    ttk.Button(actions,text='检查更新',command=lambda:app.check(True,compatibility=True)).pack(side='left',padx=(0,8))
     ttk.Button(actions,text='安装 / 更新插件  →',style='Accent.TButton',command=app.install).pack(side='left',padx=(0,8))
     ttk.Button(actions,text='只下载安装包',command=app.download_plugin).pack(side='left')
     app.package_label=tk.StringVar(value='尚未检查匹配版本。')
     ttk.Label(install,textvariable=app.package_label,wraplength=760).pack(anchor='w',pady=(4,12))
-    ttk.Checkbutton(install,text='启动时检查更新，发现新版后询问下载',variable=app.auto_check).pack(anchor='w')
+    ttk.Checkbutton(install,text='启动时检测适配和更新，下载或编译前询问',variable=app.auto_check,command=app.save_settings).pack(anchor='w')
     app.manager_button=ttk.Button(install,text='下载并打开新版工具',command=app.update_manager,state='disabled')
     app.manager_button.pack(anchor='w',pady=(10,12))
     ttk.Separator(install).pack(fill='x',pady=(0,12))

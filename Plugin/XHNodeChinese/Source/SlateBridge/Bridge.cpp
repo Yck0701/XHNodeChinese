@@ -105,6 +105,13 @@ static std::map<std::wstring,std::wstring> LookupCache;
 static FDelegateHandle PreTickHandle;
 static double LastScan=0;
 static double WarmUntil=0;
+static bool IncrementalScan=false;
+struct FPendingWidget {
+    TWeakPtr<SWidget> Widget;
+    int Depth=0;
+    bool Overview=false, NiagaraMenu=false, GraphMenu=false, Tooltip=false;
+};
+static TArray<FPendingWidget> PendingWidgets;
 static bool Enabled = false;
 static bool Bilingual = false;
 static uint64 Revision = 0;
@@ -137,6 +144,8 @@ struct FSearchBinding {
 };
 static TMap<FNiagaraMenuAction_Generic*, FSearchBinding> SearchBindings;
 static TMap<SNiagaraStackAddSelector*, TWeakPtr<SNiagaraStackAddSelector>> SearchSelectors;
+struct FMenuCursor { int32 Index=0, Count=-1; uint64 Revision=~uint64(0); double NextScan=0; };
+static TMap<SNiagaraStackAddSelector*,FMenuCursor> MenuCursors;
 
 static bool Space(wchar_t C) { return iswspace(C) || C==0xA0 || C==0x3000; }
 static bool Word(wchar_t C) { return iswalnum(C) || C==L'_'; }
@@ -332,7 +341,7 @@ static void IndexGraphMenu(const TSharedRef<SGraphActionMenu>& Menu) {
     bool Changed=false;int32 Work=0;
     while(B.Cursor<B.Count && Work++<512){
         Changed|=IndexGraphAction(List->GetSchemaAction(B.Cursor++));
-        if(FPlatformTime::Seconds()-Now>0.003)break;
+        if(FPlatformTime::Seconds()-Now>(IncrementalScan?0.001:0.003))break;
     }
     if(B.Cursor>=B.Count){B.Cursor=0;B.NextScan=Now+0.25;}
     // GenerateFilteredItems does not execute actions (the engine guards selection).
@@ -392,8 +401,17 @@ static void IndexMenu(const TSharedRef<SNiagaraStackItemGroupAddMenu>& Menu) {
     auto Selector=Menu.Get().*TextAttribute(FSelectorTag{});
     if(!Selector)return;
     SearchSelectors.Add(Selector.Get(),Selector);
+    const auto& Items=Selector.Get()->*TextAttribute(FItemsTag{});
+    auto& Cursor=MenuCursors.FindOrAdd(Selector.Get());
+    if(Cursor.Count!=Items.Num() || Cursor.Revision!=Revision){Cursor=FMenuCursor();Cursor.Count=Items.Num();Cursor.Revision=Revision;}
+    const double Start=FPlatformTime::Seconds();
+    if(IncrementalScan && Start<Cursor.NextScan)return;
     bool Changed=false;
-    for(const auto& A:Selector.Get()->*TextAttribute(FItemsTag{}))Changed=IndexAction(A)||Changed;
+    while(Cursor.Index<Items.Num()){
+        Changed=IndexAction(Items[Cursor.Index++])||Changed;
+        if(IncrementalScan && FPlatformTime::Seconds()-Start>=0.001)break;
+    }
+    if(Cursor.Index>=Items.Num()){Cursor.Index=0;Cursor.NextScan=Start+0.5;}
     if(Changed)Selector->RefreshAllCurrentItems();
 }
 
@@ -464,6 +482,7 @@ static void GuardEditing(const TSharedRef<SInlineEditableTextBlock>& Widget) {
     EditGuards.Add(&Widget.Get(), Guard);
 }
 static void Restore() {
+    PendingWidgets.Empty();MenuCursors.Empty();
     RestoreParameterSearch();
     for(auto& Pair:GraphBindings)RestoreGraphAction(Pair.Value);
     GraphBindings.Empty();
@@ -527,7 +546,10 @@ static void VisitWidget(const TSharedRef<SWidget>& Widget, int Depth = 0, bool O
     // Cached Niagara overview cards intentionally expose no ordinary children.
     // GetAllChildren preserves their cache and exposes the owned widget tree.
     FChildren* Children = Widget->GetAllChildren();
-    if (Children) for (int32 I=0; I<Children->Num(); ++I) VisitWidget(Children->GetChildAt(I), Depth+1, Overview, NiagaraMenu, GraphMenu, Tooltip);
+    if (Children) for (int32 I=0; I<Children->Num(); ++I) {
+        if(IncrementalScan)PendingWidgets.Add({Children->GetChildAt(I),Depth+1,Overview,NiagaraMenu,GraphMenu,Tooltip});
+        else VisitWidget(Children->GetChildAt(I),Depth+1,Overview,NiagaraMenu,GraphMenu,Tooltip);
+    }
 }
 
 #define XH_EXPORT extern "C" __declspec(dllexport)
@@ -572,11 +594,13 @@ XH_EXPORT void XH_Enable(int Enable, int Dual) {
 }
 XH_EXPORT int XH_Tick() {
     if (!IsInGameThread() || !FSlateApplication::IsInitialized()) return -1;
+    if(!Enabled && !Collecting){PendingWidgets.Empty();LastScanMs=0;return 0;}
+    const double ScanStart=FPlatformTime::Seconds();
     for(auto It=ParameterBindings.CreateIterator();It;++It)if(!It.Value()->Selector.IsValid())It.RemoveCurrent();
     for(auto It=GraphBindings.CreateIterator();It;++It)if(!It.Value().Action.IsValid())It.RemoveCurrent();
     for(auto It=GraphMenus.CreateIterator();It;++It)if(!It.Value().Menu.IsValid())It.RemoveCurrent();
     for(auto It=SearchBindings.CreateIterator();It;++It)if(!It.Value().Action.IsValid())It.RemoveCurrent();
-    for(auto It=SearchSelectors.CreateIterator();It;++It)if(!It.Value().IsValid())It.RemoveCurrent();
+    for(auto It=SearchSelectors.CreateIterator();It;++It)if(!It.Value().IsValid()){MenuCursors.Remove(It.Key());It.RemoveCurrent();}
     for(auto It=RichBindings.CreateIterator();It;++It) {
         auto Widget=It.Value()->RichWidget.Pin();
         if(!Widget || !OwnsRich(*Widget,*It.Value()))It.RemoveCurrent();
@@ -589,23 +613,40 @@ XH_EXPORT int XH_Tick() {
         auto Widget=It.Value()->Widget.Pin();
         if (!Widget.IsValid() || !OwnsGuard(*Widget,*It.Value())) It.RemoveCurrent();
     }
-    const double ScanStart=FPlatformTime::Seconds();
-    {
+    if(!IncrementalScan || PendingWidgets.IsEmpty()) {
         TArray<TSharedRef<SWindow>> Windows;
         FSlateApplication::Get().GetAllVisibleWindowsOrdered(Windows);
-        for (auto& Window : Windows) VisitWidget(Window);
+        for (auto& Window : Windows){
+            if(IncrementalScan)PendingWidgets.Add({Window});else VisitWidget(Window);
+        }
         // Non-interactive tooltips are hosted separately and may be absent from
         // GetAllVisibleWindowsOrdered. Visit only active tooltip windows, never
         // call every widget's tooltip getter (which can start preview movies).
         FSlateApplication::Get().ForEachUser([&Windows](FSlateUser& User){
             if(auto Window=(User.*TextAttribute(FTooltipWindowTag{})).Pin())
-                if(Window->IsVisible() && !Windows.Contains(Window.ToSharedRef()))VisitWidget(Window.ToSharedRef(),0,false,false,false,true);
+                if(Window->IsVisible() && !Windows.Contains(Window.ToSharedRef())){
+                    if(IncrementalScan)PendingWidgets.Add({Window,0,false,false,false,true});
+                    else VisitWidget(Window.ToSharedRef(),0,false,false,false,true);
+                }
         });
+    }
+    if(IncrementalScan){
+        int32 Count=0;
+        while(!PendingWidgets.IsEmpty() && Count++<800){
+            auto Item=PendingWidgets.Pop(EAllowShrinking::No);
+            if(auto Widget=Item.Widget.Pin())VisitWidget(Widget.ToSharedRef(),Item.Depth,Item.Overview,Item.NiagaraMenu,Item.GraphMenu,Item.Tooltip);
+            if(FPlatformTime::Seconds()-ScanStart>=0.002)break;
+        }
     }
     LastScanMs=(FPlatformTime::Seconds()-ScanStart)*1000.0;
     return Bindings.Num();
 }
 XH_EXPORT int XH_BindingCount() { return Bindings.Num()+RichBindings.Num(); }
+XH_EXPORT int XH_PendingScanCount(){return PendingWidgets.Num();}
+XH_EXPORT int XH_Slice(){
+    TGuardValue<bool> Guard(IncrementalScan,true);
+    return XH_Tick();
+}
 XH_EXPORT void XH_Service(int Start) {
     if(!FSlateApplication::IsInitialized())return;
     if(PreTickHandle.IsValid()) {
@@ -615,9 +656,12 @@ XH_EXPORT void XH_Service(int Start) {
         WarmUntil=FPlatformTime::Seconds()+3.0;LastScan=0;
         PreTickHandle=FSlateApplication::Get().OnPreTick().AddLambda([](float) {
             double Now=FPlatformTime::Seconds();
-            if(Now-LastScan>=(Collecting?0.10:0.25)) { LastScan=Now;XH_Tick(); }
+            if(!Enabled && !Collecting)return;
+            if(!PendingWidgets.IsEmpty() || Now-LastScan>=(Collecting?0.10:0.25)) {
+                XH_Slice();if(PendingWidgets.IsEmpty())LastScan=Now;
+            }
         });
-        XH_Tick();
+        XH_Slice();
     } else Restore();
 }
 XH_EXPORT int XH_BoundOverview(int Index) {
@@ -921,6 +965,32 @@ XH_EXPORT int XH_CaptureSelfTest(){
 
 #include "TooltipTests.inl"
 #include "LabelTests.inl"
+
+static double StressMaxSliceMs=0;
+XH_EXPORT double XH_StressMaxSliceMs(){return StressMaxSliceMs;}
+XH_EXPORT int XH_StabilitySelfTest(){
+    if(!IsInGameThread())return -1;
+    XH_Clear();XH_Collect(0);XH_Enable(1,0);XH_Add(L"Stability Label",L"稳定性标签");
+    TArray<TSharedRef<STextBlock>> Labels;
+    for(int I=0;I<6000;++I){
+        auto Label=SNew(STextBlock).Text(FText::FromString(TEXT("Stability Label")));
+        Labels.Add(Label);PendingWidgets.Add({Label});
+    }
+    StressMaxSliceMs=0;int Passes=0;
+    do{
+        XH_Slice();StressMaxSliceMs=FMath::Max(StressMaxSliceMs,LastScanMs);
+        if(++Passes>200)return 801;
+    }while(!PendingWidgets.IsEmpty());
+    for(const auto& Label:Labels)if(Label->GetText().ToString()!=TEXT("稳定性标签"))return 802;
+    // Owner edits must survive disabling, including edits between scan slices.
+    Labels[0]->SetText(FText::FromString(TEXT("Owner replacement")));
+    XH_Enable(0,0);
+    if(Labels[0]->GetText().ToString()!=TEXT("Owner replacement"))return 803;
+    for(int I=1;I<Labels.Num();++I)if(Labels[I]->GetText().ToString()!=TEXT("Stability Label"))return 804;
+    for(int I=0;I<100;++I)XH_Slice();
+    if(LastScanMs!=0 || !PendingWidgets.IsEmpty() || !Bindings.IsEmpty())return 805;
+    Labels.Empty();XH_Clear();return 0;
+}
 
 XH_EXPORT int XH_SelfTest() {
     // Run in an isolated test editor: static text, live getter, restoration,
