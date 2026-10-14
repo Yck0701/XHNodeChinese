@@ -8,6 +8,7 @@ import shutil
 import sys
 import threading
 import traceback
+import time
 import tkinter as tk
 from tkinter import filedialog, messagebox, ttk
 import webbrowser
@@ -18,6 +19,8 @@ import community
 import build_preflight
 import branding
 import engine_discovery
+import auto_setup
+import manager_update
 
 BASE=Path(sys.executable).parent if getattr(sys,'frozen',False) else Path(__file__).resolve().parent
 STATE=Path(os.environ.get('LOCALAPPDATA',str(Path.home())))/'XHPluginManager'
@@ -47,6 +50,9 @@ class App(tk.Tk):
         self.update_prompts=set()
         self.compatibility_prompts=set()
         self.discovery_timer=None;self.setting_engine=False
+        self.compatibility_timer=None
+        self.wizard_state='idle';self.wizard_result=None;self.wizard_context=None
+        self.auto_flow=False;self.dependency_attempts=set()
         self.last_project_engine=''
         self.info=None; self.checked_engine=''; self.selected=None
         settings={}
@@ -64,7 +70,7 @@ class App(tk.Tk):
         python=shutil.which('python.exe') or ''
         if not getattr(sys,'frozen',False): python=sys.executable
         self.python=tk.StringVar(value=settings.get('python',python))
-        self.msvc=tk.StringVar(value=settings.get('msvc','14.50'))
+        self.msvc=tk.StringVar(value='auto')
         self.out=tk.StringVar(value=settings.get('output',str(Path.home()/'Documents/XHBuilds')))
         self.auto_check=tk.BooleanVar(value=bool(settings.get('auto_check',True)))
         self.auto_engine=tk.BooleanVar(value=bool(settings.get('auto_engine',True)))
@@ -72,6 +78,9 @@ class App(tk.Tk):
         self.selection=tk.StringVar(value='both')
         self.status=tk.StringVar(value='先选择工程和引擎。已有用户可直接备份词典。')
         self.cloud_status=tk.StringVar(value='编译前检查云端；官方与定制投稿分区保存，审核通过后共享。')
+        self.setup_text=tk.StringVar(value='选择工程后自动检查。已有包直接安装，没有匹配包再准备编译。')
+        self.setup_button_text=tk.StringVar(value='自动适配并安装  →')
+        self.wizard_text=tk.StringVar(value='只需选择工程和 UE，点击“自动适配并安装”。\n优先使用已有包；没有时自动获取源码、安装环境、编译并安装。')
         self.last_compiled=None
         self.build_cancel=None
         interface.build(self,core,BASE)
@@ -82,7 +91,9 @@ class App(tk.Tk):
         if self.auto_check.get():
             self.after(450,self.startup_check)
         elif self.auto_engine.get() and self.project.get():
-            self.after(450,lambda:self.detect_project_engine(run_check=False))
+            self.after(450,self.detect_project_engine)
+        elif self.project.get() and self.engine.get():
+            self.after(450,self.schedule_compatibility)
 
     def path_row(self,parent,label,var,browse,label_width=13,**kw):
         row=ttk.Frame(parent);row.pack(fill='x',pady=3)
@@ -104,10 +115,12 @@ class App(tk.Tk):
         if not self.setting_engine:
             self.auto_engine.set(False)
             self.engine_status.set('手动指定引擎；点“从工程识别”可恢复自动识别。')
+            if hasattr(self,'schedule_compatibility'):self.schedule_compatibility()
 
     def project_changed(self,*_):
         if self.discovery_timer:self.after_cancel(self.discovery_timer)
-        if not self.auto_engine.get():return
+        if not self.auto_engine.get():
+            self.schedule_compatibility();return
         self.last_project_engine=self.engine.get() or self.last_project_engine
         self.selected=None;self.info=None
         self.setting_engine=True
@@ -167,7 +180,7 @@ class App(tk.Tk):
             if follows:self.build_engine.set(item['path'])
             self.last_project_engine=item['path']
             self.save_settings()
-            if run_check and self.auto_check.get():self.check(True,automatic=True,compatibility=True)
+            if run_check:self.schedule_compatibility()
             return True
         except (OSError,ValueError,TypeError) as error:
             self.engine_status.set('未能识别：'+str(error))
@@ -177,6 +190,35 @@ class App(tk.Tk):
     def toggle_auto_engine(self):
         if self.auto_engine.get():self.detect_project_engine()
         self.save_settings()
+
+    def schedule_compatibility(self):
+        if self.compatibility_timer:self.after_cancel(self.compatibility_timer)
+        self.selected=None;self.info=None;self.wizard_result=None;self.wizard_state='idle'
+        self.setup_button_text.set('自动适配并安装  →')
+        self.setup_text.set('正在检查所选工程与引擎…')
+        self.compatibility_timer=self.after(700,self.selection_check)
+
+    def selection_check(self):
+        self.compatibility_timer=None
+        if self.closing:return
+        if self.busy or self.checking:
+            self.compatibility_timer=self.after(700,self.selection_check);return
+        try:
+            core.project_path(self.project.get());core.engine_path(self.engine.get())
+        except (OSError,ValueError):
+            self.setup_text.set('请选择有效的工程文件和对应 UE。');return
+        self.check(True,automatic=True,notify=False,compatibility=True)
+
+    def render_compatibility(self,local,offline,error=''):
+        if error:self.setup_text.set('无法完成检测：'+error);return
+        installed=next((x for x in local if x['kind']=='installed'),None)
+        if installed:
+            self.setup_text.set('✓ 已适配，可以打开工程使用。无需编译。')
+            if self.wizard_state=='install':
+                self.wizard_state='idle';self.wizard_text.set('✓ 安装完成，可以打开工程使用。');self.setup_button_text.set('重新检测')
+        elif local or self.selected:self.setup_text.set('✓ 已找到适配包。点“自动适配并安装”即可，无需编译。')
+        elif offline:self.setup_text.set('本地暂无适配包，云端暂时连不上。可重试检查，也可进入本地编译。')
+        elif self.info:self.setup_text.set('当前引擎暂无适配包。点“自动适配并安装”，按提示完成编译。')
     def choose_feed(self): self.choose_file(self.feed_var,[('更新清单','manifest.json')])
     def use_bundled(self):
         path=BASE/'release/manifest.json'
@@ -196,6 +238,8 @@ class App(tk.Tk):
         if self.busy:
             messagebox.showinfo('正在处理','请等待当前操作完成。',parent=self);return
         self.save_settings();self.busy=True;self.status.set('正在处理，请查看进度日志…');self.progress.start(12)
+        for name in ('setup_button','adapt_button','cpp_button','manager_button','migrate_button'):
+            if hasattr(self,name):getattr(self,name).configure(state='disabled')
         def work():
             try: self.messages.put(('done',(done,fn())))
             except Exception as e:
@@ -204,7 +248,7 @@ class App(tk.Tk):
         threading.Thread(target=work,daemon=False).start()
 
     def pump(self):
-        while True:
+        for _ in range(160):
             try:kind,value=self.messages.get_nowait()
             except queue.Empty:break
             if kind=='log':
@@ -220,11 +264,16 @@ class App(tk.Tk):
                 if not self.busy:self.status.set('自动检查未完成，可手动重试或使用离线包：'+value)
             else:
                 self.busy=False;self.progress.stop()
+                for name in ('setup_button','adapt_button','cpp_button','manager_button','migrate_button'):
+                    if hasattr(self,name):getattr(self,name).configure(state='normal')
                 if self.build_cancel is not None:
                     self.build_cancel=None;self.cancel_build_button.configure(state='disabled')
                 if kind=='error':
                     error,quiet=(value if isinstance(value,tuple) else (value,False))
                     self.status.set('操作未完成：'+error)
+                    if self.wizard_state!='idle':
+                        self.auto_flow=False;self.wizard_state='idle';self.setup_button_text.set('继续自动安装')
+                        self.wizard_text.set('本次未完成，已保留已有文件和日志。\n'+error+'\n处理后点“继续自动安装”。')
                     if not quiet: messagebox.showerror('操作未完成',error,parent=self)
                 else:
                     self.status.set('操作完成。'); callback,result=value;callback(result)
@@ -248,9 +297,14 @@ class App(tk.Tk):
             if with_engine and engine:
                 try:
                     info=core.cached_engine_info(engine,STATE/'cache',self.log)
-                    minimum=community.source_version(source_package) if source_package and Path(source_package).is_file() else '0'
+                    minimum='0'
+                    if source_package and Path(source_package).is_file():
+                        try:minimum=community.source_version(source_package)
+                        except (OSError,ValueError,KeyError):self.log('已跳过不可用的源码设置，继续检测已有插件。')
                     local=build_preflight.local_candidates(info,minimum,output,STATE/'cache',BASE/'release',project,log=self.log)
                 except Exception as error:engine_error=str(error)
+            if automatic and not notify and local:
+                return None,info,engine_error,local,''
             self.log('读取更新清单：'+source)
             try:feed=core.load_feed(source,STATE/'cache',allow_cached=True)
             except Exception as error:feed_error=str(error)
@@ -266,7 +320,8 @@ class App(tk.Tk):
                 s=self.feed['shared'];self.shared_label.set('共享版本：'+s['version']+' · '+str(s.get('terms','?'))+' 条词典 / '+str(s.get('long_texts','?'))+' 段长文本')
                 summary=core.update_summary(self.feed,project,self.selected)
             else:
-                summary=dict(manager='当前 v'+core.VERSION,plugin='尚未确认兼容版本',shared='云端检查未完成',manager_update=False)
+                summary=dict(manager='当前 v'+core.VERSION,plugin='尚未确认兼容版本',
+                             shared='未检查词库更新' if automatic and not notify and local else '云端检查未完成',manager_update=False)
             installed=next((item for item in local if item['kind']=='installed'),None)
             if installed:
                 summary['plugin']='已适配 v'+installed['version']
@@ -281,7 +336,8 @@ class App(tk.Tk):
             prefix='云端检查未完成，本地检测仍有效' if offline else '检查完成'
             self.status.set(prefix+' · '+('引擎路径需检查：'+engine_error if engine_error else '工具、插件与共享词库状态已更新。'))
             if offline:self.log('在线检查失败：'+(feed_error or self.feed['_check_error']))
-            if compatibility and self.info and not engine_error and notify:
+            if hasattr(self,'setup_text'):self.render_compatibility(local,offline,engine_error)
+            elif compatibility and self.info and not engine_error and notify:
                 self.offer_engine_compatibility(local,offline,automatic)
             if notify and self.feed and not self.busy:
                 self.offer_updates(summary,automatic,exclude=('plugin',) if compatibility and not installed else ())
@@ -315,7 +371,7 @@ class App(tk.Tk):
             self.status.set('更新已下载。插件请点击“安装 / 更新插件”；词库请点击“更新共享词库”。')
             manager=next((p for kind,p in results if kind=='manager'),None)
             if manager:
-                if messagebox.askyesno('新版工具已下载','是否现在打开新版管理器？\n当前管理器会退出，UE 保持运行。\n插件和词库如有更新，可在新版管理器中继续安装。',parent=self):self.open_manager(manager)
+                if messagebox.askyesno('新版工具已下载','是否替换原目录并打开新版？\n更新位置：'+str(BASE)+'\n原快捷方式继续有效，失败时保留或恢复旧文件。\n当前管理器会退出，UE 保持运行。',parent=self):self.open_manager(manager)
             else:messagebox.showinfo('下载完成','更新包已下载并校验。\n插件请点击“安装 / 更新插件”；词库请点击“更新共享词库”。',parent=self)
         self.start(task,done)
 
@@ -352,8 +408,37 @@ class App(tk.Tk):
 
     def open_manager(self,path):
         try:
-            self.save_settings();os.startfile(str(path));self.closing=True;self.destroy()
-        except OSError as error:messagebox.showerror('启动失败','新版已下载：'+str(path)+'\n'+str(error),parent=self)
+            if not getattr(sys,'frozen',False):raise ValueError('请在打包后的 EXE 中更新；源码运行目录不能自动覆盖。')
+            self.save_settings()
+            self.begin_manager_replacement(Path(path).parent,BASE,Path(sys.executable).name)
+        except (OSError,ValueError) as error:messagebox.showerror('更新未开始','更新位置：'+str(BASE)+'\n'+str(error),parent=self)
+
+    def begin_manager_replacement(self,stage,target,executable):
+        plan=manager_update.prepare(stage,target,executable,STATE)
+        worker=manager_update.launch_worker(plan)
+        self.busy=True;self.status.set('正在准备原路径更新：'+str(target))
+        # Keep the old process alive until the helper has opened its process handle.
+        deadline=time.monotonic()+15
+        def ready():
+            if plan.with_name('ready.json').is_file():
+                self.closing=True;self.destroy();return
+            if worker.poll() is not None or time.monotonic()>deadline:
+                self.busy=False;self.status.set('更新助手未就绪，原程序继续可用。')
+                messagebox.showerror('更新未开始','原目录文件未替换。请重试，或查看：'+str(plan.parent),parent=self);return
+            self.after(100,ready)
+        self.after(100,ready)
+
+    def migrate_manager(self):
+        if self.busy:return
+        if not getattr(sys,'frozen',False):return
+        path=filedialog.askopenfilename(parent=self,title='选择以前一直使用的管理器 EXE；此新版将覆盖到该目录',filetypes=[('管理器程序','*.exe')])
+        if not path:return
+        target=Path(path)
+        if target.parent.resolve()==BASE.resolve():
+            messagebox.showinfo('已在当前目录','当前运行的就是此目录中的 v'+core.VERSION,parent=self);return
+        if not messagebox.askyesno('更新旧目录','将 v'+core.VERSION+' 替换到：\n'+str(target.parent)+'\n原快捷方式继续使用，旧文件先备份。继续？',parent=self):return
+        try:self.save_settings();self.begin_manager_replacement(BASE,target.parent,target.name)
+        except (OSError,ValueError) as error:messagebox.showerror('未更新旧目录',str(error),parent=self)
 
     def update_manager(self):
         if not self.feed or self.feed_origin!=self.feed_var.get():self.check(False);return
@@ -452,7 +537,7 @@ class App(tk.Tk):
             if origin=='local':
                 detail+='使用本地安装包：'+item['path']+'\n'
                 if not item.get('verified'):detail+='该包为本地编译包，尚未经过发布验证。\n'
-            if not messagebox.askyesno('安装插件',detail+'继续安装到工程：'+project+'？',parent=self):return
+            if not getattr(self,'auto_flow',False) and not messagebox.askyesno('安装插件',detail+'继续安装到工程：'+project+'？',parent=self):return
             def task():
                 current=core.engine_info(engine,self.log)
                 if current!=info:raise ValueError('引擎在检查后发生变化，请重新检查。')
@@ -464,8 +549,13 @@ class App(tk.Tk):
                     if not core.matching({'plugins':[item]},current):raise ValueError('引擎与安装包不匹配。')
                     self.log('下载并校验安装包…');archive=core.fetch(item,STATE/'cache')
                 return archive,current
-            self.start_file_update(project,task,lambda data:core.install(project,*data,self.log),
-                                   lambda p:(self.log('安装完成，备份：'+str(p)),self.check(True,notify=False)))
+            def finished(backup):
+                self.log('安装完成，备份：'+str(backup))
+                self.auto_flow=False;self.wizard_state='idle'
+                self.wizard_text.set('✓ 安装完成，可以打开工程使用。\n个人词典已保留，旧插件已备份。')
+                self.setup_button_text.set('重新检测')
+                self.check(True,notify=False,compatibility=True)
+            self.start_file_update(project,task,lambda data:core.install(project,*data,self.log),finished)
         self.resolve_install_package(ready)
 
     def download_plugin(self):
@@ -537,7 +627,123 @@ class App(tk.Tk):
         self.start(task)
 
     def compile(self):
-        self.check_versions(then_compile=True)
+        self.auto_adapt()
+
+    def setup_context(self):
+        return (self.project.get(),self.engine.get(),self.feed_var.get(),self.out.get())
+
+    def auto_adapt(self):
+        if self.busy:return
+        try:
+            core.project_path(self.project.get());core.engine_path(self.engine.get())
+        except (OSError,ValueError) as error:
+            messagebox.showinfo('先选择工程',str(error),parent=self);return
+        self.auto_flow=True;self.dependency_attempts=set()
+        self.navigate(2);context=self.setup_context();self.wizard_context=context
+        self.wizard_state='checking';self.wizard_text.set('① 检查已有版本\n先检查已安装、本地及云端适配包，避免重复编译。')
+        source=self.source_package.get()
+        def task():
+            found=auto_setup.discover_source(source,BASE,STATE,context[3])
+            return build_preflight.probe(context[1],found['path'] if found else '',context[3],STATE/'cache',BASE/'release',context[0],context[2],self.log)
+        def ready(result):
+            if context!=self.setup_context():
+                self.wizard_state='idle';self.wizard_text.set('工程或引擎已改变，请重新开始。');return
+            origin,item=build_preflight.preferred(result)
+            if item:
+                if origin=='local' and item['kind']=='installed':
+                    self.wizard_state='idle';self.wizard_text.set('✓ 当前工程已经适配，可以直接打开使用。')
+                    self.setup_text.set(self.wizard_text.get());self.setup_button_text.set('重新检测');return
+                self.wizard_state='install';self.wizard_text.set('✓ 找到已有适配包，继续安装，无需编译。')
+                self.setup_button_text.set('安装到当前工程');self.install();return
+            self.wizard_offline=bool(result.get('cloud_error'))
+            self.prepare_environment()
+        self.start(task,ready)
+
+    def prepare_environment(self):
+        context=self.setup_context()
+        self.wizard_context=context;self.wizard_state='checking'
+        self.wizard_text.set('② 自动准备编译环境\n正在查找源码、完整引擎、C++ 工具和 Python…')
+        args=(context[1],self.source_package.get(),self.sdk.get(),self.vcvars.get(),self.python.get(),context[3],BASE,STATE)
+        def ready(result):
+            if context!=self.setup_context():
+                self.wizard_state='idle';self.wizard_text.set('选择已改变，请重新检测。');return
+            self.wizard_result=result;self.build_engine.set(result['engine'])
+            for key,var in (('source',self.source_package),('sdk',self.sdk),('vcvars',self.vcvars),('python',self.python)):
+                if result[key]:var.set(result[key])
+            self.msvc.set('auto');self.save_settings()
+            labels=[('源码','source'),('引擎依赖','sdk'),('C++ 编译器','vcvars'),('Windows SDK','windows_sdk'),('Python','python')]
+            summary='  ·  '.join(('✓ ' if result.get(k) else '○ ')+label for label,k in labels)
+            if result['issues']:
+                issue=result['issues'][0];self.wizard_state='needs'
+                self.wizard_text.set('② 只需处理这一项：'+issue['title']+'\n'+issue['detail']+'\n\n'+summary)
+                self.setup_button_text.set(issue['title'])
+                if getattr(self,'auto_flow',False) and issue['kind'] in ('source','vcvars','python'):
+                    if issue['kind'] in self.dependency_attempts:
+                        self.auto_flow=False
+                        self.wizard_text.set('自动安装后仍未检测到所需环境。\n'+issue['detail']+'\n请查看日志；可使用下方官方下载或高级设置，处理后继续自动安装。')
+                        self.setup_button_text.set('继续自动安装');self.wizard_state='idle'
+                    else:self.dependency_attempts.add(issue['kind']);self.after(50,lambda:self.run_setup_step(context,self.setup_next))
+            else:
+                self.wizard_state='ready';self.setup_button_text.set('开始编译')
+                prefix='云端暂未连通，将使用本地源码编译。\n' if getattr(self,'wizard_offline',False) else ''
+                self.wizard_text.set('✓ 环境已就绪\n'+prefix+'点“开始编译”即可。完成后可直接安装；编译中可取消。\n'+summary)
+                if getattr(self,'auto_flow',False):self.after(50,lambda:self.run_setup_step(context,self.compile_auto))
+            for line in result['diagnostics']:self.log('依赖检查：'+line)
+        self.start(lambda:auto_setup.inspect(*args),ready)
+
+    def setup_next(self):
+        if self.busy:return
+        if self.wizard_state not in ('idle','checking') and self.wizard_context!=self.setup_context():
+            self.auto_adapt();return
+        if self.wizard_state=='ready':self.compile_auto();return
+        if self.wizard_state=='install':self.install();return
+        if self.wizard_state!='needs':self.auto_adapt();return
+        issue=self.wizard_result['issues'][0]
+        if issue['kind']=='source':
+            self.wizard_text.set('正在自动获取编译源码并校验，下载完成后继续检查环境…')
+            context=self.setup_context()
+            def ready(path):
+                self.source_package.set(path)
+                if context==self.setup_context():self.prepare_environment()
+                else:self.auto_flow=False;self.wizard_state='idle'
+            self.start(lambda:auto_setup.obtain_source(context[2],BASE,STATE,self.log),ready)
+        elif issue['kind']=='sdk':
+            path=filedialog.askdirectory(parent=self,title='选择完整、同版本的 UE 根目录或 Engine 目录')
+            if path:self.sdk.set(path);self.prepare_environment()
+        else:self.install_environment(issue['kind'])
+
+    def run_setup_step(self,context,fn):
+        if not self.busy and not self.closing and context==self.setup_context() and context==self.wizard_context:fn()
+
+    def install_environment(self,kind='vcvars'):
+        if self.busy:return
+        self.navigate(2);context=self.setup_context();self.wizard_state='installing_environment'
+        self.wizard_text.set('正在安装 '+('微软 C++ 编译工具和 Windows SDK' if kind=='vcvars' else 'Python')+'。\n已自动选择组件；请允许 Windows 授权。完成后自动重新检测，日志会保留安装结果。')
+        def installed(code):
+            if code==3010:
+                self.auto_flow=False;self.wizard_state='idle';self.setup_button_text.set('继续自动安装')
+                self.wizard_text.set('环境已安装，Windows 要求重启。保存工作并重启后，打开工具点“继续自动安装”。')
+            elif context!=self.setup_context():
+                self.auto_flow=False;self.wizard_state='idle';self.wizard_text.set('环境安装完成，工程选择已改变，请重新自动适配。')
+            elif self.engine.get():self.prepare_environment()
+            else:
+                self.wizard_state='idle';self.wizard_text.set('环境安装完成。请选择工程和 UE，再点“自动适配并安装”。')
+        self.start(lambda:auto_setup.install_dependency(kind,STATE,self.log),installed)
+
+    def compile_auto(self):
+        if not self.wizard_result or self.wizard_context!=self.setup_context():self.auto_adapt();return
+        result=dict(self.wizard_result);context=self.setup_context()
+        cancel=threading.Event();self.build_cancel=cancel;self.cancel_build_button.configure(state='normal')
+        self.wizard_state='compiling';self.wizard_text.set('③ 编译中\n正在为所选 UE 生成插件。可查看日志或取消，完成后进入安装。')
+        args={k:result[k] for k in ('engine','sdk','vcvars','python','output','compiler_version')}
+        def done(path):
+            self.last_compiled=path;self.log('已生成：'+str(path))
+            if context!=self.setup_context():
+                self.wizard_state='idle';self.wizard_text.set('编译已完成，但所选工程已改变。安装包已保留，请重新检查适配。');return
+            self.wizard_state='install';self.setup_button_text.set('安装到当前工程')
+            self.wizard_text.set('④ 编译完成，下一步安装\n已生成本机测试包，尚未经过编辑器运行验证。安装前会备份旧插件并保留个人词典。')
+            if getattr(self,'auto_flow',False):self.after(50,lambda:self.run_setup_step(context,self.install))
+        self.start(lambda:core.compile_package(result['source'],**args,log=self.log,cancel_event=cancel),done)
 
     def use_sdk_target(self):
         try:self.build_engine.set(str(core.engine_path(self.sdk.get())))
@@ -652,13 +858,22 @@ def main():
     parser.add_argument('--check',metavar='MANIFEST')
     parser.add_argument('--engine')
     parser.add_argument('--backup',metavar='UPROJECT')
+    parser.add_argument('--apply-manager-update')
+    parser.add_argument('--update-result')
     args=parser.parse_args()
-    if args.backup:print(core.backup(args.backup))
+    if args.apply_manager_update:sys.exit(manager_update.run_worker(args.apply_manager_update))
+    elif args.backup:print(core.backup(args.backup))
     elif args.check:
         feed=core.load_feed(args.check,STATE/'cache')
         if args.engine:print(json.dumps(core.matching(feed,core.engine_info(args.engine)),ensure_ascii=False,indent=2))
         else:print(json.dumps(feed,ensure_ascii=False,indent=2))
-    else:App().mainloop()
+    else:
+        app=App()
+        if args.update_result:
+            app.status.set('已更新至 v'+core.VERSION+'，原路径继续使用：'+str(BASE))
+            app.log(app.status.get())
+            app.after(300,lambda:messagebox.showinfo('原路径更新完成','当前版本：v'+core.VERSION+'\n位置：'+str(BASE)+'\n以后继续使用原快捷方式即可。',parent=app))
+        app.mainloop()
 
 
 if __name__=='__main__':main()

@@ -2,18 +2,18 @@
 
 ## 第一次发布到 GitHub
 
-私有源码仓库：<https://github.com/Yck0701/XHNodeChinese>。
+公开源码仓库：<https://github.com/Yck0701/XHNodeChinese>。
 
 公开发布仓库：<https://github.com/Yck0701/XHNodeChinese-new>。以下 Release 操作均在公开发布仓库进行。
 
 1. 在仓库的 **Releases → Draft a new release** 新建版本。
 2. 上传本工具 `release` 文件夹内的 **manifest.json 和所有 ZIP**。它们必须是同一个 Release 的附件，不要只提交到源码分支。
-3. 上传同版本便携管理器包（例如 `XHPluginManager-1.0.4-win64.zip`）。不要上传管理器源码 ZIP 或编译用插件源码包。
+3. 上传同版本便携管理器包（例如 `XHPluginManager-1.0.4-win64.zip`）。编译用源码 ZIP 单独发布，并在 manifest.json 的 source 项填写文件名、版本和 SHA-256。
 4. 确认附件完整后发布，并将其设为 **Latest**（不选 Pre-release）。
 
-管理器使用 `https://github.com/Yck0701/XHNodeChinese-new/releases/latest/download/manifest.json`。版本清单引用相邻附件的文件名，在线和离线共用一套文件。公开清单不包含源码下载项。
+管理器使用 `https://github.com/Yck0701/XHNodeChinese-new/releases/latest/download/manifest.json`。版本清单引用相邻附件的文件名，在线和离线共用一套文件。公开清单包含已审查的 source 下载项，便于管理器自动编译。
 
-**只发布本次生成的公开发布目录。**旧的 1.0.0 输出包含源码，不要直接上传。公开插件 ZIP 会去掉 `Source` 和维护用 `Tools`（保留运行所需的 ReloadInEditor.py）。插件运行所需的 Python 脚本仍随包分发，仓库私密不等于这些运行脚本不可见。
+**只发布本次生成的公开发布目录。**源码公开前须检查个人配置、密钥与项目文件；不要直接上传未经审查的工作目录。公开插件 ZIP 会去掉 `Source` 和维护用 `Tools`（保留运行所需的 ReloadInEditor.py）。插件运行所需的 Python 脚本仍随包分发，仓库私密不等于这些运行脚本不可见。
 
 工作区的 `shared-review` 保存了待审查的原词条，不属于发布内容。GitHub 凭据不进入管理器、插件或任何发布包。
 

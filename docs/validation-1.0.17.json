@@ -1,0 +1,15 @@
+{
+  "manager_version": "1.0.17",
+  "plugin_version": "0.2.16",
+  "manager_tests": 119,
+  "manager_tests_passed": true,
+  "gui_install_button_verified": true,
+  "manager_in_place_update_verified": true,
+  "isolated_compile_and_install_verified": true,
+  "protected_files_unchanged": 6,
+  "verified_scopes": [
+    "official UE 5.8.3",
+    "custom UE 5.8.3"
+  ],
+  "limitations": "Verification covers tested projects and configurations, not all third-party combinations."
+}

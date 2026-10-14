@@ -17,14 +17,19 @@ def stop_tree(process):
     except subprocess.TimeoutExpired:raise RuntimeError('编译进程尚未退出，请查看日志。')
 
 
-def run(args,cwd,log,log_path,cancel=None,timeout=1200,idle_timeout=300,heartbeat=20):
+def run(args,cwd,log,log_path,cancel=None,timeout=1200,idle_timeout=300,heartbeat=20,display_limit=None):
     env=dict(os.environ,PYTHONIOENCODING='utf-8',PYTHONUTF8='1',PYTHONUNBUFFERED='1')
     path=Path(log_path);path.parent.mkdir(parents=True,exist_ok=True)
     started=time.monotonic();last_output=started;last_heartbeat=started
     events=queue.Queue()
     with path.open('a',encoding='utf-8') as saved:
-        def emit(text):
-            saved.write(text+'\n');saved.flush();log(text)
+        displayed=0
+        def emit(text,force=False):
+            nonlocal displayed
+            saved.write(text+'\n');saved.flush()
+            if force or display_limit is None or displayed<display_limit:log(text)
+            elif displayed==display_limit:log('详细输出已写入构建日志，界面仅显示摘要：'+str(path))
+            if not force:displayed+=1
         if cancel is not None and cancel.is_set():raise RuntimeError('编译已取消。')
         process=subprocess.Popen([str(a) for a in args],cwd=cwd,env=env,stdin=subprocess.DEVNULL,
             stdout=subprocess.PIPE,stderr=subprocess.STDOUT,creationflags=getattr(subprocess,'CREATE_NO_WINDOW',0))
@@ -47,9 +52,9 @@ def run(args,cwd,log,log_path,cancel=None,timeout=1200,idle_timeout=300,heartbea
                 except queue.Empty:pass
                 if eof and process.poll() is not None:break
                 if now-last_heartbeat>=heartbeat:
-                    emit('编译进行中 · 已用 '+str(int(now-started))+' 秒 · 最近输出 '+str(int(now-last_output))+' 秒前');last_heartbeat=now
+                    emit('编译进行中 · 已用 '+str(int(now-started))+' 秒 · 最近输出 '+str(int(now-last_output))+' 秒前',True);last_heartbeat=now
             if process.returncode:raise RuntimeError('编译子进程退出码 '+str(process.returncode)+'；日志：'+str(path))
-            emit('本阶段完成，用时 '+format(time.monotonic()-started,'.1f')+' 秒。')
+            emit('本阶段完成，用时 '+format(time.monotonic()-started,'.1f')+' 秒。',True)
         except BaseException:
             stop_tree(process)
             raise

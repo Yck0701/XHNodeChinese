@@ -23,7 +23,7 @@ import zipfile
 SOURCE_REPOSITORY = 'https://github.com/Yck0701/XHNodeChinese'
 REPOSITORY = 'https://github.com/Yck0701/XHNodeChinese-new'
 DEFAULT_FEED = REPOSITORY + '/releases/latest/download/manifest.json'
-VERSION = '1.0.15'
+VERSION = '1.0.17'
 PRODUCT_NAME = '虚幻翻译插件'
 DOCS_URL = 'https://365.kdocs.cn/l/cpi4ASG5Izsi?source=wiki'
 PROTECTED = ('Plugins/XHNodeChinese/Dictionaries/User.csv', 'Saved/XHNodeChinese/LongText.csv')
@@ -694,14 +694,14 @@ def run_logged(args, cwd, log):
         if process.wait(): raise RuntimeError('构建命令失败，请查看上方日志。')
 
 
-def compile_package(source, engine, sdk, vcvars, python, output, log=print, compiler_version='14.50',cancel_event=None):
+def compile_package(source, engine, sdk, vcvars, python, output, log=print, compiler_version='auto',cancel_event=None):
     import build_process
     engine=engine_path(engine); sdk=engine_path(sdk); output=Path(output).resolve()
     for p in (engine,sdk,Path(vcvars),output,Path(python)):
         if re.search(r'[\r\n"%&|<>!^]',str(p)): raise ValueError('编译路径不能包含引号或命令行特殊字符。')
     if not Path(vcvars).is_file(): raise ValueError('请选择 Visual Studio 的 vcvars64.bat。')
     if not Path(python).is_file(): raise ValueError('编译需要 Python 3.9 或更新版本，请选择 python.exe。')
-    if not re.fullmatch(r'\d+\.\d+',compiler_version): raise ValueError('MSVC 版本应类似 14.50。')
+    if compiler_version!='auto' and not re.fullmatch(r'\d+\.\d+(?:\.\d+)?',compiler_version): raise ValueError('MSVC 版本应为 auto 或已安装的工具集版本。')
     if not (sdk/'Build/BatchFiles/RunUAT.bat').is_file(): raise ValueError('SDK 缺少 RunUAT.bat。')
     info=engine_info(engine,log); output.mkdir(parents=True,exist_ok=True)
     # Unique workspace keeps source distribution and installed plugin untouched.
@@ -712,13 +712,15 @@ def compile_package(source, engine, sdk, vcvars, python, output, log=print, comp
     config=stage/'Tools/build-config.json'
     if not config.is_file() or json_read(config).get('schema',0)<2:
         raise ValueError('源码包中的构建工具过旧，可能卡在 UBA。请使用 0.2.14-source-r2 或更新的授权源码包；本次尚未启动编译。')
+    if compiler_version=='auto' and json_read(config).get('compiler_selection')!='ubt_response_file':
+        raise ValueError('自动适配需要 0.2.16-source-r2 或更新的授权源码包。请重新选择源码包后继续。')
     for file in (stage/'Binaries/Win64').glob('*'): file.unlink()
     log('开始构建动态组件；其他 UE 版本可能需要适配 C++ 源码。')
     build_process.run([python,stage/'Tools/build_bridge.py','--engine',engine,'--sdk',sdk,'--vcvars',vcvars,
                 '--compiler-version',compiler_version],stage,log,build/'build.log',cancel_event)
     verify_bridge(stage,info)
     log('为目标引擎重新生成语言资源。')
-    build_process.run([python,stage/'Tools/build.py','--engine',engine],stage,log,build/'build.log',cancel_event)
+    build_process.run([python,stage/'Tools/build.py','--engine',engine],stage,log,build/'build.log',cancel_event,display_limit=20)
     target_documentation(stage,info)
     fingerprint=hashlib.sha256(json.dumps(info['sha256'],sort_keys=True).encode()).hexdigest()[:12]
     plugin_version=json_read(stage/'XHNodeChinese.uplugin')['VersionName']

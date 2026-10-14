@@ -31,7 +31,7 @@ class InstallSelectionTests(unittest.TestCase):
         self.mocks=[p.start() for p in self.patches]
         self.ui=SimpleNamespace(busy=False,engine=Var(str(self.engine)),project=Var(str(self.project/'P.uproject')),
             feed_var=Var('feed'),out=Var(str(self.output)),feed=self.feed,feed_origin='feed',selected=None,
-            status=Var(),package_label=Var(),log=Mock(),check=Mock())
+            status=Var(),package_label=Var(),wizard_text=Var(),setup_button_text=Var(),log=Mock(),check=Mock())
         self.ui.start=lambda fn,done:done(fn())
         self.ui.resolve_install_package=lambda callback,download_only=False:app.App.resolve_install_package(self.ui,callback,download_only)
         self.ui.start_file_update=lambda *args:app.App.start_file_update(self.ui,*args)
@@ -74,7 +74,7 @@ class InstallSelectionTests(unittest.TestCase):
         self.assertEqual(c.json_read(self.project/'Plugins/XHNodeChinese/XHNodeChinese.uplugin')['VersionName'],'0.2.16')
         self.assertEqual(protected,{name:(self.project/name).read_bytes() for name in protected})
         self.assertTrue(list((self.project/'Saved/XHNodeChinese/UpdaterBackups').glob('dictionary-*.zip')))
-        self.ui.check.assert_called_once_with(True,notify=False)
+        self.ui.check.assert_called_once_with(True,notify=False,compatibility=True)
 
     def test_newer_cloud_version_updates_existing_matching_plugin(self):
         self.installed('0.2.15');file=self.package('0.2.16')
