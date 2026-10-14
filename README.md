@@ -19,7 +19,7 @@
 
 ## 当前版本
 
-管理器 1.0.17、插件 0.2.16；共享词库 2026.10.12.3。选择工程和 UE，点「自动适配并安装」即可复用已有包，或自动获取源码、安装 C++ 环境、编译并安装。管理器在原目录更新，原快捷方式继续有效。源码已公开。
+管理器 1.0.18、插件 0.2.16；共享词库 2026.10.12.3。选择工程和 UE，点「自动适配并安装」即可复用已有包，或自动获取源码、安装 C++ 环境、编译并安装。管理器在原目录更新，原快捷方式继续有效。源码已公开。
 
 安装说明与金山云下载：https://365.kdocs.cn/l/cpi4ASG5Izsi?source=wiki
-版本附件与自动更新：https://github.com/Yck0701/XHNodeChinese-new/releases/tag/manager-v1.0.17
+版本附件与自动更新：https://github.com/Yck0701/XHNodeChinese-new/releases/tag/manager-v1.0.18

@@ -1,0 +1,20 @@
+{
+  "manager_version": "1.0.18",
+  "plugin_version": "0.2.16",
+  "manager_tests": 129,
+  "manager_tests_passed": true,
+  "gui_install_button_verified": true,
+  "manager_in_place_update_verified": true,
+  "isolated_compile_and_install_verified": true,
+  "protected_files_unchanged": 6,
+  "verified_scopes": [
+    "official UE 5.8.3",
+    "custom UE 5.8.3"
+  ],
+  "reused_evidence": {
+    "compile_install": "1.0.17 isolated stock UE build, unchanged build/install code",
+    "in_place_update": "1.0.17 from packaged 1.0.15, unchanged updater"
+  },
+  "netfx_coverage": "Missing SDK, file validation, signed installer arguments, error reporting and automatic recheck covered by regression tests. No clean-machine installation or remote-PC build claimed.",
+  "limitations": "Verification covers tested projects and configurations, not all third-party combinations."
+}

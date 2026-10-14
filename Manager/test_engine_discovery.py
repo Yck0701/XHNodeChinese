@@ -80,7 +80,7 @@ class StartupTests(unittest.TestCase):
             project=Var('P.uproject'),engine=Var('UE'),feed_var=Var('feed'),source_package=Var('source.zip'),
             info=dict(version='5.8.3',sha256={'file':'hash'}),selected=None,out=Var('output'),
             cloud_status=Var(),package_label=Var(),status=Var(),compatibility_prompts=set(),start=Mock(),
-            open_path=Mock(),build_engine=Var('other'),navigate=Mock(),check_versions=Mock(),
+            open_path=Mock(),build_engine=Var('other'),navigate=Mock(),check_versions=Mock(),auto_adapt=Mock(),
             engine_status=Var(),log=Mock(),setting_engine=False,check=Mock(),save_settings=Mock(),
             last_project_engine='',discovery_timer=None,select_engine_candidate=Mock(return_value=None))
         ui.set_discovered_engine=lambda item:app.App.set_discovered_engine(ui,item)
@@ -108,7 +108,7 @@ class StartupTests(unittest.TestCase):
     def test_missing_approved_checks_current_engine_before_compile(self):
         ui=self.ui()
         with patch.object(app.messagebox,'askyesno',return_value=True):app.App.offer_engine_compatibility(ui,[],False,True)
-        self.assertEqual(ui.build_engine.get(),'UE');ui.check_versions.assert_called_once_with(then_compile=True)
+        self.assertEqual(ui.build_engine.get(),'UE');ui.auto_adapt.assert_called_once();ui.check_versions.assert_not_called()
 
     def test_cloud_offer_can_be_declined_without_compile(self):
         ui=self.ui();ui.selected={'version':'0.2.16'}

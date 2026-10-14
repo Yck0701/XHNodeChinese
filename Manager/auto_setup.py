@@ -181,6 +181,45 @@ def find_windows_sdk(engine):
     return ''
 
 
+def netfx_registry_candidates():
+    """Use the same HKCU/HKLM and 32/64-bit registration used by UBT."""
+    found={}
+    try:
+        import winreg
+        for view in (winreg.KEY_WOW64_64KEY,winreg.KEY_WOW64_32KEY):
+            for hive in (winreg.HKEY_CURRENT_USER,winreg.HKEY_LOCAL_MACHINE):
+                try:
+                    with winreg.OpenKey(hive,r'SOFTWARE\Microsoft\Microsoft SDKs\NETFXSDK',0,winreg.KEY_READ|view) as key:
+                        for i in range(winreg.QueryInfoKey(key)[0]):
+                            name=winreg.EnumKey(key,i)
+                            if not re.fullmatch(r'\d+\.\d+(?:\.\d+)?',name):continue
+                            try:
+                                with winreg.OpenKey(key,name) as child:
+                                    path=winreg.QueryValueEx(child,'KitsInstallationFolder')[0]
+                                    if path and Path(path).is_dir():found.setdefault(name,str(Path(path)))
+                            except OSError:pass
+                except OSError:pass
+    except ImportError:pass
+    preferred=['4.6.2','4.6.1','4.6']
+    versions=list(dict.fromkeys(preferred+sorted(found,key=core.version_tuple,reverse=True)))
+    return [(v,found[v]) for v in versions if v in found and core.version_tuple(v)>=(4,6)]
+
+
+def find_netfx_sdk():
+    # The ordinary .NET runtime (including UE's bundled dotnet) is not this SDK.
+    root=os.environ.get('UE_SDKS_ROOT','')
+    if root:
+        for version in ('4.6.2','4.6.1','4.6'):
+            path=Path(root)/'HostWin64/Win64/Windows Kits/NETFXSDK'/version
+            if (path/'Include/um/mscoree.h').is_file():
+                return str(path) if (path/'Lib/um/x64/mscoree.lib').is_file() else ''
+    candidates=netfx_registry_candidates()
+    if not candidates:return ''
+    # Do not accept a newer SDK when UBT would pick a broken preferred entry.
+    path=Path(candidates[0][1])
+    return str(path) if all((path/p).is_file() for p in ('Include/um/mscoree.h','Lib/um/x64/mscoree.lib')) else ''
+
+
 def sdk_problem(target, sdk, headers):
     try:
         target=core.engine_path(target);sdk=core.engine_path(sdk)
@@ -211,20 +250,24 @@ def inspect(engine, source, sdk, vcvars, python, output, base, state):
             error=sdk_problem(target,candidate,source['headers'])
             if not error: found=str(core.engine_path(candidate));break
             problems.append(candidate+'：'+error)
-    py=find_python(target,python);vc=find_vcvars(vcvars,target);windows_sdk=find_windows_sdk(target)
+    py=find_python(target,python);vc=find_vcvars(vcvars,target);windows_sdk=find_windows_sdk(target);netfx=find_netfx_sdk()
     issues=[]
     if not source: issues.append(dict(kind='source',title='自动下载编译源码',detail='从发布清单获取源码并校验，保存在本机供后续复用。'))
     elif not found: issues.append(dict(kind='sdk',title='选择完整的同版本 UE',detail='目标引擎缺少编译依赖，请选择完整 UE 的根目录或 Engine 目录。'+('\n'+problems[0] if problems else '')))
     if not vc or not windows_sdk: issues.append(dict(kind='vcvars',title='安装 C++ 编译环境',detail='缺少当前 UE 支持的 C++ 工具或 Windows SDK。下载微软官方安装器，自动选好 C++ 工具与推荐组件。可能需要 Windows 管理员授权。'))
+    if not netfx: issues.append(dict(kind='netfx',title='补齐 .NET Framework 开发包',detail='缺少虚幻编译需要的 NetFxSDK。将自动下载微软 .NET Framework 4.8 Developer Pack，安装后继续；已有 .NET 运行库不能代替此开发包。'))
     if not py: issues.append(dict(kind='python',title='安装 Python',detail='未找到可用的 64 位 Python 3.9+。可自动下载 Python 官方安装器并为当前用户安装。'))
-    return dict(engine=str(target),source=source['path'] if source else '',sdk=found,vcvars=vc,python=py,windows_sdk=windows_sdk,
+    return dict(engine=str(target),source=source['path'] if source else '',sdk=found,vcvars=vc,python=py,windows_sdk=windows_sdk,netfx_sdk=netfx,
                 output=str(Path(output).resolve()),compiler_version='auto',issues=issues,diagnostics=problems)
 
 
 def install_dependency(kind, state, log=print):
     specs={
         'vcvars':('https://aka.ms/vs/17/release/vs_BuildTools.exe','vs_BuildTools.exe','Microsoft Corporation',
-                  ['--add','Microsoft.VisualStudio.Workload.VCTools','--includeRecommended','--passive','--norestart','--wait']),
+                  ['--add','Microsoft.VisualStudio.Workload.VCTools','--add','Microsoft.Net.Component.4.8.SDK',
+                   '--add','Microsoft.Net.Component.4.8.TargetingPack','--includeRecommended','--passive','--norestart','--wait']),
+        'netfx':('https://go.microsoft.com/fwlink/?linkid=2088517','NDP48-DevPack-ENU.exe','Microsoft Corporation',
+                 ['/passive','/norestart']),
         'python':('https://www.python.org/ftp/python/3.13.16/python-3.13.16-amd64.exe','python-3.13.16-amd64.exe','Python Software Foundation',
                   ['/passive','InstallAllUsers=0','PrependPath=0','Include_test=0','Include_launcher=0'])}
     if kind not in specs: raise ValueError('不支持自动安装的环境。')
@@ -239,7 +282,7 @@ def install_dependency(kind, state, log=print):
     if result.returncode or signature.get('status')!='Valid' or not re.search(r'(?:^|,\s*)(?:CN|O)='+re.escape(publisher)+r'(?=,|$)',signature.get('subject','')):
         raise ValueError('安装器数字签名校验失败，已停止。请从官方页面安装后重试检测。')
     log('签名已验证。安装中；如 Windows 请求授权，请在系统弹窗中确认。下载组件可能需要数分钟，请保持联网。')
-    if kind=='vcvars':
+    if kind in ('vcvars','netfx'):
         # Only elevate the signed Microsoft installer; manager/project writes stay unelevated.
         env['XH_INSTALLER_ARGS']=subprocess.list2cmdline(args)
         script=("try {$p=Start-Process -FilePath $env:XH_INSTALLER -ArgumentList $env:XH_INSTALLER_ARGS "
@@ -250,5 +293,7 @@ def install_dependency(kind, state, log=print):
     else:result=subprocess.run([str(dest)]+args,creationflags=getattr(subprocess,'CREATE_NO_WINDOW',0))
     if result.returncode in (1223,1602):raise ValueError('已取消环境安装。重新点击“自动适配并安装”可继续；需要允许微软安装器的 Windows 授权。')
     if result.returncode in (1618,1001):raise ValueError('已有其他安装器正在运行。等它完成后再点“继续自动安装”。')
-    if result.returncode not in (0,3010): raise ValueError('环境安装未完成（退出码 '+str(result.returncode)+'）。可点“微软官方下载”安装 C++ 桌面开发及 Windows SDK，然后继续自动安装。')
+    if result.returncode not in (0,3010):
+        detail='请安装微软 .NET Framework 4.8 Developer Pack（开发包），然后继续自动安装。' if kind=='netfx' else '可点“微软官方下载”安装 C++ 桌面开发及 Windows SDK，然后继续自动安装。'
+        raise ValueError('环境安装未完成（退出码 '+str(result.returncode)+'）。'+detail)
     return result.returncode

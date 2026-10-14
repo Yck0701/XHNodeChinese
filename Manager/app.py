@@ -403,8 +403,7 @@ class App(tk.Tk):
         self.package_label.set(self.cloud_status.get())
         if not messagebox.askyesno('是否编译当前 UE 的插件？',self.cloud_status.get()+'\n引擎：'+self.engine.get()+
                                   '\n\n是否进入编译确认？只编译本插件，不编译整个引擎。',parent=self):return
-        self.build_engine.set(self.engine.get());self.navigate(2)
-        self.check_versions(then_compile=True)
+        self.build_engine.set(self.engine.get());self.auto_adapt()
 
     def open_manager(self,path):
         try:
@@ -662,7 +661,7 @@ class App(tk.Tk):
     def prepare_environment(self):
         context=self.setup_context()
         self.wizard_context=context;self.wizard_state='checking'
-        self.wizard_text.set('② 自动准备编译环境\n正在查找源码、完整引擎、C++ 工具和 Python…')
+        self.wizard_text.set('② 自动准备编译环境\n正在检查源码、引擎和编译所需组件…')
         args=(context[1],self.source_package.get(),self.sdk.get(),self.vcvars.get(),self.python.get(),context[3],BASE,STATE)
         def ready(result):
             if context!=self.setup_context():
@@ -671,13 +670,13 @@ class App(tk.Tk):
             for key,var in (('source',self.source_package),('sdk',self.sdk),('vcvars',self.vcvars),('python',self.python)):
                 if result[key]:var.set(result[key])
             self.msvc.set('auto');self.save_settings()
-            labels=[('源码','source'),('引擎依赖','sdk'),('C++ 编译器','vcvars'),('Windows SDK','windows_sdk'),('Python','python')]
+            labels=[('源码','source'),('引擎依赖','sdk'),('C++ 编译器','vcvars'),('Windows SDK','windows_sdk'),('.NET 开发包','netfx_sdk'),('Python','python')]
             summary='  ·  '.join(('✓ ' if result.get(k) else '○ ')+label for label,k in labels)
             if result['issues']:
                 issue=result['issues'][0];self.wizard_state='needs'
                 self.wizard_text.set('② 只需处理这一项：'+issue['title']+'\n'+issue['detail']+'\n\n'+summary)
                 self.setup_button_text.set(issue['title'])
-                if getattr(self,'auto_flow',False) and issue['kind'] in ('source','vcvars','python'):
+                if getattr(self,'auto_flow',False) and issue['kind'] in ('source','vcvars','netfx','python'):
                     if issue['kind'] in self.dependency_attempts:
                         self.auto_flow=False
                         self.wizard_text.set('自动安装后仍未检测到所需环境。\n'+issue['detail']+'\n请查看日志；可使用下方官方下载或高级设置，处理后继续自动安装。')
@@ -718,7 +717,8 @@ class App(tk.Tk):
     def install_environment(self,kind='vcvars'):
         if self.busy:return
         self.navigate(2);context=self.setup_context();self.wizard_state='installing_environment'
-        self.wizard_text.set('正在安装 '+('微软 C++ 编译工具和 Windows SDK' if kind=='vcvars' else 'Python')+'。\n已自动选择组件；请允许 Windows 授权。完成后自动重新检测，日志会保留安装结果。')
+        label={'vcvars':'微软 C++ 编译工具、Windows SDK 和 .NET 开发包','netfx':'.NET Framework 4.8 开发包','python':'Python'}[kind]
+        self.wizard_text.set('正在安装 '+label+'。\n已自动选择组件；请允许 Windows 授权。完成后自动重新检测，日志会保留安装结果。')
         def installed(code):
             if code==3010:
                 self.auto_flow=False;self.wizard_state='idle';self.setup_button_text.set('继续自动安装')

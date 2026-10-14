@@ -23,7 +23,7 @@ import zipfile
 SOURCE_REPOSITORY = 'https://github.com/Yck0701/XHNodeChinese'
 REPOSITORY = 'https://github.com/Yck0701/XHNodeChinese-new'
 DEFAULT_FEED = REPOSITORY + '/releases/latest/download/manifest.json'
-VERSION = '1.0.17'
+VERSION = '1.0.18'
 PRODUCT_NAME = '虚幻翻译插件'
 DOCS_URL = 'https://365.kdocs.cn/l/cpi4ASG5Izsi?source=wiki'
 PROTECTED = ('Plugins/XHNodeChinese/Dictionaries/User.csv', 'Saved/XHNodeChinese/LongText.csv')

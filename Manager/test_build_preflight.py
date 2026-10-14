@@ -152,5 +152,14 @@ class BuildProcessTests(unittest.TestCase):
             with self.assertRaisesRegex(RuntimeError,'退出码 7'):
                 build_process.run([sys.executable,'-c','raise SystemExit(7)'],tmp,lambda _:None,Path(tmp)/'build.log')
 
+    def test_netfx_failure_is_actionable_even_when_ui_output_is_limited(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path=Path(tmp)/'build.log'
+            code='print("noise");print("Unable to instantiate module SwarmInterface: Could not find NetFxSDK install dir");raise SystemExit(8)'
+            with self.assertRaisesRegex(RuntimeError,'缺少 .NET Framework SDK') as error:
+                build_process.run([sys.executable,'-c',code],tmp,lambda _:None,path,display_limit=0)
+            self.assertIn('自动适配并安装',str(error.exception));self.assertIn('退出码 8',str(error.exception))
+            self.assertIn('SwarmInterface',path.read_text(encoding='utf-8'))
+
 
 if __name__=='__main__':unittest.main()

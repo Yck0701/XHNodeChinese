@@ -15,6 +15,7 @@ from test_build_preflight import Var
 class EnvironmentTests(unittest.TestCase):
     def setUp(self):
         self.temp=tempfile.TemporaryDirectory();self.addCleanup(self.temp.cleanup)
+        sdk=patch.object(setup,'find_netfx_sdk',return_value='netfx-sdk');sdk.start();self.addCleanup(sdk.stop)
         self.root=Path(self.temp.name).resolve()
         self.source=self.root/'XHNodeChinese-source-r2.zip'
         with zipfile.ZipFile(self.source,'w') as z:
@@ -88,6 +89,29 @@ class EnvironmentTests(unittest.TestCase):
         args=run.call_args.kwargs['env']['XH_INSTALLER_ARGS']
         self.assertIn('Microsoft.VisualStudio.Workload.VCTools',args);self.assertIn('--includeRecommended',args)
         self.assertIn('--norestart',args)
+        self.assertIn('Microsoft.Net.Component.4.8.SDK',args)
+        self.assertIn('Microsoft.Net.Component.4.8.TargetingPack',args)
+
+    def test_missing_netfx_blocks_compile_when_cpp_and_dotnet_are_present(self):
+        with patch.object(core,'engine_path',return_value=self.root),patch.object(setup,'sdk_problem',return_value=''),patch.object(setup,'find_python',return_value='python'),patch.object(setup,'find_vcvars',return_value='vcvars'),patch.object(setup,'find_windows_sdk',return_value='sdk'),patch.object(setup,'find_netfx_sdk',return_value=''),patch.object(setup.engine_discovery,'registered_engines',return_value=[]):
+            result=setup.inspect(str(self.root),str(self.source),'','','',str(self.root/'out'),self.root/'none',self.root/'state')
+        self.assertEqual([i['kind'] for i in result['issues']],['netfx'])
+        self.assertFalse(result['netfx_sdk'])
+
+    def test_netfx_downloads_developer_pack_and_elevates_only_verified_installer(self):
+        responses=[SimpleNamespace(returncode=0,stdout=b'{"status":"Valid","subject":"CN=Microsoft Corporation"}'),SimpleNamespace(returncode=0)]
+        with patch.object(core,'download') as download,patch.object(setup.subprocess,'run',side_effect=responses) as run:
+            self.assertEqual(setup.install_dependency('netfx',self.root,lambda _:None),0)
+        self.assertEqual(download.call_args.args[0],'https://go.microsoft.com/fwlink/?linkid=2088517')
+        self.assertEqual(download.call_args.args[1].name,'NDP48-DevPack-ENU.exe')
+        self.assertIn('-Verb RunAs',run.call_args.args[0][-1])
+        self.assertEqual(run.call_args.kwargs['env']['XH_INSTALLER_ARGS'],'/passive /norestart')
+
+    def test_unsigned_netfx_is_never_installed(self):
+        response=SimpleNamespace(returncode=0,stdout=b'{"status":"NotSigned","subject":"CN=Microsoft Corporation"}')
+        with patch.object(core,'download'),patch.object(setup.subprocess,'run',return_value=response) as run:
+            with self.assertRaisesRegex(ValueError,'签名'):setup.install_dependency('netfx',self.root,lambda _:None)
+        self.assertEqual(run.call_count,1)
 
     def test_cancelled_uac_returns_actionable_error_without_retry_loop(self):
         responses=[SimpleNamespace(returncode=0,stdout=b'{"status":"Valid","subject":"CN=Microsoft Corporation"}'),SimpleNamespace(returncode=1223)]
@@ -205,6 +229,54 @@ class WizardTests(unittest.TestCase):
         result=dict(engine='UE',source='source',sdk='sdk',vcvars='',python='py',windows_sdk='',issues=[dict(kind='vcvars',title='安装 C++',detail='需要工具链')],diagnostics=[])
         with patch.object(setup,'inspect',return_value=result):app.App.prepare_environment(ui)
         self.assertFalse(ui.auto_flow);ui.after.assert_not_called();self.assertIn('仍未',ui.wizard_text.get())
+
+    def test_startup_compile_consent_enters_same_automatic_flow(self):
+        ui=self.ui();ui.info=dict(version='5.8.3',sha256={'Engine.dll':'hash'});ui.selected=None
+        ui.auto_check=Var(True);ui.compatibility_prompts=set();ui.cloud_status=Var();ui.package_label=Var()
+        ui.auto_adapt=Mock();ui.check_versions=Mock()
+        with patch.object(app.messagebox,'askyesno',return_value=True):
+            app.App.offer_engine_compatibility(ui,[],False,True)
+        ui.auto_adapt.assert_called_once();ui.check_versions.assert_not_called()
+
+    def test_missing_netfx_is_scheduled_automatically_and_not_repeated(self):
+        ui=self.ui();ui.auto_flow=True
+        result=dict(engine='UE',source='source',sdk='sdk',vcvars='vc',python='py',windows_sdk='win',netfx_sdk='',issues=[dict(kind='netfx',title='补齐开发包',detail='需要 NetFxSDK')],diagnostics=[])
+        with patch.object(setup,'inspect',return_value=result):
+            app.App.prepare_environment(ui)
+            self.assertEqual(ui.dependency_attempts,{'netfx'});self.assertEqual(ui.after.call_count,1)
+            ui.after.reset_mock();app.App.prepare_environment(ui)
+        self.assertFalse(ui.auto_flow);ui.after.assert_not_called()
+
+    def test_netfx_install_finishes_by_rechecking_environment(self):
+        ui=self.ui();ui.auto_flow=True
+        with patch.object(setup,'install_dependency',return_value=0) as install:app.App.install_environment(ui,'netfx')
+        self.assertEqual(install.call_args.args[0],'netfx');ui.prepare_environment.assert_called_once()
+        self.assertIn('.NET Framework 4.8',ui.wizard_text.get());ui.compile_auto.assert_not_called()
+
+
+class NetFxDetectionTests(unittest.TestCase):
+    def setUp(self):
+        self.temp=tempfile.TemporaryDirectory();self.addCleanup(self.temp.cleanup);self.root=Path(self.temp.name)
+        env=patch.dict(setup.os.environ,{'UE_SDKS_ROOT':''});env.start();self.addCleanup(env.stop)
+
+    def sdk_files(self):
+        for name in ('Include/um/mscoree.h','Lib/um/x64/mscoree.lib'):
+            path=self.root/name;path.parent.mkdir(parents=True,exist_ok=True);path.write_bytes(b'fixture')
+
+    def test_registry_and_actual_sdk_files_required(self):
+        with patch.object(setup,'netfx_registry_candidates',return_value=[('4.8',str(self.root))]):
+            self.assertEqual(setup.find_netfx_sdk(),'')
+            self.sdk_files();self.assertEqual(setup.find_netfx_sdk(),str(self.root))
+            (self.root/'Lib/um/x64/mscoree.lib').unlink();self.assertEqual(setup.find_netfx_sdk(),'')
+
+    def test_unregistered_files_are_not_enough_for_ubt(self):
+        self.sdk_files()
+        with patch.object(setup,'netfx_registry_candidates',return_value=[]):self.assertEqual(setup.find_netfx_sdk(),'')
+
+    def test_broken_preferred_sdk_is_not_hidden_by_later_version(self):
+        self.sdk_files()
+        with patch.object(setup,'netfx_registry_candidates',return_value=[('4.6.2',str(self.root/'broken')),('4.8',str(self.root))]):
+            self.assertEqual(setup.find_netfx_sdk(),'')
 
 
 if __name__=='__main__':unittest.main()

@@ -21,7 +21,7 @@ def run(args,cwd,log,log_path,cancel=None,timeout=1200,idle_timeout=300,heartbea
     env=dict(os.environ,PYTHONIOENCODING='utf-8',PYTHONUTF8='1',PYTHONUNBUFFERED='1')
     path=Path(log_path);path.parent.mkdir(parents=True,exist_ok=True)
     started=time.monotonic();last_output=started;last_heartbeat=started
-    events=queue.Queue()
+    events=queue.Queue();failure_hint=''
     with path.open('a',encoding='utf-8') as saved:
         displayed=0
         def emit(text,force=False):
@@ -48,12 +48,15 @@ def run(args,cwd,log,log_path,cancel=None,timeout=1200,idle_timeout=300,heartbea
                 try:
                     line=events.get(timeout=min(.2,max(.01,timeout-(now-started))))
                     if line is None:eof=True
-                    else:last_output=time.monotonic();emit(line.decode('utf-8',errors='replace').rstrip())
+                    else:
+                        last_output=time.monotonic();decoded=line.decode('utf-8',errors='replace').rstrip();emit(decoded)
+                        if 'could not find netfxsdk install dir' in decoded.lower():
+                            failure_hint='缺少 .NET Framework SDK（NetFxSDK）。请点击“自动适配并安装”，工具会补齐微软开发包后重新编译。'
                 except queue.Empty:pass
                 if eof and process.poll() is not None:break
                 if now-last_heartbeat>=heartbeat:
                     emit('编译进行中 · 已用 '+str(int(now-started))+' 秒 · 最近输出 '+str(int(now-last_output))+' 秒前',True);last_heartbeat=now
-            if process.returncode:raise RuntimeError('编译子进程退出码 '+str(process.returncode)+'；日志：'+str(path))
+            if process.returncode:raise RuntimeError((failure_hint+'\n' if failure_hint else '')+'编译子进程退出码 '+str(process.returncode)+'；日志：'+str(path))
             emit('本阶段完成，用时 '+format(time.monotonic()-started,'.1f')+' 秒。',True)
         except BaseException:
             stop_tree(process)
